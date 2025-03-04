@@ -1,0 +1,272 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/Home/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<!-- Contenu principal avec arrière-plan subtil -->
+<div class="min-h-screen bg-gray-50 py-6">
+    <!-- En-tête du fil d'actualités -->
+    <div class="container mx-auto px-4 mb-6">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+                Fil d'actualités
+            </h1>
+            <!-- Filtres -->
+            <div class="flex gap-2">
+                <button class="text-xs font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full hover:bg-blue-100 transition">
+                    Récents
+                </button>
+                <button class="text-xs font-medium text-gray-600 hover:bg-gray-100 px-3 py-1 rounded-full transition">
+                    Populaires
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Structure principale - contenu centré -->
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-5">
+            
+            <!-- Colonne latérale (version desktop uniquement) -->
+            <div class="hidden md:block w-64 flex-shrink-0">
+                <div class="sticky top-20">
+                    <!-- Profil résumé - version compacte -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm mb-4">
+                        <div class="flex items-center mb-3">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                                {{ app.user.pseudo|slice(0,1)|upper }}
+                            </div>
+                            <div class="ml-3">
+                                <p class="font-semibold text-gray-800">{{ app.user.pseudo }}</p>
+                                <a href="{{ path('app_profil') }}" class="text-blue-600 text-xs hover:underline">Voir profil</a>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-center py-2 border-t border-gray-100">
+                            <div>
+                                <div class="font-bold text-gray-800">{{ app.user.photos|length }}</div>
+                                <div class="text-xs text-gray-500">Publications</div>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-800">0</div>
+                                <div class="text-xs text-gray-500">Abonnés</div>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-800">0</div>
+                                <div class="text-xs text-gray-500">Abonnements</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suggestions - version compacte -->
+                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                        <h3 class="font-medium text-gray-800 mb-3 flex items-center text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Suggestions
+                        </h3>
+                        
+                        {% for i in 1..3 %}
+                            <div class="flex items-center justify-between py-2 {% if not loop.last %}border-b border-gray-100{% endif %}">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+                                        U{{ i }}
+                                    </div>
+                                    <p class="ml-2 text-gray-800 text-xs font-medium">Utilisateur {{ i }}</p>
+                                </div>
+                                <button class="text-blue-600 hover:text-blue-800 text-xs font-medium bg-blue-50 hover:bg-blue-100 rounded-full px-2 py-0.5">
+                                    Suivre
+                                </button>
+                            </div>
+                        {% endfor %}
+                        
+                        <div class="mt-3 text-center">
+                            <a href="#" class="text-blue-600 text-xs font-medium hover:text-blue-800">Voir plus</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zone des publications -->
+            <div class="flex-grow">
+                {% if photos is defined and photos|length > 0 %}
+                    <!-- Grille optimisée pour différentes tailles d'écran -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {% for photo in photos %}
+                            <!-- Carte de publication compacte -->
+                            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-200 transform hover:-translate-y-0.5">
+                                <!-- En-tête plus compact -->
+                                <div class="p-3 flex items-center justify-between border-b">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+                                            {{ photo.user.pseudo|slice(0,1)|upper }}
+                                        </div>
+                                        <div class="ml-2">
+                                            <a href="#" class="font-medium text-gray-900 hover:text-blue-600 transition text-sm">{{ photo.user.pseudo }}</a>
+                                            <p class="text-xs text-gray-500">{{ photo.createdAt|date('d/m/Y') }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if app.user != photo.user %}
+                                        <button class="text-blue-600 hover:text-blue-800 text-xs font-medium bg-blue-50 hover:bg-blue-100 rounded-full px-2 py-0.5 transition-colors">
+                                            Suivre
+                                        </button>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Image de taille uniforme -->
+                                <div class="bg-black flex items-center justify-center h-44">
+                                    <img 
+                                        src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" 
+                                        alt="Photo de {{ photo.user.pseudo }}" 
+                                        class="max-h-full max-w-full object-contain"
+                                    >
+                                </div>
+                                
+                                <!-- Actions compactes -->
+                                <div class="px-3 py-2 border-b border-gray-100 flex justify-between items-center">
+                                    <div class="flex space-x-2">
+                                        <!-- J'aime -->
+                                        <button class="flex items-center text-gray-700 hover:text-red-500 transition-colors group">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                            </svg>
+                                            <span class="ml-1 font-medium text-xs">J'aime</span>
+                                        </button>
+                                        
+                                        <!-- Commentaire -->
+                                        <button class="flex items-center text-gray-700 hover:text-blue-500 transition-colors group" onclick="toggleComments('comments-{{ photo.id }}')">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                            </svg>
+                                            <span class="ml-1 font-medium text-xs">Commenter</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Enregistrer -->
+                                    <button class="text-gray-700 hover:text-gray-900 transition-colors group">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                
+                                <!-- Description compacte avec limitation de hauteur -->
+                                <div class="px-3 py-2">
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold">{{ random(5, 25) }}</span> personnes aiment cette publication
+                                    </p>
+                                    
+                                    <div class="mt-1 text-xs text-gray-800 line-clamp-2">
+                                        <span class="font-medium">{{ photo.user.pseudo }}</span>
+                                        <span class="ml-1">{{ photo.description }}</span>
+                                    </div>
+                                    
+                                    <button class="text-xs text-gray-500 mt-1 hover:text-blue-600" onclick="toggleComments('comments-{{ photo.id }}')">
+                                        Voir les commentaires
+                                    </button>
+                                </div>
+                                
+                                <!-- Commentaires (masqués par défaut) -->
+                                <div id="comments-{{ photo.id }}" class="hidden border-t border-gray-100">
+                                    <div class="px-3 py-2 max-h-40 overflow-y-auto bg-gray-50">
+                                        {% for i in 1..random(0, 3) %}
+                                            <div class="py-2 {% if not loop.last %}border-b border-gray-100{% endif %}">
+                                                <div class="flex items-start">
+                                                    <div class="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex-shrink-0 flex items-center justify-center text-white font-bold text-xs">
+                                                        U{{ i }}
+                                                    </div>
+                                                    <div class="ml-2 flex-1">
+                                                        <p class="text-xs">
+                                                            <a href="#" class="font-medium text-gray-900 hover:underline">Utilisateur {{ i }}</a>
+                                                            <span class="ml-1 text-gray-700">Super photo !</span>
+                                                        </p>
+                                                        <div class="flex items-center mt-1">
+                                                            <p class="text-xs text-gray-500">Il y a {{ random(1, 5) }}h</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    
+                                    <!-- Formulaire de commentaire compact -->
+                                    <div class="border-t border-gray-200 px-3 py-2 bg-white">
+                                        <form class="flex items-center">
+                                            <div class="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-xs mr-2 flex-shrink-0">
+                                                {{ app.user.pseudo|slice(0,1)|upper }}
+                                            </div>
+                                            <div class="flex-grow relative">
+                                                <input type="text" placeholder="Commenter..." class="w-full rounded-full bg-gray-100 px-3 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                
+                                <!-- Option suppression - version compacte -->
+                                {% if app.user == photo.user %}
+                                    <div class="px-3 py-1 border-t border-gray-100 text-right">
+                                        <a href="{{ path('app_delete_photo', {'id': photo.id}) }}" 
+                                          class="inline-flex items-center text-red-600 hover:text-red-800 text-xs" 
+                                          onclick="return confirm('Voulez-vous vraiment supprimer cette publication ?')">
+                                           
+                                            Supprimer
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <!-- Message si aucune publication - version compacte -->
+                    <div class="bg-white rounded-lg shadow-sm p-6 text-center">
+                        <div class="mx-auto h-24 w-24 flex items-center justify-center rounded-full bg-blue-50 text-blue-500 mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune publication</h3>
+                        <p class="text-gray-500 mb-4 text-sm max-w-md mx-auto">Le fil d'actualités est vide pour le moment.</p>
+                        <a href="{{ path('app_profil') }}" class="inline-flex items-center px-4 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-md shadow text-sm transition">
+                            Créer une publication
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleComments(id) {
+        const commentsSection = document.getElementById(id);
+        if (commentsSection.classList.contains('hidden')) {
+            commentsSection.classList.remove('hidden');
+            commentsSection.classList.add('animate-fade-in');
+        } else {
+            commentsSection.classList.add('hidden');
+        }
+    }
+</script>
+
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    /* Pour limiter la hauteur des descriptions */
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

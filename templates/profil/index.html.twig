@@ -1,0 +1,194 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/profil/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<!-- Page de profil avec bannière et contenu -->
+<div class="bg-gray-100 min-h-screen">
+    <!-- Bannière de profil -->
+    <div class="relative bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-700 h-64 overflow-hidden">
+        <div class="absolute inset-0 bg-pattern opacity-10"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-100 to-transparent"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 relative">
+        <!-- Carte de profil principale -->
+        <div class="bg-white rounded-xl shadow-lg -mt-20 mb-8 relative z-10 overflow-hidden">
+            <div class="p-6 sm:p-8">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                    <!-- Avatar -->
+                  
+                    
+                 
+<!-- Informations utilisateur -->
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/profil/index.html.twig #}
+<!-- Informations utilisateur -->
+<div class="flex-1 flex justify-between items-center w-full">
+    <!-- Nom et email à gauche -->
+    <div class="text-left pl-4">
+        <h1 class="text-3xl font-bold text-gray-800">{{ app.user.pseudo }}</h1>
+        <p class="mt-2 text-gray-500">{{ app.user.email }}</p>
+    </div>
+    
+    <!-- Statistiques à droite -->
+    <div class="flex gap-12 pr-4">
+        <div class="text-center">
+            <div class="text-2xl font-bold text-gray-900">{{ app.user.photos|length }}</div>
+            <div class="text-sm text-gray-500">Publications</div>
+        </div>
+        <div class="text-center">
+            <div class="text-2xl font-bold text-gray-900">0</div>
+            <div class="text-sm text-gray-500">Abonnés</div>
+        </div>
+        <div class="text-center">
+            <div class="text-2xl font-bold text-gray-900">0</div>
+            <div class="text-sm text-gray-500">Abonnements</div>
+        </div>
+    </div>
+</div> </div>
+            </div>
+        </div>
+        
+      
+       <!-- Section Publications -->
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/profil/index.html.twig #}
+<!-- Section Publications -->
+<div class="bg-white rounded-xl shadow-md p-6 mb-8">
+    <div class="border-b pb-4 mb-6 flex justify-between items-center">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Vos Publications
+        </h2>
+    </div>
+    
+    {% if app.user.photos|length > 0 %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 mb-4">
+            {% for photo in app.user.photos %}
+                {% if photo.id is not null and photo.id is defined and photo.photoUrl is not empty %}
+                    <!-- Carte de publication avec dimensions fixes -->
+                    <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300" style="height: 384px; min-height: 384px; max-height: 384px;">
+                        <!-- En-tête de la carte - hauteur fixe -->
+                        <div class="p-4 border-b flex items-center justify-between" style="height: 60px; min-height: 60px; max-height: 60px;">
+                            <div class="flex items-center">
+                                <div class="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">
+                                    {{ app.user.pseudo|slice(0,1)|upper }}
+                                </div>
+                                <span class="ml-2 font-medium text-sm">{{ app.user.pseudo }}</span>
+                            </div>
+                            <div class="text-gray-400 text-xs">
+                                {{ photo.createdAt|date('d/m/Y') }}
+                            </div>
+                        </div>
+
+                        <!-- Image de la publication - hauteur fixe -->
+                      {# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/profil/index.html.twig #}
+
+<div style="height: 200px; width: 100%; position: relative; background-color: #f9fafb;" class="flex items-center justify-center overflow-hidden border-y border-gray-100">
+    <img 
+        src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" 
+        alt="Photo" 
+        style="max-height: 190px; max-width: 95%;" 
+        class="object-scale-down"
+    >
+</div>
+
+                        <!-- Description et actions - hauteur fixe -->
+                        <div class="p-4" style="height: 124px; min-height: 124px; max-height: 124px;">
+                            <!-- Description avec défilement si nécessaire -->
+                          {# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/profil/index.html.twig #}
+<!-- Description avec défilement si nécessaire -->
+<div class="mb-2" style="height: 50px; min-height: 50px; max-height: 50px; overflow-y: auto;">
+    <h2 class="font-bold text-gray-700 mb-2">Description:</h2>
+    <p class="text-gray-800 text-sm">{{ photo.description }}</p>
+</div>
+                            
+                            <!-- Actions avec positionnement fixe -->
+                            <div class="flex justify-between items-center mt-4">
+                                <button class="flex items-center text-pink-600 hover:text-pink-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                    J'aime
+                                </button>
+                                
+                                <button class="flex items-center text-blue-600 hover:text-blue-800">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                                    </svg>
+                                    Commenter
+                                </button>
+                                
+                                <a href="{{ path('app_delete_photo', {'id': photo.id}) }}" class="flex items-center text-red-600 hover:text-red-800" onclick="return confirm('Voulez-vous vraiment supprimer cette publication ?')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Supprimer
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-gray-50 rounded-lg p-8 text-center">
+            <div class="mx-auto h-24 w-24 flex items-center justify-center rounded-full bg-blue-50 text-blue-500 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Aucune publication</h3>
+            <p class="text-gray-500 mb-6 max-w-md mx-auto">Partagez vos moments avec la communauté en ajoutant votre première publication.</p>
+        </div>
+    {% endif %}
+</div>
+        <!-- Formulaire d'ajout de publication -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+              
+                Ajouter une nouvelle publication
+            </h2>
+            
+            <div class="max-w-2xl mx-auto">
+                {{ form_start(form, {'attr': {'class': 'space-y-5'}}) }}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Choisissez une photo</label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-blue-400 transition-colors">
+                            <div class="space-y-2 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="flex text-sm text-gray-600 justify-center">
+                                    <div class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 focus-within:outline-none">
+                                        {{ form_widget(form.photoFile) }}
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500">PNG, JPG, GIF jusqu'à 2MB</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        {{ form_widget(form.description, {'attr': {'class': 'w-full p-3 border border-gray-300 rounded-lg', 'placeholder': 'Que souhaitez-vous partager ?'}}) }}
+                    </div>
+                    
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-8 rounded-lg shadow-md transition duration-200">
+                            Publier
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.bg-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+</style>
+
+{% endblock %}
