@@ -22,6 +22,7 @@ class Like
     #[ORM\JoinColumn(nullable: false)]
     private ?Photo $photo = null;
 
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -50,4 +51,6 @@ class Like
 
         return $this;
     }
+
+   
 }
