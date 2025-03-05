@@ -24,8 +24,10 @@ class ProfilFormType extends AbstractType
                 'by_reference' => false,
                 'prototype' => true,
                 'attr' => ['class' => 'form-control']
-            ])
-        ;
+            ]);
+
+
+            
     }
 
     public function configureOptions(OptionsResolver $resolver): void
