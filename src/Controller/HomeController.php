@@ -9,8 +9,10 @@ use App\Entity\User;
 use App\Form\CommentaireType;
 use App\Repository\PhotoRepository;
 use App\Repository\StatutRepository;
+use App\Repository\UserRepository;
 use App\Services\CommentFormService;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -139,4 +141,46 @@ class HomeController extends AbstractController
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
     }
+
+    #[Route('/search', name: 'app_search', methods: ['GET'])]
+    public function search(Request $request, UserRepository $userRepository, LoggerInterface $logger): Response
+    {
+        try {
+            // Récupération du terme de recherche
+            $query = trim($request->query->get('query', ''));
+            
+            // Log pour débogage
+            $logger->debug('Recherche effectuée avec le terme: "' . $query . '"');
+            
+            // Si la requête est vide ou trop courte, ne pas effectuer de recherche
+            if (mb_strlen($query) < 2) {
+                return $this->render('home/search_results.html.twig', [
+                    'users' => [],
+                    'query' => $query,
+                    'debug' => 'Requête trop courte: ' . mb_strlen($query) . ' caractères'
+                ]);
+            }
+            
+            // Recherche des utilisateurs par pseudo
+            $users = $userRepository->searchByPseudo($query);
+            $logger->debug('Nombre d\'utilisateurs trouvés: ' . count($users));
+            
+            return $this->render('home/search_results.html.twig', [
+                'users' => $users,
+                'query' => $query
+            ]);
+        } catch (\Exception $e) {
+            // Journal de l'erreur
+            $logger->error('Erreur lors de la recherche : ' . $e->getMessage());
+            
+            // En cas d'erreur, on retourne un résultat vide
+            return $this->render('home/search_results.html.twig', [
+                'users' => [],
+                'query' => $query ?? '',
+                'error' => true,
+                'errorMessage' => $e->getMessage()
+            ]);
+        }
+    }
+            
 }

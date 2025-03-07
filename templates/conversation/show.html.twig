@@ -14,14 +14,13 @@
             <div class="p-6">
                 <!-- Zone des messages avec défilement -->
                 <div id="messages" class="overflow-y-auto max-h-[500px] space-y-4 mb-6" hx-ext="sse" sse-connect="{{ mercure(topic)}}" sse-swap="message">
-                  
                     {% include "conversation/messages.html.twig" %}
                 </div>
                 
                 <hr class="border-gray-200 my-4">
                 
                 <!-- Formulaire d'envoi -->
-                <form class="flex gap-3 items-center" hx-post="{{ path('message.create') }}" hx-swap="none" >
+                <form class="flex gap-3 items-center" hx-post="{{ path('message.create') }}" hx-swap="none">
                     <input 
                         aria-label="Message" 
                         type="text" 
@@ -41,19 +40,31 @@
             </div>
         </div>
     </div>
-
-    {# À la fin de votre template conversation/show.html.twig #}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Log des erreurs SSE pour faciliter le débogage
-        document.body.addEventListener('htmx:sseError', function(event) {
-            console.error('SSE Connection Error:', event.detail);
-        });
-        
-        // Log des connexions SSE réussies
-        document.body.addEventListener('htmx:sseOpen', function(event) {
-            console.log('SSE Connection Established:', event.detail);
-        });
-    });
+const messages = document.getElementById('messages');
+const userId = {{ app.user.id }};
+
+document.addEventListener('DOMContentLoaded', () => {
+   scrollToBottom(messages);
+});
+
+
+
+document.addEventListener('htmx:sseBeforeMessage',function (e){
+    e.preventDefault();
+
+    const json = e.detail.data;
+    console.log(json);
+});
+
+function scrollToBottom(container){
+    container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth'
+    })
+}
+
+
 </script>
+   
 {% endblock %}

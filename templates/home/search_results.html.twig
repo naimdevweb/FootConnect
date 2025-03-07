@@ -1,0 +1,48 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/home/search_results.html.twig #}
+{% if error is defined and error %}
+    <div class="p-4 text-center text-gray-500">
+        Une erreur est survenue lors de la recherche.
+        {% if app.environment == 'dev' and errorMessage is defined %}
+            <div class="mt-2 text-xs text-red-500">{{ errorMessage }}</div>
+        {% endif %}
+    </div>
+{% elseif users is empty and query|length > 1 %}
+    <div class="p-4 text-center text-gray-500">
+        Aucun utilisateur trouvé pour "{{ query }}"
+    </div>
+{% elseif query|length < 2 and query|length > 0 %}
+    <div class="p-4 text-center text-gray-500">
+        Veuillez saisir au moins 2 caractères
+        {% if app.environment == 'dev' and debug is defined %}
+            <div class="mt-1 text-xs text-blue-500">{{ debug }}</div>
+        {% endif %}
+    </div>
+{% elseif users is not empty %}
+    <ul class="divide-y divide-gray-200">
+        {% for user in users %}
+            <li>
+                <a href="{{ path('app_profil_user', {id: user.id}) }}" class="block px-4 py-3 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center">
+                        {% if user.avatar is defined and user.avatar %}
+                            <img src="{{ asset('uploads/avatars/' ~ user.avatar) }}" alt="{{ user.pseudo }}" class="w-10 h-10 rounded-full object-cover">
+                        {% else %}
+                            <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                                {{ user.pseudo|first|upper }}
+                            </div>
+                        {% endif %}
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">{{ user.pseudo }}</p>
+                            <p class="text-xs text-gray-500">
+                                {{ user.pseudo }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <div class="p-4 text-center text-gray-400 text-sm">
+        Commencez à taper pour rechercher des utilisateurs
+    </div>
+{% endif %}
