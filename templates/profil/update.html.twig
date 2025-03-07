@@ -3,10 +3,6 @@
 
 {% block title %}Modifier votre profil{% endblock %}
 
-{% block stylesheets %}
-    {{ parent() }}
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-{% endblock %}
 
 {% block body %}
 <div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -22,13 +18,13 @@
         </div>
 
         {# Messages flash #}
-        {% for label, messages in app.flashes %}
+        {# {% for label, messages in app.flashes %}
             {% for message in messages %}
                 <div class="mb-4 p-4 rounded-md {{ label == 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800' }}">
                     {{ message }}
                 </div>
-            {% endfor %}
-        {% endfor %}
+            {% endfor %} #}
+        {# {% endfor %} #}
 
         {# Carte principale #}
         <div class="bg-white shadow-md rounded-xl overflow-hidden">

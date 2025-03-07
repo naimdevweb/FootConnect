@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\PrivateMessage;
+use App\Entity\Message;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<PrivateMessage>
+ * @extends ServiceEntityRepository<Message>
  */
-class PrivateMessageRepository extends ServiceEntityRepository
+class MessageRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, PrivateMessage::class);
+        parent::__construct($registry, Message::class);
     }
 
     //    /**
-    //     * @return PrivateMessage[] Returns an array of PrivateMessage objects
+    //     * @return Message[] Returns an array of Message objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
+    //        return $this->createQueryBuilder('m')
+    //            ->andWhere('m.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
+    //            ->orderBy('m.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?PrivateMessage
+    //    public function findOneBySomeField($value): ?Message
     //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
+    //        return $this->createQueryBuilder('m')
+    //            ->andWhere('m.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

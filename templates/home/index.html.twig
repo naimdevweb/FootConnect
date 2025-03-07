@@ -114,12 +114,12 @@
                             <div class="border-t border-gray-100 bg-gray-50 p-4">
                                 <div class="space-y-4 max-h-72 overflow-y-auto">
                                     {% for comment in photo.comments %}
-                                        <div class="flex space-x-3">
+                                        <div id="commentaire" class="flex space-x-3">
                                             <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
                                                 {{ comment.user.pseudo|slice(0,1)|upper }}
                                             </div>
                                             <div class="flex-1 bg-white rounded-lg p-3 shadow-sm">
-                                                <p class="text-sm text-gray-800">{{ comment.message }}</p>
+                                                <p  class="commentairemsg text-sm text-gray-800">{{ comment.message }}</p>
                                                 <p class="text-xs text-gray-500 mt-1">{{ comment.createdAt|date('H:i') }}</p>
                                             </div>
                                         </div>
@@ -129,15 +129,21 @@
                                 </div>
 
                                 <!-- Formulaire de commentaire -->
-                                {{ form_start(commentForms[photo.id], {'attr': {'class': 'mt-4'}}) }}
-                                    <div class="flex space-x-2">
+                             {{ form_start(commentForms[photo.id], {
+                                    'attr': {
+                                        'class': 'mt-4 comment-form',
+                                        'id': 'comment-form-' ~ photo.id,
+                                        'data-photo-id': photo.id
+                                    }
+                                }) }}
+                                    <div  class="flex space-x-2">
                                         {{ form_widget(commentForms[photo.id].message, {
                                             'attr': {
                                                 'class': 'flex-1 rounded-full px-4 py-2 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm',
                                                 'placeholder': 'Ajouter un commentaire...'
                                             }
                                         }) }}
-                                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300">
+                                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center">
                                             <i class="fas fa-paper-plane"></i>
                                         </button>
                                     </div>
@@ -196,6 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
 
     // Gestion des commentaires
     document.querySelectorAll('.comment-toggle').forEach(button => {
@@ -215,39 +222,45 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
 
 
-// Ajouter dans la section script existante, juste après la gestion des commentaires
-document.querySelectorAll('.follow-button').forEach(button => {
-    button.addEventListener('click', async function(e) {
-        e.preventDefault();
-        
-        try {
-            const response = await fetch(this.href);
-            if (response.ok) {
-                const icon = this.querySelector('i');
-                const text = this.querySelector('span');
-                
-                if (text.textContent === 'Suivre') {
-                    // Changer en état "Suivi"
-                    this.classList.remove('bg-blue-50', 'text-blue-600');
-                    this.classList.add('bg-blue-100', 'text-blue-700');
-                    icon.classList.remove('fa-user-plus');
-                    icon.classList.add('fa-user-check');
-                    text.textContent = 'Suivi';
+    // Gestion de l'ajout de commentaires
+    document.querySelectorAll('.comment-form').forEach(form => {
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Empêche le rechargement de la page
+            const photoId = this.dataset.photoId;
+            const formData = new FormData(this);
+            const commentSection = document.getElementById(`comments-${photoId}`);
+            const commentList = commentSection.querySelector('.space-y-4');
+            const message = formData.get('commentaire[message]');
+
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (response.ok) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(await response.text(), 'text/html');
+                    const newComment = doc.querySelector('#commentaire');
+                    if (newComment) {
+                        newComment.querySelector('.commentairemsg').textContent = message;
+                        commentList.appendChild(newComment);
+                        this.reset();
+                    } else {
+                        console.error('Erreur: le commentaire n\'a pas été trouvé dans la réponse.');
+                    }
                 } else {
-                    // Revenir à l'état "Suivre"
-                    this.classList.remove('bg-blue-100', 'text-blue-700');
-                    this.classList.add('bg-blue-50', 'text-blue-600');
-                    icon.classList.remove('fa-user-check');
-                    icon.classList.add('fa-user-plus');
-                    text.textContent = 'Suivre';
+                    console.error('Erreur lors de l\'ajout du commentaire:', response.statusText);
                 }
+            } catch (error) {
+                console.error('Erreur lors de l\'ajout du commentaire:', error);
             }
-        } catch (error) {
-            console.error('Erreur lors du suivi:', error);
-        }
+        });
     });
 });
 </script>

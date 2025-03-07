@@ -35,11 +35,17 @@
                             <span class="material-icons text-sm mr-1">edit</span>
                             Modifier le profil
                         </a>
+                       <a href="{{ path('conversation.show', {'recipient': user.id}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                           <span class="material-icons text-sm mr-1">email</span>
+                           Envoyer un message
+                        </a>
+                         
                         <a href="{{ path('app_logout') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
                             <span class="material-icons text-sm mr-1">logout</span>
                             Déconnexion
                         </a>
 
+ 
                     </div>
                     {% else %}
                     <div class="flex space-x-3">
@@ -93,16 +99,20 @@
                         Mon réseau
                     </h3>
                 </div>
-                <div class="p-6 space-y-4">
-                    <a href="#" class="flex items-center text-gray-800 hover:text-blue-600 transition-colors duration-200">
-                        <span class="material-icons text-blue-500 mr-2">group</span>
-                        Voir mes abonnés ({{ followersCount|default(0) }})
-                    </a>
-                    <a href="#" class="flex items-center text-gray-800 hover:text-blue-600 transition-colors duration-200">
-                        <span class="material-icons text-blue-500 mr-2">person_add</span>
-                        Voir mes abonnements ({{ followingCount|default(0) }})
-                    </a>
-            </div>
+               <div class="p-6 space-y-4">
+    <a href="{{ path('app_followers', {'id': user.id}) }}" class="flex items-center text-gray-800 hover:text-blue-600 transition-colors duration-200">
+        <span class="material-icons text-blue-500 mr-2">group</span>
+        Voir mes abonnés ({{ followersCount|default(0) }})
+    </a>
+    <a href="{{ path('app_following', {'id': user.id}) }}" class="flex items-center text-gray-800 hover:text-blue-600 transition-colors duration-200">
+        <span class="material-icons text-blue-500 mr-2">person_add</span>
+        Voir mes abonnements ({{ followingCount|default(0) }})
+    </a>
+    <a href="{{ path('app_blocked_users', {'id': user.id}) }}" class="flex items-center text-gray-800 hover:text-blue-600 transition-colors duration-200">
+        <span class="material-icons text-blue-500 mr-2">block</span>
+        Voir les personnes bloquées
+    </a>
+</div>
         </div>
         {% endif %}
 
@@ -152,4 +162,40 @@
         {% endif %}
     </div>
 </div>
+
+
+<script>
+document.querySelectorAll('.follow-button').forEach(button => {
+    button.addEventListener('click', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const response = await fetch(this.href);
+            if (response.ok) {
+                const icon = this.querySelector('i');
+                const text = this.querySelector('span');
+                
+                if (text.textContent === 'Suivre') {
+                    // Changer en état "Suivi"
+                    this.classList.remove('bg-blue-50', 'text-blue-600');
+                    this.classList.add('bg-blue-100', 'text-blue-700');
+                    icon.classList.remove('fa-user-plus');
+                    icon.classList.add('fa-user-check');
+                    text.textContent = 'Suivi';
+                } else {
+                    // Revenir à l'état "Suivre"
+                    this.classList.remove('bg-blue-100', 'text-blue-700');
+                    this.classList.add('bg-blue-50', 'text-blue-600');
+                    icon.classList.remove('fa-user-check');
+                    icon.classList.add('fa-user-plus');
+                    text.textContent = 'Suivre';
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du suivi:', error);
+        }
+    });
+});
+
+</script>
 {% endblock %}

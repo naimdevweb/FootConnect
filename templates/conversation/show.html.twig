@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conversation{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!-- En-tête de la conversation -->
+            <div class="bg-blue-600 px-6 py-4">
+                <h1 class="text-xl font-semibold text-white">Messages</h1>
+            </div>
+            
+            <!-- Corps de la conversation -->
+            <div class="p-6">
+                <!-- Zone des messages avec défilement -->
+                <div id="messages" class="overflow-y-auto max-h-[500px] space-y-4 mb-6" hx-ext="sse" sse-connect="{{ mercure(topic)}}" sse-swap="message">
+                  
+                    {% include "conversation/messages.html.twig" %}
+                </div>
+                
+                <hr class="border-gray-200 my-4">
+                
+                <!-- Formulaire d'envoi -->
+                <form class="flex gap-3 items-center" hx-post="{{ path('message.create') }}" hx-swap="none" >
+                    <input 
+                        aria-label="Message" 
+                        type="text" 
+                        name="content" 
+                        id="content" 
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Écrivez votre message..."
+                    >
+                    <input type="hidden" name="conversationId" value="{{ conversation.id }}">
+                    <button 
+                        type="submit" 
+                        class="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    >
+                        Envoyer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {# À la fin de votre template conversation/show.html.twig #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Log des erreurs SSE pour faciliter le débogage
+        document.body.addEventListener('htmx:sseError', function(event) {
+            console.error('SSE Connection Error:', event.detail);
+        });
+        
+        // Log des connexions SSE réussies
+        document.body.addEventListener('htmx:sseOpen', function(event) {
+            console.log('SSE Connection Established:', event.detail);
+        });
+    });
+</script>
+{% endblock %}

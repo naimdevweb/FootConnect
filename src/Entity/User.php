@@ -74,17 +74,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Statut::class, mappedBy: 'otherUser')]
     private Collection $otherUser;
 
-    /**
-     * @var Collection<int, PrivateMessage>
-     */
-    #[ORM\OneToMany(targetEntity: PrivateMessage::class, mappedBy: 'sender')]
-    private Collection $privateMessages;
-
-    /**
-     * @var Collection<int, PrivateMessage>
-     */
-    #[ORM\OneToMany(targetEntity: PrivateMessage::class, mappedBy: 'receiver')]
-    private Collection $receiver;
+    
+   
 
     /**
      * @var Collection<int, LikeCommentaire>
@@ -94,6 +85,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private bool $isVerified = false;
+
+    /**
+     * @var Collection<int, Conversation>
+     */
+    #[ORM\ManyToMany(targetEntity: Conversation::class, mappedBy: 'users')]
+    private Collection $conversations;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author')]
+    private Collection $messages;
     
 
     public function __construct()
@@ -104,9 +107,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->favoritePosts = new ArrayCollection();
         $this->statuts = new ArrayCollection();
         $this->otherUser = new ArrayCollection();
-        $this->privateMessages = new ArrayCollection();
-        $this->receiver = new ArrayCollection();
         $this->likeCommentaires = new ArrayCollection();
+        $this->conversations = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -377,65 +380,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, PrivateMessage>
-     */
-    public function getPrivateMessages(): Collection
-    {
-        return $this->privateMessages;
-    }
+   
 
-    public function addPrivateMessage(PrivateMessage $privateMessage): static
-    {
-        if (!$this->privateMessages->contains($privateMessage)) {
-            $this->privateMessages->add($privateMessage);
-            $privateMessage->setSender($this);
-        }
+   
 
-        return $this;
-    }
+   
 
-    public function removePrivateMessage(PrivateMessage $privateMessage): static
-    {
-        if ($this->privateMessages->removeElement($privateMessage)) {
-            // set the owning side to null (unless already changed)
-            if ($privateMessage->getSender() === $this) {
-                $privateMessage->setSender(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, PrivateMessage>
-     */
-    public function getReceiver(): Collection
-    {
-        return $this->receiver;
-    }
-
-    public function addReceiver(PrivateMessage $receiver): static
-    {
-        if (!$this->receiver->contains($receiver)) {
-            $this->receiver->add($receiver);
-            $receiver->setReceiver($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReceiver(PrivateMessage $receiver): static
-    {
-        if ($this->receiver->removeElement($receiver)) {
-            // set the owning side to null (unless already changed)
-            if ($receiver->getReceiver() === $this) {
-                $receiver->setReceiver(null);
-            }
-        }
-
-        return $this;
-    }
+   
 
     /**
      * @return Collection<int, LikeCommentaire>
@@ -475,6 +426,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Conversation>
+     */
+    public function getConversations(): Collection
+    {
+        return $this->conversations;
+    }
+
+    public function addConversation(Conversation $conversation): static
+    {
+        if (!$this->conversations->contains($conversation)) {
+            $this->conversations->add($conversation);
+            $conversation->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversation(Conversation $conversation): static
+    {
+        if ($this->conversations->removeElement($conversation)) {
+            $conversation->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getAuthor() === $this) {
+                $message->setAuthor(null);
+            }
+        }
 
         return $this;
     }
