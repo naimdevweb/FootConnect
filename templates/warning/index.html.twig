@@ -1,58 +1,107 @@
-{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/warning/index.html.twig #}
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/moderation/photos.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Modération des photos{% endblock %}
 
 {% block body %}
-<div class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">
-                Modération des photos
-            </h1>
-            
-            <div class="flex space-x-4">
-                <a href="{{ path('app_moderation_dashboard') }}" 
-                   class="px-4 py-2 bg-gray-100 rounded-md text-gray-700 hover:bg-gray-200 flex items-center">
-                    <span class="material-icons mr-2">dashboard</span>
-                    Tableau de bord
-                </a>
-            </div>
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">Modération des photos</h1>
+            <a href="{{ path('app_moderation_dashboard') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                <span class="mr-2">&#8592;</span> Retour au tableau de bord
+            </a>
         </div>
 
-        <div class="bg-white rounded-lg shadow">
-            <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {% for photo in photos %}
-                        <div class="border border-gray-200 rounded-lg overflow-hidden">
-                            <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" class="w-full h-48 object-cover">
-                            <div class="p-4">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <p class="font-medium">{{ photo.user.pseudo }}</p>
-                                        <p class="text-sm text-gray-500">{{ photo.createdAt|date('d/m/Y H:i') }}</p>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <form method="post" action="{{ path('app_moderator_delete_photo', {'id': photo.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
-                                            <button type="submit" class="text-red-500 hover:text-red-700">
-                                                <span class="material-icons">delete</span>
-                                            </button>
-                                        </form>
-                                        <a href="{{ path('app_moderator_warn_user', {'id': photo.user.id}) }}" 
-                                           class="text-yellow-500 hover:text-yellow-700">
-                                            <span class="material-icons">warning</span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <p class="text-sm text-gray-700 mt-2">{{ photo.description }}</p>
-                            </div>
-                        </div>
-                    {% else %}
-                        <p class="text-gray-500 col-span-3 text-center py-4">Aucune photo disponible</p>
-                    {% endfor %}
+        {% for message in app.flashes('success') %}
+            <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-r-md">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-700">{{ message }}</p>
+                    </div>
                 </div>
             </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-md">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">{{ message }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for item in photosWithComments %}
+                {% set photo = item.photo %}
+                {% set comments = item.comments %}
+                
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-200 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo" class="w-full h-48 object-cover">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                            <div class="flex justify-between items-center">
+                                <div class="text-white">
+                                    <div class="font-medium">Par {{ photo.user.pseudo }}</div>
+                                    <div class="text-xs opacity-75">{{ photo.createdAt|date('d/m/Y H:i') }}</div>
+                                </div>
+                                <form method="post" action="{{ path('app_moderator_delete_photo', {'id': photo.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
+                                    <button class="p-1 bg-red-600 rounded-full text-white hover:bg-red-700 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="font-medium text-gray-800 mb-1">{{ photo.description }}</div>
+                        
+                        <div class="mt-4">
+                            <div class="flex items-center justify-between border-b pb-2 mb-3">
+                                <h4 class="font-medium text-gray-700">Commentaires ({{ comments|length }})</h4>
+                                <a href="{{ path('app_moderator_warn_user', {'id': photo.user.id}) }}" class="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded hover:bg-amber-200 transition-colors">
+                                    Avertir l'utilisateur
+                                </a>
+                            </div>
+                            
+                            {% if comments|length > 0 %}
+                                <div class="space-y-3 max-h-48 overflow-y-auto">
+                                    {% for comment in comments %}
+                                        <div class="bg-gray-50 p-2 rounded text-sm">
+                                            <div class="flex justify-between">
+                                                <span class="font-medium">{{ comment.user.pseudo }}</span>
+                                                <span class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y H:i') }}</span>
+                                            </div>
+                                            <p class="mt-1">{{ comment.content }}</p>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-sm text-gray-500 italic">Aucun commentaire</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full bg-gray-50 p-8 rounded-lg border border-gray-200 text-center">
+                    <p class="text-gray-500">Aucune photo à modérer.</p>
+                </div>
+            {% endfor %}
         </div>
     </div>
 </div>

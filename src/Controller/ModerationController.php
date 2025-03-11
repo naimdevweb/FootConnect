@@ -61,19 +61,33 @@ class ModerationController extends AbstractController
     /**
      * Liste toutes les photos pour modération
      */
-    #[Route('/moderation/photos', name: 'app_moderator_photos', methods: ['GET'])]
-    public function listPhotos(PhotoRepository $photoRepository): Response {
-        try {
-            $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
-            
-            return $this->render('warning/index.html.twig', [
-                'photos' => $photos
-            ]);
-        } catch (\Exception $e) {
-            $this->addFlash('error', 'Une erreur est survenue lors du chargement des photos: ' . $e->getMessage());
-            return $this->redirectToRoute('app_moderation_dashboard');
+   /**
+ * Liste toutes les photos pour modération
+ */
+#[Route('/moderation/photos', name: 'app_moderator_photos', methods: ['GET'])]
+public function listPhotos(PhotoRepository $photoRepository): Response 
+{
+    try {
+        $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
+        
+        // Récupérer les commentaires associés à chaque photo
+        $photosWithComments = [];
+        foreach ($photos as $photo) {
+            $comments = $photo->getComments(); // Utilisation de getCommentaires() selon la convention de nommage
+            $photosWithComments[] = [
+                'photo' => $photo,
+                'comments' => $comments
+            ];
         }
+        
+        return $this->render('moderation/photos.html.twig', [
+            'photosWithComments' => $photosWithComments
+        ]);
+    } catch (\Exception $e) {
+        $this->addFlash('error', 'Une erreur est survenue lors du chargement des photos: ' . $e->getMessage());
+        return $this->redirectToRoute('app_moderation_dashboard');
     }
+}
 
     /**
      * Supprime une photo

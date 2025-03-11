@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Role\Role;
 
 class HomeController extends AbstractController
 {
@@ -164,6 +165,11 @@ class HomeController extends AbstractController
             // Recherche des utilisateurs par pseudo
             $users = $userRepository->searchByPseudo($query);
             $logger->debug('Nombre d\'utilisateurs trouvés: ' . count($users));
+
+            // Filtrer les utilisateurs pour ne pas afficher les administrateurs et les modérateurs
+            $users = array_filter($users, function ($user) {
+                return !in_array('ROLE_ADMIN', $user->getRoles()) && !in_array('ROLE_MODERATOR', $user->getRoles());
+            });
             
             return $this->render('home/search_results.html.twig', [
                 'users' => $users,
