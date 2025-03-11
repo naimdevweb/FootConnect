@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\LikeCommentaireRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LikeCommentaireRepository::class)]
 class LikeCommentaire
@@ -15,10 +16,12 @@ class LikeCommentaire
 
     #[ORM\ManyToOne(inversedBy: 'likeCommentaires')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Commentaire $commentaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'likeCommentaires')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?User $user = null;
 
     public function getId(): ?int

@@ -1,0 +1,187 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/warning/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'avertissement{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    @keyframes apparition {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes glissementDroit {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @keyframes pulsation {
+        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+    
+    @keyframes brillance {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+    
+    .animation-apparition {
+        animation: apparition 0.6s ease-out forwards;
+        opacity: 0;
+    }
+    
+    .animation-glissement {
+        animation: glissementDroit 0.5s ease-out forwards;
+        opacity: 0;
+    }
+    
+    .delai-1 { animation-delay: 0.1s; }
+    .delai-2 { animation-delay: 0.2s; }
+    .delai-3 { animation-delay: 0.3s; }
+    .delai-4 { animation-delay: 0.4s; }
+    
+    .carte-survol {
+        transition: all 0.3s ease;
+    }
+    
+    .carte-survol:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    .bouton-primaire {
+        background: linear-gradient(45deg, #3b82f6, #60a5fa);
+        transition: all 0.3s ease;
+    }
+    
+    .bouton-primaire:hover {
+        background: linear-gradient(45deg, #2563eb, #3b82f6);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    }
+    
+    .bouton-danger {
+        background: linear-gradient(45deg, #ef4444, #f87171);
+        transition: all 0.3s ease;
+    }
+    
+    .bouton-danger:hover {
+        background: linear-gradient(45deg, #dc2626, #ef4444);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3);
+    }
+    
+    .effet-brillance {
+        background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+        background-size: 200% 100%;
+        animation: brillance 2.5s infinite;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen py-8 px-4">
+    <div class="container mx-auto max-w-3xl">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden carte-survol animation-apparition">
+            <!-- En-tête -->
+            <div class="relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 effet-brillance"></div>
+                <div class="relative px-6 py-5 flex justify-between items-center">
+                    <h1 class="text-2xl font-bold text-blue-500 flex items-center justify-center w-full">
+                        <span class="material-icons mr-2">Détails de l'avertissement</span>
+                    </h1>
+                    <div class="flex space-x-2">
+                        <a href="{{ path('app_warning_edit', {'id': warning.id}) }}" 
+                           class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-blue-600 bg-white hover:bg-blue-50 transition-all duration-300 shadow-sm">
+                            <span class="material-icons mr-1">Modifier</span> 
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contenu principal -->
+            <div class="p-6 space-y-8">
+                <!-- Informations utilisateur avec badge -->
+                <div class="bg-blue-50 rounded-lg p-5 animation-apparition delai-1">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div class="flex items-center">
+                            <div class="rounded-full bg-blue-100 p-3 mr-4">
+                                <span class="material-icons text-blue-600">person</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-blue-500 uppercase tracking-wider">Utilisateur</p>
+                                <p class="font-semibold text-gray-800 text-lg">{{ warning.user.pseudo }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="rounded-full bg-blue-100 p-3 mr-4">
+                                <span class="material-icons text-blue-600">calendar_today</span>
+                            </div>
+                            <div>
+                                <p class="text-xs text-blue-500 uppercase tracking-wider">Date</p>
+                                <p class="font-semibold text-gray-800">{{ warning.createdAt|date('d/m/Y H:i') }}</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <p class="text-xs text-blue-500 uppercase tracking-wider mb-1">Statut</p>
+                            {% if warning.viewed %}
+                                <span class="px-3 py-1 inline-flex items-center rounded-full bg-green-100 text-green-800 text-sm">
+                                    <span class="material-icons text-sm mr-1">visibility</span> Lu
+                                </span>
+                            {% else %}
+                                <span class="px-3 py-1 inline-flex items-center rounded-full bg-red-100 text-red-800 text-sm animate-pulse">
+                                    <span class="material-icons text-sm mr-1">visibility_off</span> Non lu
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section motif -->
+                <div class="animation-apparition delai-2">
+                    <h3 class="text-xs text-blue-500 uppercase tracking-wider mb-1 flex items-center">
+                        <span class="material-icons text-sm mr-1">label</span> Motif
+                    </h3>
+                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
+                        <p class="font-semibold text-gray-800">{{ warning.reason }}</p>
+                    </div>
+                </div>
+                
+                <!-- Section description -->
+                <div class="animation-apparition delai-3">
+                    <h3 class="text-xs text-blue-500 uppercase tracking-wider mb-1 flex items-center">
+                        <span class="material-icons text-sm mr-1">description</span> Description
+                    </h3>
+                    <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                        <p class="text-gray-800 whitespace-pre-wrap leading-relaxed">{{ warning.description }}</p>
+                    </div>
+                </div>
+                
+              
+                
+                <!-- Boutons d'action -->
+                <div class="pt-6 flex flex-col sm:flex-row justify-between items-center border-t border-gray-200 gap-4 animation-apparition delai-4">
+                    <a href="{{ path('app_warning_index') }}" 
+                       class="w-full sm:w-auto inline-flex justify-center items-center px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300 shadow-sm">
+                        <span class="material-icons mr-2">Retour à la liste</span>
+                    </a>
+                    
+                    <form method="post" action="{{ path('app_warning_delete', {'id': warning.id}) }}" 
+                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet avertissement ?');"
+                          class="w-full sm:w-auto">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ warning.id) }}">
+                        <button type="submit" 
+                                class="w-full bouton-danger inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300">
+                            <span class="material-icons mr-2">Supprimer</span> 
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

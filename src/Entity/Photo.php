@@ -6,7 +6,6 @@ use App\Repository\PhotoRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Dom\Comment;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -19,19 +18,27 @@ class Photo
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $photo_url = null;
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    #[Assert\Url]
+    private ?string $photoUrl = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?User $user = null;
 
     #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpeg', 'image/png'])]
@@ -44,7 +51,7 @@ class Photo
     private Collection $likes;
 
     /**
-     * @var Collection<int, Comment>
+     * @var Collection<int, Commentaire>
      */
     #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'photo', cascade: ['remove'])]
     private Collection $comments;
@@ -64,12 +71,12 @@ class Photo
 
     public function getPhotoUrl(): ?string
     {
-        return $this->photo_url;
+        return $this->photoUrl;
     }
 
-    public function setPhotoUrl(string $photo_url): static
+    public function setPhotoUrl(string $photoUrl): static
     {
-        $this->photo_url = $photo_url;
+        $this->photoUrl = $photoUrl;
 
         return $this;
     }
@@ -165,7 +172,7 @@ class Photo
     }
 
     /**
-     * @return Collection<int, Comment>
+     * @return Collection<int, Commentaire>
      */
     public function getComments(): Collection
     {

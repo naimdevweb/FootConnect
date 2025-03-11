@@ -6,6 +6,7 @@ use App\Repository\CommentaireRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommentaireRepository::class)]
 class Commentaire
@@ -15,19 +16,24 @@ class Commentaire
     #[ORM\Column]
     private ?int $id = null;
 
-   
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Assert\Type("\DateTimeImmutable")]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $message = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaires')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaires')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Photo $photo = null;
 
     /**
@@ -46,7 +52,6 @@ class Commentaire
         return $this->id;
     }
 
-   
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;

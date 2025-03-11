@@ -1,0 +1,294 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/warning/dashboard.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord modération{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .card-hover {
+        transition: all 0.3s ease-in-out;
+    }
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+    }
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+    }
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+        transform: rotate(30deg);
+        transition: all 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+        opacity: 0;
+    }
+    .stat-card:hover::after {
+        opacity: 1;
+        left: 100%;
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+        opacity: 0;
+    }
+    .photo-card {
+        transition: all 0.3s ease;
+    }
+    .photo-card:hover {
+        transform: scale(1.02);
+    }
+    .action-button {
+        transition: all 0.2s;
+    }
+    .action-button:hover {
+        transform: scale(1.1);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes countUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-delay-1 { animation-delay: 0.1s; }
+    .animate-delay-2 { animation-delay: 0.2s; }
+    .animate-delay-3 { animation-delay: 0.3s; }
+    .count-number {
+        display: inline-block;
+        animation: countUp 1s ease-out forwards;
+    }
+    .pulse-icon {
+        animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    .tooltip {
+        position: relative;
+        display: inline-block;
+    }
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen pt-6 pb-12">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between mb-8 animate-fade-in">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">
+                    <span class="text-blue-600">Tableau de bord</span> 
+                </h1>
+                <p class="text-gray-600 mt-1">Superviser et gérer le contenu de la plateforme</p>
+            </div>
+            
+            <a href="{{ path('app_home') }}" 
+               class="px-4 py-2 bg-white rounded-lg text-gray-700 hover:bg-blue-50 flex items-center shadow-sm border border-gray-200 transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+                <span class="material-icons mr-2">Retour à l'accueil</span>
+                
+            </a>
+        </div>
+        
+        {# Statistiques #}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-white rounded-xl shadow-md p-6 stat-card animate-fade-in animate-delay-1 border-l-4 border-blue-500">
+                <div class="flex items-center">
+                    <div class="rounded-full w-14 h-14 bg-blue-100 flex items-center justify-center mr-4 pulse-icon">
+                        <span class="material-icons text-blue-600 text-1xl">personnes</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Utilisateurs</p>
+                        <p class="text-3xl font-bold text-gray-800 count-number">{{ totalUsers|default(0) }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <p class="text-xs text-gray-500 flex items-center">
+                        <span class="material-icons text-green-500 text-sm mr-1">Communauté active</span> 
+                    </p>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 stat-card animate-fade-in animate-delay-2 border-l-4 border-indigo-500">
+                <div class="flex items-center">
+                    <div class="rounded-full w-14 h-14 bg-indigo-100 flex items-center justify-center mr-4 pulse-icon">
+                        <span class="material-icons text-indigo-600 text-1xl">collections</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Photos</p>
+                        <p class="text-3xl font-bold text-gray-800 count-number">{{ totalPhotos|default(0) }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <p class="text-xs text-gray-500 flex items-center">
+                        <span class="material-icons text-indigo-500 text-sm mr-1">collections</span> Contenu partagé
+                    </p>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 stat-card animate-fade-in animate-delay-3 border-l-4 border-amber-500">
+                <div class="flex items-center">
+                    <div class="rounded-full w-14 h-14 bg-amber-100 flex items-center justify-center mr-4 pulse-icon">
+                        <span class="material-icons text-amber-600 text-1xl">warning</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Avertissements</p>
+                        <p class="text-3xl font-bold text-gray-800 count-number">{{ totalWarnings|default(0) }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100">
+                    <p class="text-xs text-gray-500 flex items-center">
+                        <span class="material-icons text-amber-500 text-sm mr-1">infractions signalées</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        {# Raccourcis rapides #}
+        <h2 class="text-xl font-bold text-gray-800 mb-4 animate-fade-in animate-delay-1">Actions rapides</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <a href="{{ path('app_moderator_photos') }}" class="bg-white rounded-xl shadow-md p-6 hover:bg-blue-50 transition-all duration-300 ease-in-out transform card-hover border border-gray-100 animate-fade-in animate-delay-2">
+                <div class="flex items-center">
+                   
+                    <div>
+                        <p class="font-medium text-gray-800 text-lg">Modérer les photos</p>
+                        <p class="text-sm text-gray-500 mt-1">Vérifier et supprimer les photos inappropriées</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <span class="text-blue-600 flex items-center text-sm font-medium">
+                         <span class="material-icons text-sm ml-1">Accéder</span>
+                    </span>
+                </div>
+            </a>
+            
+            <a href="{{ path('app_warning_index') }}" class="bg-white rounded-xl shadow-md p-6 hover:bg-amber-50 transition-all duration-300 ease-in-out transform card-hover border border-gray-100 animate-fade-in animate-delay-3">
+                <div class="flex items-center">
+                 
+                    <div>
+                        <p class="font-medium text-gray-800 text-lg">Gérer les avertissements</p>
+                        <p class="text-sm text-gray-500 mt-1">Superviser les avertissements envoyés aux utilisateurs</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <span class="text-amber-600 flex items-center text-sm font-medium">
+                        <span class="material-icons text-sm ml-1"> Accéder</span>
+                    </span>
+                </div>
+            </a>
+        </div>
+        
+        {# Photos récentes #}
+        <div class="bg-white rounded-xl shadow-md overflow-hidden animate-fade-in animate-delay-2 mb-6 border border-gray-100">
+            <div class="border-b border-gray-100 px-6 py-4 flex justify-between items-center bg-gradient-to-r from-blue-50 to-white">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <span class="material-icons text-blue-600 mr-2">collections</span>
+                    Photos récentes
+                </h2>
+                <a href="{{ path('app_moderator_photos') }}" class="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium transition-colors duration-300">
+                     <span class="material-icons text-sm ml-1">Tout voir</span>
+                </a>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {% for photo in latestPhotos %}
+                        <div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm photo-card bg-white" 
+                             style="animation: fadeIn 0.5s ease-out forwards; animation-delay: {{ loop.index0 * 0.1 }}s; opacity: 0;">
+                            <div class="relative pb-9/16 h-48">
+                                <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" 
+                                     class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out hover:scale-105">
+                            </div>
+                            <div class="p-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-medium text-gray-800">{{ photo.user.pseudo }}</p>
+                                        <p class="text-xs text-gray-500">{{ photo.createdAt|date('d/m/Y H:i') }}</p>
+                                    </div>
+                                    <div class="flex space-x-3">
+                                        <form method="post" action="{{ path('app_moderator_delete_photo', {'id': photo.id}) }}" 
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
+                                            <button type="submit" class="text-red-500 hover:text-red-700 action-button">
+                                                <span class="material-icons">delete</span>
+                                            </button>
+                                        </form>
+                                        <a href="{{ path('app_moderator_warn_user', {'id': photo.user.id}) }}" 
+                                           class="text-amber-500 hover:text-amber-700 action-button">
+                                            <span class="material-icons">warning</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-700 mt-2 line-clamp-2">{{ photo.description }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500 col-span-3 text-center py-8 animate-fade-in">
+                            <span class="material-icons text-gray-400 text-3xl block mb-2">Aucune photo récente à modérer</span>
+                            
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation des compteurs
+    const countElements = document.querySelectorAll('.count-number');
+    countElements.forEach(el => {
+        const finalValue = parseInt(el.textContent);
+        if (isNaN(finalValue)) return;
+        
+        let startValue = 0;
+        const duration = 1500;
+        const increment = Math.ceil(finalValue / (duration / 30));
+        const startTime = Date.now();
+        
+        const updateCount = () => {
+            const currentTime = Date.now();
+            const elapsedTime = currentTime - startTime;
+            
+            if (elapsedTime < duration) {
+                let value = Math.ceil((elapsedTime / duration) * finalValue);
+                if (value > finalValue) value = finalValue;
+                el.textContent = value;
+                requestAnimationFrame(updateCount);
+            } else {
+                el.textContent = finalValue;
+            }
+        };
+        
+        updateCount();
+    });
+});
+</script>
+{% endblock %}

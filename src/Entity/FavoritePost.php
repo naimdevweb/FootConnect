@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\FavoritePostRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FavoritePostRepository::class)]
 class FavoritePost
@@ -14,14 +15,18 @@ class FavoritePost
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
+    #[Assert\Type("\DateTimeImmutable")]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'favoritePosts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'favoritePosts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?Photo $photo = null;
 
     public function getId(): ?int

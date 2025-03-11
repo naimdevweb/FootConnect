@@ -1,0 +1,59 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/warning/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modération des photos{% endblock %}
+
+{% block body %}
+<div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">
+                Modération des photos
+            </h1>
+            
+            <div class="flex space-x-4">
+                <a href="{{ path('app_moderation_dashboard') }}" 
+                   class="px-4 py-2 bg-gray-100 rounded-md text-gray-700 hover:bg-gray-200 flex items-center">
+                    <span class="material-icons mr-2">dashboard</span>
+                    Tableau de bord
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow">
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for photo in photos %}
+                        <div class="border border-gray-200 rounded-lg overflow-hidden">
+                            <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <p class="font-medium">{{ photo.user.pseudo }}</p>
+                                        <p class="text-sm text-gray-500">{{ photo.createdAt|date('d/m/Y H:i') }}</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <form method="post" action="{{ path('app_moderator_delete_photo', {'id': photo.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
+                                            <button type="submit" class="text-red-500 hover:text-red-700">
+                                                <span class="material-icons">delete</span>
+                                            </button>
+                                        </form>
+                                        <a href="{{ path('app_moderator_warn_user', {'id': photo.user.id}) }}" 
+                                           class="text-yellow-500 hover:text-yellow-700">
+                                            <span class="material-icons">warning</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-700 mt-2">{{ photo.description }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500 col-span-3 text-center py-4">Aucune photo disponible</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

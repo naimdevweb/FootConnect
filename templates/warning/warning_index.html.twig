@@ -1,0 +1,215 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/warning/warning_index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des avertissements{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+        opacity: 0;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-delay-1 { animation-delay: 0.1s; }
+    .animate-delay-2 { animation-delay: 0.2s; }
+    .animate-delay-3 { animation-delay: 0.3s; }
+    
+    .table-row {
+        transition: background-color 0.3s ease;
+    }
+    .table-row:hover {
+        background-color: rgba(59, 130, 246, 0.05);
+    }
+    .action-button {
+        transition: all 0.2s;
+    }
+    .action-button:hover {
+        transform: scale(1.2);
+    }
+    
+    .status-badge {
+        position: relative;
+        overflow: hidden;
+    }
+    .status-badge::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%);
+        background-size: 8px 8px;
+        animation: move 1s linear infinite;
+        border-radius: 9999px;
+        z-index: 0;
+    }
+    @keyframes move {
+        from { background-position: 0 0; }
+        to { background-position: 16px 0; }
+    }
+    
+    .btn-primary {
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    .btn-primary:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        transform: scale(0);
+        z-index: -1;
+        transition: transform 0.5s, opacity 0.3s;
+    }
+    .btn-primary:active:after {
+        transform: scale(2);
+        opacity: 0;
+        transition: 0s;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen pt-6 pb-12">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 animate-fade-in">
+            <div class="mb-4 md:mb-0">
+                <h1 class="text-3xl font-bold text-gray-800 tet">
+                    <span class="text-amber-600">Avertissements</span>
+                </h1>
+                <p class="text-gray-600 mt-1">Gestion des avertissements envoyés aux utilisateurs</p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-3">
+                <a href="{{ path('app_moderation_dashboard') }}" 
+                   class="px-4 py-2 bg-white rounded-lg text-gray-700 hover:bg-blue-50 flex items-center justify-center shadow-sm border border-gray-200 transition-all duration-300 ease-in-out">
+                    <span class="material-icons mr-2"> Tableau de bord</span>
+                    
+                </a>
+                <a href="{{ path('app_warning_new') }}" 
+                   class="px-4 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700 flex items-center justify-center shadow-md transition-all duration-300 ease-in-out btn-primary">
+                    <span class="material-icons mr-2"> Nouvel avertissement</span>
+                   
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-md overflow-hidden animate-fade-in animate-delay-1 border border-gray-100">
+            <div class="px-6 py-4 bg-gradient-to-r from-amber-50 to-white border-b border-gray-100">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <span class="material-icons text-amber-600 mr-2">Tous les avertissements</span>
+                    
+                </h2>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Utilisateur
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Motif
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Date
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Statut
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for warning in warnings %}
+                            <tr class="table-row" style="animation: fadeIn 0.5s ease-out forwards; animation-delay: {{ loop.index0 * 0.05 }}s; opacity: 0;">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                       
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">{{ warning.user.pseudo }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900 line-clamp-1">{{ warning.reason }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">{{ warning.createdAt|date('d/m/Y H:i') }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if warning.viewed %}
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 status-badge">
+                                            Lu
+                                        </span>
+                                    {% else %}
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 status-badge">
+                                            Non lu
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex justify-end space-x-3">
+                                        <a href="{{ path('app_warning_show', {'id': warning.id}) }}" 
+                                           class="text-blue-600 hover:text-blue-900 action-button" 
+                                           data-tooltip="Voir les détails">
+                                            <span class="material-icons">voir</span>
+                                        </a>
+                                        <a href="{{ path('app_warning_edit', {'id': warning.id}) }}" 
+                                           class="text-indigo-600 hover:text-indigo-900 action-button"
+                                           data-tooltip="Modifier">
+                                            <span class="material-icons">modifier</span>
+                                        </a>
+                                        <form method="post" action="{{ path('app_warning_delete', {'id': warning.id}) }}" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet avertissement ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ warning.id) }}">
+                                            <button type="submit" class="text-red-600 hover:text-red-900 border-0 bg-transparent cursor-pointer action-button" data-tooltip="Supprimer">
+                                                <span class="material-icons">supprimer</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr class="animate-fade-in animate-delay-1">
+                                <td colspan="5" class="px-6 py-12 text-center">
+                                    <div class="flex flex-col items-center">
+                                        <span class="material-icons text-gray-400 text-5xl mb-3">warning_off</span>
+                                        <p class="text-gray-500 text-lg">Aucun avertissement trouvé</p>
+                                        <p class="text-gray-400 text-sm mt-1">Tous les utilisateurs respectent les règles</p>
+                                        <a href="{{ path('app_warning_new') }}" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+                                            <span class="material-icons mr-2">add</span> Créer un avertissement
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            {% if warnings|length > 0 %}
+            <div class="py-3 px-6 border-t border-gray-200 bg-gray-50">
+                <p class="text-sm text-gray-500">
+                    Total : {{ warnings|length }} avertissement(s)
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

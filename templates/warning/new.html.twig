@@ -1,0 +1,121 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/warning/new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel avertissement{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+    }
+    .slide-up {
+        animation: slideUp 0.5s ease-in-out;
+    }
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+    .hover-scale:hover {
+        transform: scale(1.03);
+    }
+    .form-input {
+        transition: all 0.3s ease;
+    }
+    .form-input:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    }
+    .btn-gradient {
+        background: linear-gradient(45deg, #3b82f6, #60a5fa);
+        transition: all 0.3s ease;
+    }
+    .btn-gradient:hover {
+        background: linear-gradient(45deg, #2563eb, #3b82f6);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+    }
+    .card {
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .card:hover {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideUp {
+        from { transform: translateY(30px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="bg-gradient-to-br from-blue-50 to-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8 fade-in">
+    <div class="container mx-auto max-w-3xl">
+        <div class="card bg-white rounded-xl shadow-lg overflow-hidden slide-up hover-scale">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-6 rounded-t-xl">
+                <h1 class="text-2xl font-bold text-white flex items-center">
+                    <span class="material-icons text-blue-200 mr-3"> Nouvel avertissement</span>
+                   
+                </h1>
+                {% if user is defined %}
+                <p class="text-blue-100 mt-1 flex items-center">
+                    <span class="material-icons text-sm mr-1"></span>
+                    Pour l'utilisateur: <span class="font-medium ml-1">{{ user.pseudo }}</span>
+                </p>
+                {% endif %}
+            </div>
+            
+            <div class="p-8">
+                <div class="bg-blue-50 rounded-lg p-4 mb-6 border-l-4 border-blue-500">
+                    <p class="text-blue-800 text-sm flex items-center">
+                        <span class="material-icons text-blue-600 mr-2">info</span>
+                        Veuillez décrire précisément la raison de cet avertissement pour une meilleure compréhension de l'utilisateur.
+                    </p>
+                </div>
+                
+                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                    <div class="slide-up" style="animation-delay: 0.1s">
+                        {{ form_label(form.reason, 'Motif', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                        {{ form_widget(form.reason, {'attr': {'class': 'form-input block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-0'}}) }}
+                        {{ form_errors(form.reason, {'attr': {'class': 'text-red-500 text-sm mt-1'}}) }}
+                    </div>
+                    
+                    <div class="slide-up" style="animation-delay: 0.2s">
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-input block w-full rounded-lg border-gray-300 text-red-500 shadow-sm focus:border-blue-500 focus:ring-0', 'rows': 5}}) }}
+                        {{ form_errors(form.description, {'attr': {'class': 'text-red-500 text-sm mt-1'}}) }}
+                    </div>
+                    
+                    <div class="pt-6 flex justify-between items-center border-t border-gray-200 mt-8 slide-up" style="animation-delay: 0.3s">
+                        <a href="{{ path('app_warning_index') }}" 
+                           class="inline-flex items-center px-5 py-2.5 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 hover:text-gray-900 transition ease-in-out duration-150">
+                            <span class="material-icons mr-2">arrow_back</span> 
+                            Retour
+                        </a>
+                        <button type="submit" 
+                                class="btn-gradient inline-flex items-center px-5 py-2.5 rounded-lg border border-transparent text-sm font-medium text-white focus:outline-none">
+                            <span class="material-icons mr-2">save</span>
+                            Enregistrer
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+        
+        <div class="text-center mt-8 text-gray-500 text-sm fade-in" style="animation-delay: 0.4s">
+            <p>Centre de modération - FootConnect</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

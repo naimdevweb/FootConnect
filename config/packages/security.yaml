@@ -19,10 +19,13 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
+                success_handler: App\Security\LoginSuccessHandler
                 enable_csrf: true
             logout:
                 path: app_logout
                 target: app_login 
+
+            
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -32,9 +35,14 @@ security:
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
+    role_hierarchy:
+        ROLE_MODERATEUR: ROLE_USER
+        ROLE_ADMIN: [ROLE_MODERATEUR, ROLE_USER]
+
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/moderateur, roles: ROLE_MODERATEUR }
+        - { path: ^/profil, roles: ROLE_USER }
 
 when@test:
     security:

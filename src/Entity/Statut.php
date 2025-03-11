@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\StatutRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StatutRepository::class)]
 class Statut
@@ -15,15 +16,18 @@ class Statut
 
     #[ORM\ManyToOne(inversedBy: 'statuts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'otherUser')]
     private ?User $otherUser = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?bool $isFollowing = null;
 
     #[ORM\Column]
+    #[Assert\NotNull]
     private ?bool $isBlocked = null;
 
     public function getId(): ?int
