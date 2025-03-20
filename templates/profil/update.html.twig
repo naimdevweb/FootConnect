@@ -1,128 +1,121 @@
-{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/profil/update.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Modifier votre profil{% endblock %}
 
-
 {% block body %}
-<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-3xl mx-auto">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
         {# En-tête #}
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-gray-900 animate-fade-in">
                 Modifier votre profil
             </h1>
-            <p class="mt-2 text-sm text-gray-600">
+            <p class="mt-3 text-lg text-gray-600 animate-fade-in delay-100">
                 Personnalisez vos informations et paramètres de compte
             </p>
         </div>
 
-        {# Messages flash #}
-        {# {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="mb-4 p-4 rounded-md {{ label == 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800' }}">
-                    {{ message }}
-                </div>
-            {% endfor %} #}
-        {# {% endfor %} #}
-
         {# Carte principale #}
-        <div class="bg-white shadow-md rounded-xl overflow-hidden">
+        <div class="bg-white shadow-2xl rounded-2xl overflow-hidden transform transition-all duration-300 hover:shadow-3xl">
             {# Aperçu du profil #}
-            <div class="bg-blue-600 p-6 text-white">
-                <div class="flex items-center">
-                    <div class="h-16 w-16 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center text-white text-2xl font-bold mr-4">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white">
+                <div class="flex items-center space-x-6">
+                    <div class="h-20 w-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-4xl font-bold animate-pulse">
                         {{ user.pseudo|slice(0, 1)|upper }}
                     </div>
                     <div>
-                        <h2 class="text-xl font-semibold">{{ user.pseudo }}</h2>
-                        <p class="text-white/80">{{ user.email }}</p>
+                        <h2 class="text-2xl font-bold">{{ user.pseudo }}</h2>
+                        <p class="text-white/90">{{ user.email }}</p>
                     </div>
                 </div>
             </div>
 
             {# Formulaire #}
-            <div class="p-6">
-                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
-                    <div class="space-y-6">
-                        {# Section informations personnelles #}
+            <div class="p-8">
+                {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+                    {# Section informations personnelles #}
+                    <div class="space-y-8">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">
+                            <h3 class="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-3 mb-6">
                                 Informations personnelles
                             </h3>
                             
-                            <div class="space-y-4">
+                            <div class="space-y-6">
                                 {# Champ pseudo #}
                                 <div>
-                                    {{ form_label(form.pseudo, 'Pseudo', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                                    {{ form_label(form.pseudo, 'Pseudo', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
                                     <div class="mt-1">
                                         {{ form_widget(form.pseudo, {'attr': {
-                                            'class': 'shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md',
-                                            'autocomplete': 'username'
+                                            'class': 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200',
+                                            'autocomplete': 'username',
+                                            'placeholder': 'Votre pseudo'
                                         }}) }}
                                     </div>
-                                    {{ form_errors(form.pseudo, {'attr': {'class': 'text-red-600 text-sm mt-1'}}) }}
+                                    {{ form_errors(form.pseudo, {'attr': {'class': 'text-red-600 text-sm mt-2'}}) }}
                                 </div>
                                 
                                 {# Champ email #}
                                 <div>
-                                    {{ form_label(form.email, 'Adresse email', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                                    {{ form_label(form.email, 'Adresse email', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
                                     <div class="mt-1">
                                         {{ form_widget(form.email, {'attr': {
-                                            'class': 'shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md',
-                                            'autocomplete': 'email'
+                                            'class': 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200',
+                                            'autocomplete': 'email',
+                                            'placeholder': 'Votre email'
                                         }}) }}
                                     </div>
-                                    {{ form_errors(form.email, {'attr': {'class': 'text-red-600 text-sm mt-1'}}) }}
+                                    {{ form_errors(form.email, {'attr': {'class': 'text-red-600 text-sm mt-2'}}) }}
                                 </div>
                             </div>
                         </div>
                         
                         {# Section mot de passe #}
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2 mb-4">
+                            <h3 class="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-3 mb-6">
                                 Changer de mot de passe
                             </h3>
                             
-                            <div class="space-y-4">
+                            <div class="space-y-6">
                                 {# Vérification email #}
                                 <div>
-                                    {{ form_label(form.emailConfirmation, 'Confirmer votre email pour changer le mot de passe', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                                    {{ form_label(form.emailConfirmation, 'Confirmer votre email pour changer le mot de passe', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
                                     <div class="mt-1">
                                         {{ form_widget(form.emailConfirmation, {'attr': {
-                                            'class': 'shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md',
+                                            'class': 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200',
                                             'autocomplete': 'email',
                                             'placeholder': 'Entrez votre email actuel'
                                         }}) }}
                                     </div>
-                                    {{ form_errors(form.emailConfirmation, {'attr': {'class': 'text-red-600 text-sm mt-1'}}) }}
+                                    {{ form_errors(form.emailConfirmation, {'attr': {'class': 'text-red-600 text-sm mt-2'}}) }}
                                 </div>
                                 
                                 {# Nouveau mot de passe #}
                                 <div>
-                                    {{ form_label(form.plainPassword.first, 'Nouveau mot de passe', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                                    {{ form_label(form.plainPassword.first, 'Nouveau mot de passe', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
                                     <div class="mt-1">
                                         {{ form_widget(form.plainPassword.first, {'attr': {
-                                            'class': 'shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md',
-                                            'autocomplete': 'new-password'
+                                            'class': 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200',
+                                            'autocomplete': 'new-password',
+                                            'placeholder': 'Nouveau mot de passe'
                                         }}) }}
                                     </div>
-                                    {{ form_errors(form.plainPassword.first, {'attr': {'class': 'text-red-600 text-sm mt-1'}}) }}
+                                    {{ form_errors(form.plainPassword.first, {'attr': {'class': 'text-red-600 text-sm mt-2'}}) }}
                                 </div>
                                 
                                 {# Confirmation mot de passe #}
                                 <div>
-                                    {{ form_label(form.plainPassword.second, 'Confirmer le nouveau mot de passe', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                                    {{ form_label(form.plainPassword.second, 'Confirmer le nouveau mot de passe', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
                                     <div class="mt-1">
                                         {{ form_widget(form.plainPassword.second, {'attr': {
-                                            'class': 'shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md',
-                                            'autocomplete': 'new-password'
+                                            'class': 'w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200',
+                                            'autocomplete': 'new-password',
+                                            'placeholder': 'Confirmez le mot de passe'
                                         }}) }}
                                     </div>
-                                    {{ form_errors(form.plainPassword.second, {'attr': {'class': 'text-red-600 text-sm mt-1'}}) }}
+                                    {{ form_errors(form.plainPassword.second, {'attr': {'class': 'text-red-600 text-sm mt-2'}}) }}
                                 </div>
                                 
-                                <p class="text-xs text-gray-500 italic">
+                                <p class="text-sm text-gray-500 italic">
                                     Pour changer votre mot de passe, vous devez d'abord confirmer votre email et saisir deux fois votre nouveau mot de passe.
                                     Laissez ces champs vides si vous ne souhaitez pas modifier votre mot de passe.
                                 </p>
@@ -131,12 +124,12 @@
                     </div>
 
                     {# Boutons d'action #}
-                    <div class="pt-6 flex items-center justify-between border-t border-gray-200">
-                        <a href="{{ path('app_profil') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            <span class="material-icons text-sm mr-1">arrow_back</span>
+                    <div class="pt-8 flex items-center justify-between border-t border-gray-200">
+                        <a href="{{ path('app_profil') }}" class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out">
+                            <span class="material-icons text-sm mr-2">arrow_back</span>
                             Annuler
                         </a>
-                        <button type="submit" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        <button type="submit" class="inline-flex items-center px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105">
                             <span class="material-icons text-sm mr-2">save</span>
                             Enregistrer les modifications
                         </button>

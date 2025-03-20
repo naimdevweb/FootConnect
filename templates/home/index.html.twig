@@ -5,7 +5,7 @@
     {{ parent() }}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-.card-enter {
+        .card-enter {
             animation: cardEnter 0.5s ease-out forwards;
         }
 
@@ -19,9 +19,34 @@
                 transform: translateY(0);
             }
         }
+         .image-container {
+            position: relative;
+            height: 400px; /* Hauteur fixe mais responsive */
+            width: 100%;
+            overflow: hidden;
+        }
+
+         @media (max-width: 768px) {
+            .image-container {
+                height: 240px;
+            }
+        }
+
 
         .comment-section {
             transition: all 0.3s ease-in-out;
+        }
+        
+        .image-container {
+            aspect-ratio: 4/3;
+            overflow: hidden;
+        }
+        
+        .description-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
 {% endblock %}
@@ -35,16 +60,16 @@
         </h1>
 
         {% if photos is defined and photos|length > 0 %}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for photo in photos %}
-                    <div class="card-enter bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl" 
-                         style="animation-delay: {{ loop.index * 0.1 }}s; width: 100%; min-width: 320px; max-width: 450px; margin: 0 auto;">
+                    <div class="card-enter bg-white rounded-xl shadow-md overflow-hidden transform transition-all duration-300 hover:shadow-xl" 
+                         style="animation-delay: {{ loop.index * 0.1 }}s;">
                         <!-- En-tête avec avatar et nom -->
                         <div class="p-4 border-b flex justify-between items-center">
                             <div class="flex items-center space-x-3">
-                                <a href="{{ path('app_profil_user', {'id': photo.user.id }) }}" class="ml-2 font-medium text-sm hover:text-blue-600 transition">
-
-                                </a>
+                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
+                                    {{ photo.user.pseudo|slice(0,1)|upper }}
+                                </div>
                                 <div>
                                     <a href="{{ path('app_profil_user', {'id': photo.user.id}) }}" 
                                        class="font-semibold text-gray-900 hover:text-blue-600 transition-colors">
@@ -55,57 +80,58 @@
                                     </p>
                                 </div>
                             </div>
-
-                          
                         </div>
 
-                        <!-- Image -->
-                        <div class="relative h-96">
-                            <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" 
-                                 alt="Photo de {{ photo.user.pseudo }}" 
-                                 class="w-full h-full object-cover">
-                        </div>
+                        <!-- Image avec aspect ratio standardisé -->
+                      <!-- Image avec affichage optimisé -->
+<div class="image-container">
+    <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" 
+         alt="Photo de {{ photo.user.pseudo }}" 
+         class="w-full h-full object-contain bg-gray-50">
+</div>
 
                         <!-- Actions et description -->
-                        <div class="p-4">
-                            <p class="text-gray-800 mb-4 text-sm">{{ photo.description }}</p>
+                        <div class="p-5">
+                            <div class="description-text text-gray-800 mb-5 text-sm leading-relaxed">
+                                {{ photo.description }}
+                            </div>
                             
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
                                 {% if app.user %}
-                                    <button class="like-button group flex items-center space-x-2" 
+                                    <button class="like-button group flex items-center space-x-2 hover:scale-105 transition-transform" 
                                             data-photo-id="{{ photo.id }}">
                                         <span class="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300
-                                            bg-gray-100 text-gray-500 group-hover:bg-pink-50 group-hover:text-pink-500">
+                                            bg-gray-100 text-gray-500 group-hover:bg-pink-50 group-hover:text-pink-500 shadow-sm">
                                             <i class="fas fa-heart"></i>
                                         </span>
-                                        <span class="like-count text-sm font-medium">{{ photo.likes|length }}</span>
+                                        <span class="like-count text-sm font-medium bg-gray-50 px-2 py-1 rounded-full">{{ photo.likes|length }}</span>
                                     </button>
-                               {% else %}
-    <a href="{{ path('app_login') }}" class="group flex items-center space-x-2">
-        <span class="w-10 h-10 rounded-full flex items-center justify-center 
-            bg-gray-100 text-gray-400 group-hover:bg-gray-200 transition-colors duration-300">
-            <i class="fas fa-heart"></i>
-        </span>
-        <div class="flex flex-col">
-            <span class="like-count text-sm font-medium text-gray-500">{{ photo.likes|length }}</span>
-            <span class="text-sm text-blue-600">Se connecter pour liker</span>
-        </div>
-    </a>
-{% endif %}
+                                {% else %}
+                                    <a href="{{ path('app_login') }}" class="group flex items-center space-x-2 hover:scale-105 transition-transform">
+                                        <span class="w-10 h-10 rounded-full flex items-center justify-center shadow-sm
+                                            bg-gray-100 text-gray-400 group-hover:bg-gray-200 transition-colors duration-300">
+                                            <i class="fas fa-heart"></i>
+                                        </span>
+                                        <div class="flex flex-col">
+                                            <span class="like-count text-sm font-medium bg-gray-50 px-2 py-1 rounded-full">{{ photo.likes|length }}</span>
+                                            <span class="text-xs text-blue-600 whitespace-nowrap">Se connecter</span>
+                                        </div>
+                                    </a>
+                                {% endif %}
 
-                                <button class="comment-toggle group flex items-center space-x-2" 
+                                <button class="comment-toggle group flex items-center space-x-2 hover:scale-105 transition-transform" 
                                         data-target="comments-{{ photo.id }}">
-                                    <span class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors duration-300">
+                                    <span class="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors duration-300">
                                         <i class="fas fa-comment"></i>
                                     </span>
-                                    <span class="text-sm font-medium">{{ photo.comments|length }}</span>
+                                    <span class="text-sm font-medium bg-gray-50 px-2 py-1 rounded-full">{{ photo.comments|length }}</span>
                                 </button>
 
                                 {% if app.user == photo.user %}
                                     <a href="{{ path('app_delete_photo', {'id': photo.id}) }}" 
-                                       class="group flex items-center space-x-2"
+                                       class="group flex items-center space-x-2 hover:scale-105 transition-transform"
                                        onclick="return confirm('Voulez-vous vraiment supprimer cette publication ?')">
-                                        <span class="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-gray-500 group-hover:bg-red-50 group-hover:text-red-500 transition-colors duration-300">
+                                        <span class="w-10 h-10 rounded-full flex items-center justify-center shadow-sm bg-gray-100 text-gray-500 group-hover:bg-red-50 group-hover:text-red-500 transition-colors duration-300">
                                             <i class="fas fa-trash"></i>
                                         </span>
                                     </a>
@@ -115,24 +141,30 @@
 
                         <!-- Section commentaires -->
                         <div id="comments-{{ photo.id }}" class="hidden comment-section">
-                            <div class="border-t border-gray-100 bg-gray-50 p-4">
-                                <div class="space-y-4 max-h-72 overflow-y-auto">
+                            <div class="border-t border-gray-200 bg-gray-50 p-4">
+                                <div class="space-y-3 max-h-72 overflow-y-auto px-1">
                                     {% for comment in photo.comments %}
-                                        <div id="commentaire" class="flex space-x-3">
-                                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+                                        <div id="commentaire" class="flex space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0">
                                                 {{ comment.user.pseudo|slice(0,1)|upper }}
                                             </div>
                                             <div class="flex-1 bg-white rounded-lg p-3 shadow-sm">
-                                                <p  class="commentairemsg text-sm text-gray-800">{{ comment.message }}</p>
-                                                <p class="text-xs text-gray-500 mt-1">{{ comment.createdAt|date('H:i') }}</p>
+                                                <div class="flex justify-between items-start mb-1">
+                                                    <span class="font-medium text-xs text-gray-700">{{ comment.user.pseudo }}</span>
+                                                    <span class="text-xs text-gray-400">{{ comment.createdAt|date('H:i') }}</span>
+                                                </div>
+                                                <p class="commentairemsg text-sm text-gray-800 break-words">{{ comment.message }}</p>
                                             </div>
                                         </div>
                                     {% else %}
-                                        <p class="text-center text-gray-500 py-4">Aucun commentaire pour le moment</p>
+                                        <div class="text-center py-6 bg-white rounded-lg border border-gray-100">
+                                            <span class="material-icons text-gray-300 text-2xl mb-2">chat_bubble_outline</span>
+                                            <p class="text-gray-500">Aucun commentaire pour le moment</p>
+                                        </div>
                                     {% endfor %}
                                 </div>
 
-                                <!-- Formulaire de commentaire -->
+                                <!-- Formulaire de commentaire avec design amélioré -->
                                 {% if app.user %}
                                     {% if commentForms[photo.id] is defined %}
                                         {{ form_start(commentForms[photo.id], {
@@ -142,23 +174,23 @@
                                                 'data-photo-id': photo.id
                                             }
                                         }) }}
-                                        <div class="flex space-x-2">
+                                        <div class="flex space-x-2 items-center bg-white p-2 rounded-full shadow-sm border border-gray-100">
                                             {{ form_widget(commentForms[photo.id].message, {
                                                 'attr': {
-                                                    'class': 'flex-1 rounded-full px-4 py-2 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm',
+                                                    'class': 'flex-1 rounded-full px-4 py-2 border-0 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm',
                                                     'placeholder': 'Ajouter un commentaire...'
                                                 }
                                             }) }}
-                                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center">
+                                            <button type="submit" class="p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center shadow-sm hover:shadow flex-shrink-0">
                                                 <i class="fas fa-paper-plane"></i>
                                             </button>
                                         </div>
                                         {{ form_end(commentForms[photo.id]) }}
                                     {% endif %}
                                 {% else %}
-                                    <div class="mt-4 flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                    <div class="mt-4 flex items-center justify-between bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
                                         <p class="text-sm text-gray-600">Connectez-vous pour commenter</p>
-                                        <a href="{{ path('app_login') }}" class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors">
+                                        <a href="{{ path('app_login') }}" class="text-sm font-medium text-white bg-blue-600 px-4 py-2 rounded-full hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md">
                                             Se connecter
                                         </a>
                                     </div>
@@ -169,14 +201,14 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="text-center py-16">
-                <div class="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-blue-500 mb-6">
+            <div class="text-center py-16 bg-white rounded-xl shadow-md">
+                <div class="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-blue-500 mb-6 shadow-inner">
                     <i class="fas fa-images text-4xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold text-gray-900 mb-2">Aucune publication</h3>
                 <p class="text-gray-600 mb-6">Commencez à partager vos moments avec la communauté !</p>
                 <a href="{{ path('app_profil') }}" 
-                   class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300">
+                   class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 shadow-md hover:shadow-lg">
                     <i class="fas fa-plus-circle mr-2"></i>
                     Créer une publication
                 </a>
@@ -187,6 +219,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Le même script JavaScript est conservé
     // Gestion des likes
     document.querySelectorAll('.like-button').forEach(button => {
         button.addEventListener('click', async function() {
@@ -218,7 +251,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-
     // Gestion des commentaires
     document.querySelectorAll('.comment-toggle').forEach(button => {
         button.addEventListener('click', function() {
@@ -238,7 +270,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-
     // Gestion de l'ajout de commentaires
     document.querySelectorAll('.comment-form').forEach(form => {
         form.addEventListener('submit', async function(event) {
@@ -246,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const photoId = this.dataset.photoId;
             const formData = new FormData(this);
             const commentSection = document.getElementById(`comments-${photoId}`);
-            const commentList = commentSection.querySelector('.space-y-4');
+            const commentList = commentSection.querySelector('.space-y-3');
             const message = formData.get('commentaire[message]');
 
             try {
