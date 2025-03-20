@@ -83,54 +83,65 @@ class HomeController extends AbstractController
     private function createPhotoCommentForms(array $photos): array
     {
         $commentForms = [];
-
+        $currentUser = $this->getUser();
+        
+        // Si l'utilisateur n'est pas connecté, retourner un tableau vide
+        if (!$currentUser) {
+            return $commentForms;
+        }
+    
         foreach ($photos as $photo) {
             $commentForm = $this->commentFormService->createCommentForm($photo);
             $commentForms[$photo->getId()] = $commentForm->createView();
         }
-
+    
         return $commentForms;
     }
 
     private function handleCommentSubmission(Request $request, StatutRepository $statutRepository, ?User $currentUser): ?Response
     {
         if (!$currentUser) {
-            throw $this->createAccessDeniedException('Vous devez être connecté pour commenter');
+            return $this->redirectToRoute('app_login');
         }
-
+    
         $comment = new Commentaire();
         $form = $this->createForm(CommentaireType::class, $comment);
         $form->handleRequest($request);
-
+    
         if (!$form->isSubmitted() || !$form->isValid()) {
             return null;
         }
-
-        $photoId = $form->get('photoId')->getData();
-        $photo = $this->photoRepository->find($photoId);
-
-        if (!$photo) {
-            throw $this->createNotFoundException('Publication non trouvée');
+    
+        try {
+            $photoId = $form->get('photoId')->getData();
+            $photo = $this->photoRepository->find($photoId);
+    
+            if (!$photo) {
+                throw $this->createNotFoundException('Publication non trouvée');
+            }
+    
+            if ($this->isUserBlocked($statutRepository, $photo->getUser(), $currentUser)) {
+                $this->addFlash('error', 'Vous ne pouvez pas commenter les publications de cet utilisateur');
+                return $this->redirectToRoute('app_home');
+            }
+    
+            $this->saveComment($comment, $photo, $currentUser);
+    
+            $this->addFlash('success', 'Votre commentaire a été ajouté');
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de l\'ajout du commentaire');
         }
-
-        if ($this->isUserBlocked($statutRepository, $photo->getUser(), $currentUser)) {
-            $this->addFlash('error', 'Vous ne pouvez pas commenter les publications de cet utilisateur');
-            return $this->redirectToRoute('app_home');
-        }
-
-        $this->saveComment($comment, $photo, $currentUser);
-
-        $this->addFlash('success', 'Votre commentaire a été ajouté');
+        
         return $this->redirectToRoute('app_home');
     }
-
     private function isUserBlocked(StatutRepository $statutRepository, User $photoUser, User $currentUser): bool
     {
-        return (bool) $statutRepository->findOneBy([
-            'user' => $photoUser,
-            'otherUser' => $currentUser,
-            'isBlocked' => true
+        $statut = $statutRepository->findOneBy([
+            'user' => $currentUser,
+            'otherUser' => $photoUser
         ]);
+
+        return $statut && $statut->isBlocked();
     }
 
     private function saveComment(Commentaire $comment, Photo $photo, User $user): void

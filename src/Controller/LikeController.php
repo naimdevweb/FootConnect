@@ -1,4 +1,5 @@
 <?php
+// filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/src/Controller/LikeController.php
 
 namespace App\Controller;
 
@@ -14,16 +15,41 @@ final class LikeController extends AbstractController
     #[Route('/like/{id}', name: 'app_like', methods: ['GET'])]
     public function index(EntityManagerInterface $entityManager, int $id): Response
     {
-        
-        $user = $this->getUser();
+        try {
+            $user = $this->getUser();
 
-        $photo = $entityManager->getRepository(Photo::class)->find($id);
-        $like = new Like();
-        $like->setUser($user);
-        $like->setPhoto($photo);
-        $entityManager->persist($like);
-        $entityManager->flush();
-        
-        return $this->redirectToRoute('app_home');
+            if (!$user) {
+                $this->addFlash('error', 'Vous devez être connecté pour liker une photo');
+                return $this->redirectToRoute('app_login');
+            }
+
+            $photo = $entityManager->getRepository(Photo::class)->find($id);
+            
+            if (!$photo) {
+                $this->addFlash('error', 'Photo non trouvée');
+                return $this->redirectToRoute('app_home');
+            }
+            
+            // Vérifier si l'utilisateur a déjà liké cette photo
+            $existingLike = $entityManager->getRepository(Like::class)->findOneBy([
+                'user' => $user,
+                'photo' => $photo
+            ]);
+            
+            if (!$existingLike) {
+                $like = new Like();
+                $like->setUser($user);
+                $like->setPhoto($photo);
+                $entityManager->persist($like);
+                $entityManager->flush();
+            }
+            
+// Rediriger vers la page précédente ou la page d'accueil
+            return $this->redirectToRoute('app_home');
+            
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue: ' . $e->getMessage());
+            return $this->redirectToRoute('app_home');
+        }
     }
 }

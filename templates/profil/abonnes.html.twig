@@ -1,116 +1,120 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {% if mode is defined and mode == 'blocked' %}
-        Utilisateurs bloqués
-    {% else %}
-        {{ isFollowers ? 'Vos abonnés' : 'Vos abonnements' }}
-    {% endif %}
+	{% if mode is defined and mode == 'blocked' %}
+		Utilisateurs bloqués
+	{% else %}
+		{{ isFollowers ? 'Vos abonnés' : 'Vos abonnements' }}
+	{% endif %}
 {% endblock %}
 
 {% block stylesheets %}
-    {{ parent() }}
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	{{ parent() }}
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 {% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-3xl mx-auto">
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="bg-blue-600 px-6 py-4 flex items-center justify-between">
-                <h1 class="text-xl font-bold text-white flex items-center">
-                    {% if mode is defined and mode == 'blocked' %}
-                        <span class="material-icons mr-2">block</span>
-                        Utilisateurs bloqués ({{ users|length }})
-                    {% else %}
-                      <span class="material-icons mr-2">{{ isFollowers is defined and isFollowers ? 'group' : 'person_add' }}</span>
-                      {{ isFollowers is defined and isFollowers ? 'Abonnés' : 'Abonnements' }} ({{ users|length }})
-                    {% endif %}
-                </h1>
-                <a href="{{ path('app_profil', {'id': user.id}) }}" class="text-white hover:text-blue-200 transition-colors duration-200">
-                    <span class="material-icons">arrow_back</span>
-                </a>
-            </div>
-            
-            {# Navigation entre les différentes listes #}
-            <div class="flex border-b border-gray-200">
-                <a href="{{ path('app_followers', {'id': user.id}) }}" class="px-4 py-3 text-center flex-1 {{ isFollowers is defined and isFollowers ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-800' }}">
-                    <span class="material-icons text-sm mr-1">group</span> Abonnés
-                </a>
-                <a href="{{ path('app_following', {'id': user.id}) }}" class="px-4 py-3 text-center flex-1 {{ isFollowers is defined and not isFollowers and mode is not defined ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-800' }}">
-                    <span class="material-icons text-sm mr-1">person_add</span> Abonnements
-                </a>
-                <a href="{{ path('app_blocked_users', {'id': user.id}) }}" class="px-4 py-3 text-center flex-1 {{ mode is defined and mode == 'blocked' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-800' }}">
-                    <span class="material-icons text-sm mr-1">block</span> Bloqués
-                </a>
-            </div>
-            
-            <div class="divide-y divide-gray-200">
-                {% if users|length > 0 %}
-                    {% for followUser in users %}
-                        <div class="p-4 flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg font-semibold mr-4">
-                                    {{ followUser.pseudo|slice(0, 1)|upper }}
-                                </div>
-                                <div>
-                                    <a href="{{ path('app_profil', {'id': followUser.id}) }}" class="font-medium text-gray-900 hover:text-blue-600">
-                                        {{ followUser.pseudo }}
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            {% if app.user.id != followUser.id %}
-                                <div>
-                                    {% if mode is defined and mode == 'blocked' %}
-                                        {# Bouton pour débloquer l'utilisateur #}
-                                        <a href="{{ path('app_statut', {'id': followUser.id, 'suivi': 'debloquer'}) }}" class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200">
-                                            <span class="material-icons text-sm mr-1">person_add</span>
-                                            Débloquer
-                                        </a>
-                                    {% else %}
-                                        {# Logique existante pour suivre/ne plus suivre #}
-                                        {% set isUserFollowing = false %}
-                                        
-                                        {% if followingStatus is defined %}
-                                            {% for status in followingStatus %}
-                                                {% if status.otherUser.id == followUser.id and status.isFollowing == 1 %}
-                                                    {% set isUserFollowing = true %}
-                                                {% endif %}
-                                            {% endfor %}
-                                        {% endif %}
-                                        
-                                        {% if isUserFollowing %}
-                                            <a href="{{ path('app_statut', {'id': followUser.id, 'suivi': 'suivre'}) }}" class="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors duration-200">
-                                                <span class="material-icons text-sm mr-1">person_remove</span>
-                                                Ne plus suivre
-                                            </a>
-                                        {% else %}
-                                            <a href="{{ path('app_statut', {'id': followUser.id, 'suivi': 'suivre'}) }}" class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200">
-                                                <span class="material-icons text-sm mr-1">person_add</span>
-                                                Suivre
-                                            </a>
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="p-6 text-center">
-                        <div class="text-gray-500">
-                            {% if mode is defined and mode == 'blocked' %}
-                                Vous n'avez bloqué aucun utilisateur.
-                            {% elseif isFollowers %}
-                                Vous n'avez pas encore d'abonnés.
-                            {% else %}
-                                Vous ne suivez personne pour le moment.
-                            {% endif %}
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
+	<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+		<div class="max-w-3xl mx-auto">
+			<div class="bg-white rounded-xl shadow-md overflow-hidden">
+				<div class="bg-blue-600 px-6 py-4 flex items-center justify-between">
+					<h1 class="text-xl font-bold text-white flex items-center">
+						{% if mode is defined and mode == 'blocked' %}
+							<span class="material-icons mr-2">block</span>
+							Utilisateurs bloqués ({{ users|length }})
+						{% else %}
+							<span class="material-icons mr-2">{{ isFollowers is defined and isFollowers ? 'group' : 'person_add' }}</span>
+							{{ isFollowers is defined and isFollowers ? 'Abonnés' : 'Abonnements' }}
+							({{ users|length }})
+						{% endif %}
+					</h1>
+					<a href="{{ path('app_profil', {'id': user.id}) }}" class="text-white hover:text-blue-200 transition-colors duration-200">
+						<span class="material-icons">arrow_back</span>
+					</a>
+				</div>
+
+				{# Navigation entre les différentes listes #}
+				<div class="flex border-b border-gray-200">
+					<a href="{{ path('app_followers', {'id': user.id}) }}" class="px-4 py-3 text-center flex-1 {{ isFollowers is defined and isFollowers ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-800' }}">
+						<span class="material-icons text-sm mr-1">group</span>
+						Abonnés
+					</a>
+					<a href="{{ path('app_following', {'id': user.id}) }}" class="px-4 py-3 text-center flex-1 {{ isFollowers is defined and not isFollowers and mode is not defined ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-800' }}">
+						<span class="material-icons text-sm mr-1">person_add</span>
+						Abonnements
+					</a>
+					<a href="{{ path('app_blocked_users', {'id': user.id}) }}" class="px-4 py-3 text-center flex-1 {{ mode is defined and mode == 'blocked' ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-800' }}">
+						<span class="material-icons text-sm mr-1">block</span>
+						Bloqués
+					</a>
+				</div>
+
+				<div class="divide-y divide-gray-200">
+					{% if users|length > 0 %}
+						{% for followUser in users %}
+							<div class="p-4 flex items-center justify-between">
+								<div class="flex items-center">
+									<div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg font-semibold mr-4">
+										{{ followUser.pseudo|slice(0, 1)|upper }}
+									</div>
+									<div>
+										<a href="{{ path('app_profil_user', {'id': followUser.id}) }}" class="font-medium text-gray-900 hover:text-blue-600">
+											{{ followUser.pseudo }}
+										</a>
+									</div>
+								</div>
+
+								{% if app.user.id != followUser.id %}
+									<div>
+										{% if mode is defined and mode == 'blocked' %}
+											{# Bouton pour débloquer l'utilisateur #}
+											<a href="{{ path('app_statut', {'id': followUser.id, 'suivi': 'debloquer'}) }}" class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200">
+												<span class="material-icons text-sm mr-1">person_add</span>
+												Débloquer
+											</a>
+										{% else %}
+											{# Logique existante pour suivre/ne plus suivre #}
+											{% set isUserFollowing = false %}
+
+											{% if followingStatus is defined %}
+												{% for status in followingStatus %}
+													{% if status.otherUser.id == followUser.id and status.isFollowing == 1 %}
+														{% set isUserFollowing = true %}
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+
+											{% if isUserFollowing %}
+												<a href="{{ path('app_profil', {'id': followUser.id}) }}" class="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors duration-200">
+													<span class="material-icons text-sm mr-1">person_remove</span>
+													Ne plus suivre
+												</a>
+											{% else %}
+												<a href="{{ path('app_statut', {'id': followUser.id, 'suivi': 'suivre'}) }}" class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200">
+													<span class="material-icons text-sm mr-1">person_add</span>
+													Suivre
+												</a>
+											{% endif %}
+										{% endif %}
+									</div>
+								{% endif %}
+							</div>
+						{% endfor %}
+					{% else %}
+						<div class="p-6 text-center">
+							<div class="text-gray-500">
+								{% if mode is defined and mode == 'blocked' %}
+									Vous n'avez bloqué aucun utilisateur.
+								{% elseif isFollowers %}
+									Vous n'avez pas encore d'abonnés.
+								{% else %}
+									Vous ne suivez personne pour le moment.
+								{% endif %}
+							</div>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

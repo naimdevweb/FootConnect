@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FootBook - {% block title %}Réseau Social de Football{% endblock %}</title>
+    <title>FootConnect - {% block title %}Réseau Social de Football{% endblock %}</title>
     {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('styles/app.css') }}" />
     {% endblock %}
@@ -72,6 +72,7 @@
                     {% endif %}
                 </div>
             </div>
+            {% include "partials/flash.html.twig" %}
         </nav>
     </header>
 
