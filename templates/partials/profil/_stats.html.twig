@@ -1,0 +1,28 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/partials/profil/_stats.html.twig #}
+{#
+ # Partiel pour les statistiques de l'utilisateur
+ # 
+ # Variables attendues:
+ # - photos: collection de photos de l'utilisateur
+ # - followersCount: nombre d'abonnés
+ # - followingCount: nombre d'abonnements
+ #}
+
+<div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6 transform transition-all duration-300 hover:shadow-2xl">
+    <div class="p-4 sm:p-6">
+        <div class="flex justify-center sm:justify-around gap-8">
+            <div class="text-center transform transition-all duration-200 hover:scale-110">
+                <div class="text-2xl font-bold text-gray-900">{{ photos|length|default(0) }}</div>
+                <div class="text-sm text-gray-500">Publications</div>
+            </div>
+            <div class="text-center transform transition-all duration-200 hover:scale-110">
+                <div class="text-2xl font-bold text-gray-900">{{ followersCount|default(0) }}</div>
+                <div class="text-sm text-gray-500">Abonnés</div>
+            </div>
+            <div class="text-center transform transition-all duration-200 hover:scale-110">
+                <div class="text-2xl font-bold text-gray-900">{{ followingCount|default(0) }}</div>
+                <div class="text-sm text-gray-500">Abonnements</div>
+            </div>
+        </div>
+    </div>
+</div>

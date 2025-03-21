@@ -15,13 +15,14 @@
 
 <body class="bg-gray-100 text-gray-800">
     <header>
+    
         <nav class="bg-white shadow-md p-4">
             <div class="container mx-auto flex flex-wrap justify-between items-center">
                 <a class="text-2xl font-semibold text-blue-600" href="{{ path('app_home') }}">FootConnect</a>
                 
-                <!-- Affichage du pseudo de l'utilisateur, visible à tout moment -->
+                
                 {% if app.user %}
-                    <h2 class="font-semibold text-lg text-gray-800">{{ app.user.pseudo }}</h2>
+                    <h2 class="font-semibold text-lg text-black">{{ app.user.pseudo }}</h2>
                 {% endif %}
 
                 <!-- Champ de recherche responsive -->
@@ -30,37 +31,41 @@
                         type="text" 
                         placeholder="Rechercher un utilisateur..." 
                         class="w-full border border-gray-300 rounded-full px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        hx-get="{{ path('app_search') }}" 
-                        hx-trigger="keyup changed delay:300ms" 
-                        hx-target="#search-results" 
-                        name="query"
-                        hx-indicator="#search-indicator"
+                        {% if app.user %}
+                            hx-get="{{ path('app_search') }}" 
+                            hx-trigger="keyup changed delay:300ms" 
+                            hx-target="#search-results" 
+                            name="query"
+                            hx-indicator="#search-indicator"
+                        {% endif %}
                     >
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
                         {# <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg> #}
                     </div>
-                    <div id="search-indicator" class="htmx-indicator absolute inset-y-0 right-0 flex items-center pr-3">
-                        <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </div>
-                    
-                    <div id="search-results" class="absolute z-10 mt-2 w-full bg-white rounded-lg shadow-lg max-h-60 overflow-y-auto"></div>
-                    
-                    <button 
-                        type="button" 
-                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-blue-600 focus:outline-none"
-                        hx-get="{{ path('app_search') }}" 
-                        hx-trigger="click" 
-                        hx-target="#search-results"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </button>
+                    {% if app.user %}
+                        <div id="search-indicator" class="htmx-indicator absolute inset-y-0 right-0 flex items-center pr-3">
+                            <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                        
+                        <div id="search-results" class="absolute z-10 mt-2 w-full bg-white rounded-lg shadow-lg max-h-60 overflow-y-auto"></div>
+                        
+                        <button 
+                            type="button" 
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-blue-600 focus:outline-none"
+                            hx-get="{{ path('app_search') }}" 
+                            hx-trigger="click" 
+                            hx-target="#search-results"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </button>
+                    {% endif %}
                 </div>
 
                 <!-- Liens de navigation -->

@@ -1,0 +1,33 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/partials/profil/_user_card.html.twig #}
+{#
+ # Partiel pour l'affichage d'un utilisateur (pour les listes d'abonnés)
+ # 
+ # Variables attendues:
+ # - userData: données de l'utilisateur à afficher
+ # - isCurrentUser: booléen indiquant si l'utilisateur affiché est l'utilisateur connecté
+ # - followingStatus: statut de suivi (optionnel)
+ #}
+
+<div class="bg-white rounded-lg shadow overflow-hidden transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
+    <div class="flex items-center p-4">
+        <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold mr-3">
+            {{ userData.pseudo|slice(0, 1)|upper }}
+        </div>
+        <div class="flex-1">
+            <a href="{{ path('app_profil_view', {'id': userData.id}) }}" class="font-medium text-gray-800 hover:text-blue-600 transition-colors">
+                {{ userData.pseudo }}
+            </a>
+            {% if userData.ville is defined %}
+                <p class="text-sm text-gray-500">{{ userData.ville }}</p>
+            {% endif %}
+        </div>
+        
+        {% if not isCurrentUser %}
+            <div>
+                <a href="{{ path('app_statut', {'id': userData.id, 'suivi': 'suivre'}) }}" class="inline-flex items-center px-3 py-1 text-xs rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
+                    <span class="material-icons text-sm mr-1">Suivre</span>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>

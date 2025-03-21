@@ -1,0 +1,39 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/partials/profil/_moderation.html.twig #}
+{#
+ # Partiel pour la section de modération
+ # 
+ # Variables attendues:
+ # - aucune variable spécifique requise
+ #}
+
+<div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6 transform transition-all duration-300 hover:shadow-2xl">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4">
+        <h3 class="text-xl font-bold text-white flex items-center">
+            <span class="material-icons mr-2">security</span>
+            Modération
+        </h3>
+    </div>
+    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <a href="{{ path('app_warning_dashboard') }}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200 transform hover:scale-105">
+            <span class="material-icons text-blue-500 mr-3">dashboard</span>
+            <div>
+                <div class="font-medium text-gray-800">Tableau de bord</div>
+                <div class="text-sm text-gray-500">Vue d'ensemble des avertissements</div>
+            </div>
+        </a>
+        <a href="{{ path('app_warning_index') }}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200 transform hover:scale-105">
+            <span class="material-icons text-blue-500 mr-3">warning</span>
+            <div>
+                <div class="font-medium text-gray-800">Avertissements</div>
+                <div class="text-sm text-gray-500">Liste des avertissements envoyés</div>
+            </div>
+        </a>
+        <a href="{{ path('app_moderator_photos') }}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-all duration-200 transform hover:scale-105">
+            <span class="material-icons text-blue-500 mr-3">photo_library</span>
+            <div>
+                <div class="font-medium text-gray-800">Modérer les photos</div>
+                <div class="text-sm text-gray-500">Vérifier et supprimer les photos inappropriées</div>
+            </div>
+        </a>
+    </div>
+</div>

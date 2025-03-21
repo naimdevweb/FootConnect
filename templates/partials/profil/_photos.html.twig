@@ -1,0 +1,40 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/partials/profil/_photos.html.twig #}
+{#
+ # Partiel pour la galerie de photos
+ # 
+ # Variables attendues:
+ # - photos: collection de photos
+ # - isCurrentUser: booléen indiquant si c'est le profil de l'utilisateur connecté
+ #}
+
+<div class="bg-white rounded-xl shadow-lg p-6 mt-6 transform transition-all duration-300 hover:shadow-2xl">
+    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+        <span class="material-icons mr-2">collections</span>
+        Mes photos récentes
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for photo in photos|slice(0, 8) %}
+            {% if photo.id is defined and photo.photoUrl is defined %}
+                <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square transform transition-all duration-300 hover:scale-105">
+                    <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo" class="w-full h-full object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                        <div class="flex justify-between items-center">
+                            {% if isCurrentUser %}
+                                <div class="flex space-x-1">
+                                    <a href="{{ path('app_photo_edit', {'id': photo.id}) }}" class="p-1 bg-white/20 rounded-full text-white hover:bg-white/40">
+                                        <span class="material-icons text-xs">edit</span>
+                                    </a>
+                                    <a href="{{ path('app_delete_photo', {'id': photo.id}) }}" class="p-1 bg-white/20 rounded-full text-white hover:bg-white/40" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?')">
+                                        <span class="material-icons text-xs">delete</span>
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="text-white font-bold text-lg">{{ photo.description }}</div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>

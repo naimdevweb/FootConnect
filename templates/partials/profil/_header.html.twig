@@ -1,0 +1,53 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/partials/profil/_header.html.twig #}
+{#
+ # Partiel pour l'en-tête du profil utilisateur
+ # 
+ # Variables attendues:
+ # - user: l'utilisateur dont on affiche le profil
+ # - isCurrentUser: booléen indiquant si c'est le profil de l'utilisateur connecté
+ #}
+
+<div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6 transform transition-all duration-300 hover:shadow-2xl">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-6">
+        <div class="flex flex-col items-center sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center mb-4 sm:mb-0">
+                <div class="h-20 w-20 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center text-white text-3xl font-bold mr-4 transform transition-all duration-300 hover:scale-110">
+                    {{ user.pseudo|slice(0, 1)|upper }}
+                </div>
+                {% if isCurrentUser %}
+                    <h1 class="text-2xl sm:text-3xl font-bold text-white">
+                        Bienvenue,
+                        <span class="text-blue-200">{{ user.pseudo }}</span>
+                    </h1>
+                {% else %}
+                    <h1 class="text-2xl sm:text-3xl font-bold text-white">
+                        Profil de
+                        <span class="text-blue-200">{{ user.pseudo }}</span>
+                    </h1>
+                {% endif %}
+            </div>
+            {% if isCurrentUser %}
+                <div class="flex space-x-3">
+                    <a href="{{ path('app_profil_edit') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105">
+                        <span class="material-icons text-sm mr-1">Modifier le profil</span>
+                    </a>
+                    <a href="{{ path('app_logout') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 transform hover:scale-105">
+                        <span class="material-icons text-sm mr-1">Déconnexion</span>
+                    </a>
+                </div>
+            {% else %}
+                <div class="flex space-x-3">
+                    <a href="{{ path('conversation.show', {'recipient': user.id}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105">
+                        <span class="material-icons text-sm mr-1">Envoyer un message</span>
+                    </a>
+                    <a href="{{ path('app_statut', {'id': user.id,'suivi': 'suivre'}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105">
+                        <span class="material-icons text-sm mr-1">Suivre</span>
+                    </a>
+                    <a href="{{ path('app_statut', {'id': user.id,'suivi': 'bloquer'}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 transform hover:scale-105">
+                        <span class="material-icons text-sm mr-1">Bloquer</span>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

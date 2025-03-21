@@ -1,0 +1,71 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/partials/profil/_warnings.html.twig #}
+{#
+ # Partiel pour les avertissements de l'utilisateur
+ # 
+ # Variables attendues:
+ # - warnings: collection d'avertissements
+ # - unviewedWarnings: collection d'avertissements non lus (optionnel)
+ # - isCurrentUser: booléen indiquant si c'est le profil de l'utilisateur connecté
+ # - isModerator: booléen indiquant si l'utilisateur est modérateur
+ #}
+
+<div id="warnings-section" class="bg-white rounded-xl shadow-lg overflow-hidden mb-6 transform transition-all duration-300 hover:shadow-2xl">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4">
+        <h3 class="text-xl font-bold text-white flex items-center">
+            <span class="material-icons mr-2">Avertissements</span>
+            <span class="ml-2 text-sm bg-white text-amber-600 px-2 py-0.5 rounded-full">{{ warnings|length }}</span>
+        </h3>
+    </div>
+    <div class="p-6 space-y-4">
+        {% if unviewedWarnings is defined and unviewedWarnings|length > 0 and isCurrentUser %}
+            <div class="bg-blue-600 border-l-4 border-amber-500 p-4 mb-4 rounded-r-lg transform transition-all duration-200 hover:scale-105">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <span class="material-icons text-amber-500">info</span>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-amber-700">
+                            Vous avez
+                            <span class="font-bold">{{ unviewedWarnings|length }}</span>
+                            avertissement(s) non lu(s).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% for warning in warnings %}
+            <div id="warning-{{ warning.id }}" class="border-l-4 {{ warning.viewed ? 'border-gray-300' : 'border-amber-500' }} bg-gray-50 p-4 rounded-r-lg transition-all duration-300 transform hover:scale-105">
+                <div class="flex justify-between items-start">
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-gray-800 flex items-center">
+                            <span class="material-icons mr-2">warning</span>
+                            {{ warning.reason }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mt-1">{{ warning.description|length > 100 ? warning.description|slice(0, 100) ~ '...' : warning.description }}</p>
+                        <div class="flex items-center mt-2 text-xs text-gray-500">
+                            <span class="material-icons text-xs mr-1">calendar_today</span>
+                            {{ warning.createdAt|date('d/m/Y H:i') }}
+                        </div>
+                    </div>
+                    <div>
+                        <span id="status-{{ warning.id }}" class="px-2 py-1 {{ warning.viewed ? 'bg-gray-200 text-gray-700' : 'bg-amber-100 text-amber-700 animate-pulse' }} rounded-full text-xs">
+                            {{ warning.viewed ? 'Lu' : 'Non lu' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="mt-3 flex justify-end">
+                    {% if isCurrentUser or isModerator %}
+                        <a href="{{ path('app_warning_user_view', {'id': warning.id}) }}" class="text-sm text-blue-600 hover:text-blue-800 flex items-center view-details" data-id="{{ warning.id }}" onclick="markAsRead(event, {{ warning.id }})">
+                            <span class="material-icons text-xm mr-1">Voir les détails</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_warning_user_view', {'id': warning.id}) }}" class="text-sm text-blue-600 hover:text-blue-800 flex items-center">
+                            <span class="material-icons text-xm mr-1">Voir les détails</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
