@@ -1,0 +1,134 @@
+{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/moderation/posts.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modération des publications{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .photo-card {
+            transition: all 0.3s ease;
+        }
+        .photo-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen py-8 px-4">
+    <div class="container mx-auto">
+        <div class="flex items-center justify-between mb-8 animate-fade-in">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">
+                    <span class="text-blue-600">Modération des publications</span> 
+                </h1>
+                <p class="text-gray-600 mt-1">Gérer les photos publiées par les utilisateurs</p>
+            </div>
+            
+            <a href="{{ path('app_moderation_dashboard') }}" 
+               class="px-4 py-2 bg-white rounded-lg text-gray-700 hover:bg-blue-50 flex items-center shadow-sm border border-gray-200 transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+                <span class="material-icons mr-2">dashboard</span>
+                Tableau de bord
+            </a>
+        </div>
+
+        {# Filtres #}
+        <div class="bg-white p-4 rounded-xl shadow-md mb-6 animate-fade-in">
+            <form method="get" action="{{ path('app_moderation_posts') }}" class="flex flex-wrap gap-4 items-end">
+                <div class="w-full md:w-auto flex-grow">
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Rechercher</label>
+                    <input type="text" id="search" name="search" value="{{ app.request.query.get('search') }}" 
+                           class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                           placeholder="Description ou pseudo...">
+                </div>
+                
+                <div class="w-full md:w-auto">
+                    <label for="sort" class="block text-sm font-medium text-gray-700 mb-1">Trier par</label>
+                    <select id="sort" name="sort" 
+                            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <option value="newest" {% if app.request.query.get('sort') == 'newest' %}selected{% endif %}>Plus récentes</option>
+                        <option value="oldest" {% if app.request.query.get('sort') == 'oldest' %}selected{% endif %}>Plus anciennes</option>
+                        <option value="user" {% if app.request.query.get('sort') == 'user' %}selected{% endif %}>Par utilisateur</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        <span class="material-icons mr-1">search</span>
+                        Filtrer
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        {# Liste des publications #}
+        <h2 class="text-xl font-bold text-gray-800 mb-4 animate-fade-in">Publications ({{ photos|length }})</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for photo in photos %}
+                <div class="bg-white rounded-xl overflow-hidden shadow-md photo-card" 
+                     style="animation: fadeIn 0.5s ease-out forwards; animation-delay: {{ loop.index0 * 0.05 }}s; opacity: 0;">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" 
+                             alt="Photo par {{ photo.user.pseudo }}" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3">
+                            <div class="text-white">
+                                <p class="font-medium">{{ photo.user.pseudo }}</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <form method="post" action="{{ path('app_moderator_delete_photo', {'id': photo.id}) }}" 
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
+                                    <button type="submit" class="p-1.5 bg-red-600/80 hover:bg-red-700 text-white rounded-full">
+                                        <span class="material-icons text-sm">delete</span>
+                                    </button>
+                                </form>
+                                <a href="{{ path('app_moderator_warn_user', {'id': photo.user.id}) }}" 
+                                   class="p-1.5 bg-amber-500/80 hover:bg-amber-600 text-white rounded-full">
+                                    <span class="material-icons text-sm">warning</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center">
+                                <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                    <span class="text-blue-600 text-xs font-bold">{{ photo.user.pseudo|slice(0, 1)|upper }}</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">{{ photo.user.pseudo }}</p>
+                                    <p class="text-xs text-gray-500">{{ photo.createdAt|date('d/m/Y H:i') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-700 line-clamp-2">{{ photo.description }}</p>
+                        <div class="mt-3 pt-3 border-t border-gray-100 flex justify-end">
+                            <a href="{{ path('app_photo_show', {'id': photo.id}) }}" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                                <span class="material-icons text-sm mr-1">visibility</span>
+                                Voir détails
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full bg-white rounded-xl shadow-md p-10 text-center">
+                    <span class="material-icons text-gray-400 text-5xl mb-3">photo_library</span>
+                    <p class="text-gray-500 text-lg">Aucune publication trouvée</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -39,12 +39,12 @@
                 <div class="flex justify-between items-start">
                     <div class="flex-grow">
                         <h4 class="font-bold text-gray-800 flex items-center">
-                            <span class="material-icons mr-2">warning</span>
+                            <span class="material-icons mr-2">Avertissements</span>
                             {{ warning.reason }}
                         </h4>
                         <p class="text-sm text-gray-600 mt-1">{{ warning.description|length > 100 ? warning.description|slice(0, 100) ~ '...' : warning.description }}</p>
                         <div class="flex items-center mt-2 text-xs text-gray-500">
-                            <span class="material-icons text-xs mr-1">calendar_today</span>
+                            <span class="material-icons text-xs mr-1">Date</span>
                             {{ warning.createdAt|date('d/m/Y H:i') }}
                         </div>
                     </div>

@@ -45,6 +45,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotCompromisedPassword(message: 'Ce mot de passe a été compromis lors d\'une fuite de données. Veuillez en choisir un autre.')]
     private ?string $password = null;
 
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $banned = false;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $banReason = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $bannedAt = null;
+
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Veuillez fournir un pseudo')]
     #[Assert\Length(
@@ -281,6 +291,40 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
 
+        return $this;
+    }
+
+
+    public function isBanned(): bool
+    {
+        return $this->banned;
+    }
+
+    public function setBanned(bool $banned): self
+    {
+        $this->banned = $banned;
+        return $this;
+    }
+
+    public function getBanReason(): ?string
+    {
+        return $this->banReason;
+    }
+
+    public function setBanReason(?string $banReason): self
+    {
+        $this->banReason = $banReason;
+        return $this;
+    }
+
+    public function getBannedAt(): ?\DateTimeInterface
+    {
+        return $this->bannedAt;
+    }
+
+    public function setBannedAt(?\DateTimeInterface $bannedAt): self
+    {
+        $this->bannedAt = $bannedAt;
         return $this;
     }
 }

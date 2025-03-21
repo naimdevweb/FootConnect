@@ -1,55 +1,57 @@
 {# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/warning/user_view.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Détail de l'avertissement{% endblock %}
+{% block title %}Détail de l'avertissement
+{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-3xl mx-auto">
-        {# En-tête #}
-        <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between">
-            <div class="flex items-center mb-4 sm:mb-0">
-                <a href="{{ path('app_profil', {'pseudo': app.user.pseudo}) }}" class="text-blue-600 hover:text-blue-800 flex items-center mr-4">
-                    <span class="material-icons text-sm mr-1">arrow_back</span>
-                    Retour au profil
-                </a>
-                <h1 class="text-2xl font-bold text-gray-900">Détail de l'avertissement</h1>
-            </div>
-            <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm font-medium">
-                {{ warning.viewed ? 'Lu' : 'Non lu' }}
-            </span>
-        </div>
+	<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+		<div
+			class="max-w-3xl mx-auto">
+			{# En-tête #}
+			<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between">
+				<div class="flex items-center mb-4 sm:mb-0">
+					<a href="{{ path('app_profil', {'pseudo': app.user.pseudo}) }}" class="text-blue-600 hover:text-blue-800 flex items-center mr-4">
+						<span class="material-icons text-sm mr-1">arrow_back</span>
+						Retour au profil
+					</a>
+					<h1 class="text-2xl font-bold text-gray-900">Détail de l'avertissement</h1>
+				</div>
+				<span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm font-medium">
+					{{ warning.viewed ? 'Lu' : 'Non lu' }}
+				</span>
+			</div>
 
-        {# Détail de l'avertissement #}
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="bg-amber-600 px-6 py-4">
-                <h3 class="text-xl font-bold text-white flex items-center">
-                    <span class="material-icons mr-2">warning</span>
-                    Avertissement
-                </h3>
-            </div>
-            <div class="p-6">
-                <div class="mb-6">
-                    <h4 class="text-lg font-semibold text-gray-800 mb-3">{{ warning.reason }}</h4>
-                    <div class="text-gray-600 whitespace-pre-line bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        {{ warning.description }}
-                    </div>
-                </div>
-                
-                <div class="border-t border-gray-200 pt-4 mt-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-500">
-                        <div class="flex items-center mb-2 sm:mb-0">
-                            <span class="material-icons text-xs mr-1">calendar_today</span>
-                            {{ warning.createdAt|date('d/m/Y H:i') }}
-                        </div>
-                        <div class="flex items-center">
-                            <span class="material-icons text-xs mr-1">person</span>
-                            Émis par: Modération
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+			{# Détail de l'avertissement #}
+			<div class="bg-white rounded-xl shadow-md overflow-hidden">
+				<div class="bg-amber-600 px-6 py-4">
+					<h3 class="text-xl font-bold text-white flex items-center">
+						<span class="material-icons mr-2">warning</span>
+						Avertissement
+					</h3>
+				</div>
+				<div class="p-6">
+					<div class="mb-6">
+						<h4 class="text-lg font-semibold text-gray-800 mb-3">{{ warning.reason }}</h4>
+						<div class="text-gray-600 whitespace-pre-line bg-gray-50 p-4 rounded-lg border border-gray-200">
+							{{ warning.description }}
+						</div>
+					</div>
+
+					<div class="border-t border-gray-200 pt-4 mt-4">
+						<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-500">
+							<div class="flex items-center mb-2 sm:mb-0">
+								<span class="material-icons text-xs mr-1">calendar_today</span>
+								{{ warning.createdAt|date('d/m/Y H:i') }}
+							</div>
+							<div class="flex items-center">
+								<span class="material-icons text-xs mr-1">person</span>
+								Émis par: Modération
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}

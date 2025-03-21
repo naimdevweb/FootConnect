@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\Photo;
 use App\Entity\User;
 use App\Entity\Warning;
+use App\Form\UserBanType;
 use App\Form\WarningType;
 use App\Repository\PhotoRepository;
 use App\Repository\UserRepository;
@@ -313,7 +314,93 @@ public function listPhotos(PhotoRepository $photoRepository): Response
         }
     }
 
+
+
    
+
+
+ 
+    
+    /**
+     * Permet de bannir ou débannir un utilisateur
+     */
+    #[Route('/moderation/utilisateur/{id}/bannir', name: 'app_moderation_ban_user', methods: ['GET', 'POST'])]
+    public function banUser(
+        User $user,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
+        try {
+            // Création du formulaire pour la raison du bannissement
+            $form = $this->createForm(UserBanType::class);
+            $form->handleRequest($request);
+            
+            if ($form->isSubmitted() && $form->isValid()) {
+                // Inverser le statut de bannissement
+                $currentStatus = $user->isBanned();
+                $user->setBanned(!$currentStatus);
+                
+                // Si on banne l'utilisateur, enregistrer la raison
+                if (!$currentStatus) {
+                    $user->setBanReason($form->get('banReason')->getData());
+                    $user->setBannedAt(new \DateTime());
+                    $this->addFlash('success', 'L\'utilisateur ' . $user->getPseudo() . ' a été banni.');
+                } else {
+                    $user->setBanReason(null);
+                    $user->setBannedAt(null);
+                    $this->addFlash('success', 'L\'utilisateur ' . $user->getPseudo() . ' a été débanni.');
+                }
+                
+                $entityManager->flush();
+                return $this->redirectToRoute('app_moderation_users');
+            }
+            
+            return $this->render('moderation/ban_user.html.twig', [
+                'user' => $user,
+                'form' => $form,
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue: ' . $e->getMessage());
+            return $this->redirectToRoute('app_moderation_dashboard');
+        }
+    }
+    
+    /**
+     * Liste tous les utilisateurs avec options de modération
+     */
+    #[Route('/moderation/utilisateurs', name: 'app_moderation_users', methods: ['GET'])]
+    public function listUsers(UserRepository $userRepository): Response {
+        try {
+            $users = $userRepository->findBy([], ['createdAt' => 'DESC']);
+            
+            return $this->render('moderation/users.html.twig', [
+                'users' => $users,
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors du chargement des utilisateurs: ' . $e->getMessage());
+            return $this->redirectToRoute('app_moderation_dashboard');
+        }
+    }
+    
+    /**
+     * Liste de toutes les publications (photos) avec options de modération
+     */
+    #[Route('/moderation/publications', name: 'app_moderation_posts', methods: ['GET'])]
+    public function listPosts(PhotoRepository $photoRepository): Response {
+        try {
+            $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
+            
+            return $this->render('moderation/posts.html.twig', [
+                'photos' => $photos,
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors du chargement des publications: ' . $e->getMessage());
+            return $this->redirectToRoute('app_moderation_dashboard');
+        }
+    }
+
+    // Le reste du code existant...
+
 
     }
 
