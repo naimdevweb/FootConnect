@@ -4,39 +4,45 @@ namespace App\Services;
 
 use App\Entity\Commentaire;
 use App\Entity\Photo;
+use App\Entity\User;
 use App\Form\CommentaireType;
-use App\Interfaces\CommentFormServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
 
-class CommentFormService implements CommentFormServiceInterface
+class CommentFormService
 {
-    private FormFactoryInterface $formFactory;
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(FormFactoryInterface $formFactory, EntityManagerInterface $entityManager)
-    {
-        $this->formFactory = $formFactory;
-        $this->entityManager = $entityManager;
-    }
-
-    public function createCommentForm(Photo $photo): FormInterface
+    public function __construct(
+        private readonly FormFactoryInterface $formFactory
+    ) {}
+    
+    /**
+     * Crée un formulaire de commentaire pour une photo
+     */
+    public function createCommentForm(Photo $photo)
     {
         $comment = new Commentaire();
         $comment->setPhoto($photo);
-
+        
         return $this->formFactory->create(CommentaireType::class, $comment, [
             'photo_id' => $photo->getId()
         ]);
     }
-
-    public function handleCommentForm(FormInterface $form): void
+    
+    /**
+     * Crée des formulaires de commentaires pour plusieurs photos
+     */
+    public function createPhotoCommentForms(array $photos, ?User $currentUser): array
     {
-        if ($form->isSubmitted() && $form->isValid()) {
-            $comment = $form->getData();
-            $this->entityManager->persist($comment);
-            $this->entityManager->flush();
+        $commentForms = [];
+
+        if (!$currentUser) {
+            return $commentForms;
         }
+
+        foreach ($photos as $photo) {
+            $commentForm = $this->createCommentForm($photo);
+            $commentForms[$photo->getId()] = $commentForm->createView();
+        }
+
+        return $commentForms;
     }
 }
