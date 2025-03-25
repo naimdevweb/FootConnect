@@ -47,6 +47,11 @@ class Commentaire
         $this->likeCommentaires = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->message;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

@@ -39,14 +39,14 @@ class ModerationController extends AbstractController
             $totalPhotos = $photoRepository->count([]);
             $warnings = $warningRepository->findAll();
             $totalWarnings = count($warnings);
-            
+
             // Photos récentes
             $latestPhotos = $photoRepository->findBy(
-                [], 
-                ['createdAt' => 'DESC'], 
+                [],
+                ['createdAt' => 'DESC'],
                 10
             );
-            
+
             return $this->render('warning/dashboard.html.twig', [
                 'latestPhotos' => $latestPhotos,
                 'totalUsers' => $totalUsers,
@@ -58,37 +58,34 @@ class ModerationController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
     }
-    
+
     /**
      * Liste toutes les photos pour modération
      */
-   /**
- * Liste toutes les photos pour modération
- */
-#[Route('/moderation/photos', name: 'app_moderator_photos', methods: ['GET'])]
-public function listPhotos(PhotoRepository $photoRepository): Response 
-{
-    try {
-        $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
-        
-        // Récupérer les commentaires associés à chaque photo
-        $photosWithComments = [];
-        foreach ($photos as $photo) {
-            $comments = $photo->getComments(); // Utilisation de getCommentaires() selon la convention de nommage
-            $photosWithComments[] = [
-                'photo' => $photo,
-                'comments' => $comments
-            ];
+    #[Route('/moderation/photos', name: 'app_moderator_photos', methods: ['GET'])]
+    public function listPhotos(PhotoRepository $photoRepository): Response
+    {
+        try {
+            $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
+
+            // Récupérer les commentaires associés à chaque photo
+            $photosWithComments = [];
+            foreach ($photos as $photo) {
+                $comments = $photo->getComments(); // Utilisation de getCommentaires() selon la convention de nommage
+                $photosWithComments[] = [
+                    'photo' => $photo,
+                    'comments' => $comments
+                ];
+            }
+
+            return $this->render('moderation/photos.html.twig', [
+                'photosWithComments' => $photosWithComments
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors du chargement des photos: ' . $e->getMessage());
+            return $this->redirectToRoute('app_moderation_dashboard');
         }
-        
-        return $this->render('moderation/photos.html.twig', [
-            'photosWithComments' => $photosWithComments
-        ]);
-    } catch (\Exception $e) {
-        $this->addFlash('error', 'Une erreur est survenue lors du chargement des photos: ' . $e->getMessage());
-        return $this->redirectToRoute('app_moderation_dashboard');
     }
-}
 
     /**
      * Supprime une photo
@@ -96,42 +93,42 @@ public function listPhotos(PhotoRepository $photoRepository): Response
     #[Route('/moderation/photos/{id}/delete', name: 'app_moderator_delete_photo', methods: ['POST'])]
     public function deletePhoto(
         Request $request,
-        Photo $photo, 
+        Photo $photo,
         EntityManagerInterface $entityManager
     ): Response {
         try {
-            if (!$this->isCsrfTokenValid('delete'.$photo->getId(), $request->request->get('_token'))) {
+            if (!$this->isCsrfTokenValid('delete' . $photo->getId(), $request->request->get('_token'))) {
                 throw new \Exception('Token CSRF invalide');
             }
-            
+
             // Stocker les informations de la photo pour le message flash
             $photoId = $photo->getId();
-            
+
             // Supprimer le fichier physique si possible
-            $photoPath = $this->getParameter('photos_directory').'/'.$photo->getPhotoUrl();
+            $photoPath = $this->getParameter('photos_directory') . '/' . $photo->getPhotoUrl();
             if (file_exists($photoPath)) {
                 unlink($photoPath);
             }
-            
+
             $entityManager->remove($photo);
             $entityManager->flush();
-            
+
             $this->addFlash('success', 'Photo #' . $photoId . ' supprimée avec succès.');
-            
+
             return $this->redirectToRoute('app_moderator_photos');
         } catch (\Exception $e) {
             $this->addFlash('error', 'Une erreur est survenue lors de la suppression: ' . $e->getMessage());
             return $this->redirectToRoute('app_moderator_photos');
         }
     }
-    
+
     /**
      * Envoi d'un avertissement à un utilisateur depuis la modération
      */
     #[Route('/moderation/warn-user/{id}', name: 'app_moderator_warn_user', methods: ['GET', 'POST'])]
     public function warnUser(
-        User $user, 
-        Request $request, 
+        User $user,
+        Request $request,
         EntityManagerInterface $entityManager
     ): Response {
         try {
@@ -140,18 +137,18 @@ public function listPhotos(PhotoRepository $photoRepository): Response
             $warning->setModerator($this->getUser());
             $warning->setCreatedAtValue(new \DateTime());
             $warning->setViewed(false);
-            
+
             $form = $this->createForm(WarningType::class, $warning);
             $form->handleRequest($request);
-            
+
             if ($form->isSubmitted() && $form->isValid()) {
                 $entityManager->persist($warning);
                 $entityManager->flush();
-                
+
                 $this->addFlash('success', 'Avertissement envoyé à ' . $user->getPseudo());
                 return $this->redirectToRoute('app_moderator_photos');
             }
-            
+
             return $this->render('warning/new.html.twig', [
                 'form' => $form,
                 'user' => $user
@@ -165,7 +162,7 @@ public function listPhotos(PhotoRepository $photoRepository): Response
     /**
      * Affiche la liste des avertissements
      */
-    
+
     #[Route('/warning', name: 'app_warning_index', methods: ['GET'])]
     public function warningList(WarningRepository $warningRepository): Response
     {
@@ -187,18 +184,18 @@ public function listPhotos(PhotoRepository $photoRepository): Response
     {
         try {
             $warnings = $warningRepository->findAll();
-            
+
             // Filtrer les avertissements non lus
-            $unviewedWarnings = array_filter($warnings, function($warning) {
+            $unviewedWarnings = array_filter($warnings, function ($warning) {
                 return !$warning->isViewed();
             });
-            
+
             // Récupérer les avertissements récents triés par date
-            usort($warnings, function($a, $b) {
+            usort($warnings, function ($a, $b) {
                 return $b->getCreatedAt() <=> $a->getCreatedAt();
             });
             $recentWarnings = array_slice($warnings, 0, 10);
-            
+
             return $this->render('warning/dashboard.html.twig', [
                 'warnings' => $warnings,
                 'unviewedWarnings' => $unviewedWarnings,
@@ -223,7 +220,7 @@ public function listPhotos(PhotoRepository $photoRepository): Response
             $warning->setModerator($this->getUser());
             $warning->setCreatedAtValue(new \DateTime());
             $warning->setViewed(false);
-            
+
             $form = $this->createForm(WarningType::class, $warning);
             $form->handleRequest($request);
 
@@ -257,7 +254,7 @@ public function listPhotos(PhotoRepository $photoRepository): Response
                 $warning->setViewed(true);
                 $entityManager->flush();
             }
-            
+
             return $this->render('warning/show.html.twig', [
                 'warning' => $warning,
             ]);
@@ -301,7 +298,7 @@ public function listPhotos(PhotoRepository $photoRepository): Response
     public function deleteWarning(Request $request, Warning $warning, EntityManagerInterface $entityManager): Response
     {
         try {
-            if ($this->isCsrfTokenValid('delete'.$warning->getId(), $request->request->get('_token'))) {
+            if ($this->isCsrfTokenValid('delete' . $warning->getId(), $request->request->get('_token'))) {
                 $entityManager->remove($warning);
                 $entityManager->flush();
                 $this->addFlash('success', 'Avertissement supprimé avec succès.');
@@ -314,13 +311,6 @@ public function listPhotos(PhotoRepository $photoRepository): Response
         }
     }
 
-
-
-   
-
-
- 
-    
     /**
      * Permet de bannir ou débannir un utilisateur
      */
@@ -334,12 +324,12 @@ public function listPhotos(PhotoRepository $photoRepository): Response
             // Création du formulaire pour la raison du bannissement
             $form = $this->createForm(UserBanType::class);
             $form->handleRequest($request);
-            
+
             if ($form->isSubmitted() && $form->isValid()) {
                 // Inverser le statut de bannissement
                 $currentStatus = $user->isBanned();
                 $user->setBanned(!$currentStatus);
-                
+
                 // Si on banne l'utilisateur, enregistrer la raison
                 if (!$currentStatus) {
                     $user->setBanReason($form->get('banReason')->getData());
@@ -350,11 +340,11 @@ public function listPhotos(PhotoRepository $photoRepository): Response
                     $user->setBannedAt(null);
                     $this->addFlash('success', 'L\'utilisateur ' . $user->getPseudo() . ' a été débanni.');
                 }
-                
+
                 $entityManager->flush();
                 return $this->redirectToRoute('app_moderation_users');
             }
-            
+
             return $this->render('moderation/ban_user.html.twig', [
                 'user' => $user,
                 'form' => $form,
@@ -364,15 +354,16 @@ public function listPhotos(PhotoRepository $photoRepository): Response
             return $this->redirectToRoute('app_moderation_dashboard');
         }
     }
-    
+
     /**
      * Liste tous les utilisateurs avec options de modération
      */
     #[Route('/moderation/utilisateurs', name: 'app_moderation_users', methods: ['GET'])]
-    public function listUsers(UserRepository $userRepository): Response {
+    public function listUsers(UserRepository $userRepository): Response
+    {
         try {
             $users = $userRepository->findBy([], ['createdAt' => 'DESC']);
-            
+
             return $this->render('moderation/users.html.twig', [
                 'users' => $users,
             ]);
@@ -381,15 +372,16 @@ public function listPhotos(PhotoRepository $photoRepository): Response
             return $this->redirectToRoute('app_moderation_dashboard');
         }
     }
-    
+
     /**
      * Liste de toutes les publications (photos) avec options de modération
      */
     #[Route('/moderation/publications', name: 'app_moderation_posts', methods: ['GET'])]
-    public function listPosts(PhotoRepository $photoRepository): Response {
+    public function listPosts(PhotoRepository $photoRepository): Response
+    {
         try {
             $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
-            
+
             return $this->render('moderation/posts.html.twig', [
                 'photos' => $photos,
             ]);
@@ -402,5 +394,4 @@ public function listPhotos(PhotoRepository $photoRepository): Response
     // Le reste du code existant...
 
 
-    }
-
+}
