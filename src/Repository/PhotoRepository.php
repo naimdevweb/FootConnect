@@ -41,4 +41,30 @@ class PhotoRepository extends ServiceEntityRepository
             return [];
         }
     }
+
+
+    
+
+public function findPopularPhotos(int $limit = 10): array
+{
+    $qb = $this->createQueryBuilder('p')
+        ->leftJoin('p.likes', 'l')
+        ->groupBy('p.id')
+        ->orderBy('COUNT(l.id)', 'DESC')
+        ->setMaxResults($limit);
+        
+    return $qb->getQuery()->getResult();
+}
+
+// Dans UserRepository.php
+public function findActiveUsers(int $limit = 5): array
+{
+    $qb = $this->createQueryBuilder('u')
+        ->leftJoin('u.photos', 'p')
+        ->groupBy('u.id')
+        ->orderBy('COUNT(p.id)', 'DESC')
+        ->setMaxResults($limit);
+        
+    return $qb->getQuery()->getResult();
+}
 }

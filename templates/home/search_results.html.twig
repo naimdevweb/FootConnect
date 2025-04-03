@@ -1,4 +1,4 @@
-{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/home/search_results.html.twig #}
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\home\search_results.html.twig #}
 {% if error is defined and error %}
     <div class="p-4 text-center text-gray-500">
         Une erreur est survenue lors de la recherche.
@@ -18,29 +18,62 @@
         {% endif %}
     </div>
 {% elseif users is not empty %}
+    {# Compteur pour les utilisateurs réguliers #}
+    {% set regularUsersCount = 0 %}
+    
     <ul class="divide-y divide-gray-200">
         {% for user in users %}
-            <li>
-                <a href="{{ path('app_profil_user', {id: user.id}) }}" class="block px-4 py-3 hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center">
-                        {% if user.avatar is defined and user.avatar %}
-                            <img src="{{ asset('uploads/avatars/' ~ user.avatar) }}" alt="{{ user.pseudo }}" class="w-10 h-10 rounded-full object-cover">
-                        {% else %}
-                            <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                                {{ user.pseudo|first|upper }}
+            {# Vérifier si l'utilisateur n'est ni admin ni modérateur #}
+            {% set isAdmin = false %}
+            {% set isModerator = false %}
+            
+            {% if user.roles is defined %}
+                {% for role in user.roles %}
+                    {% if role == 'ROLE_ADMIN' %}
+                        {% set isAdmin = true %}
+                    {% endif %}
+                    {% if role == 'ROLE_MODERATOR' or role == 'ROLE_MODERATEUR' %}
+                        {% set isModerator = true %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            {# Afficher uniquement les utilisateurs réguliers #}
+            {% if not isAdmin and not isModerator %}
+                {% set regularUsersCount = regularUsersCount + 1 %}
+                <li>
+                    <a href="{{ path('app_profil_user', {id: user.id}) }}" class="block px-4 py-3 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center">
+                            {% if user.avatar is defined and user.avatar %}
+                                <img src="{{ asset('uploads/avatars/' ~ user.avatar) }}" alt="{{ user.pseudo }}" class="w-10 h-10 rounded-full object-cover">
+                            {% else %}
+                                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                                    {{ user.pseudo|first|upper }}
+                                </div>
+                            {% endif %}
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">{{ user.pseudo }}</p>
+                                <p class="text-xs text-gray-500">
+                                    {{ user.pseudo }}
+                                </p>
                             </div>
-                        {% endif %}
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-900">{{ user.pseudo }}</p>
-                            <p class="text-xs text-gray-500">
-                                {{ user.pseudo }}
-                            </p>
                         </div>
-                    </div>
-                </a>
-            </li>
+                    </a>
+                </li>
+            {% endif %}
         {% endfor %}
     </ul>
+    
+    {# Message si aucun utilisateur régulier n'est trouvé après filtrage #}
+    {% if regularUsersCount == 0 %}
+        <div class="p-4 text-center text-gray-500">
+            Aucun utilisateur trouvé pour "{{ query }}"
+        </div>
+    {% else %}
+        <div class="px-4 py-2 text-xs text-gray-500 bg-gray-50 rounded-b-lg">
+            {{ regularUsersCount }} utilisateur{% if regularUsersCount > 1 %}s{% endif %} trouvé{% if regularUsersCount > 1 %}s{% endif %}
+        </div>
+    {% endif %}
 {% else %}
     <div class="p-4 text-center text-gray-400 text-sm">
         Commencez à taper pour rechercher des utilisateurs
