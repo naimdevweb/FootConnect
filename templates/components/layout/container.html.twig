@@ -1,0 +1,22 @@
+{# templates/components/layout/container.html.twig #}
+{# Composants de conteneurs pour la mise en page globale #}
+
+{% macro standard(additionalClasses = '') %}
+    container mx-auto px-4 sm:px-6 lg:px-8 {{ additionalClasses }}
+{% endmacro %}
+
+{% macro narrow(additionalClasses = '') %}
+    container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl {{ additionalClasses }}
+{% endmacro %}
+
+{% macro wide(additionalClasses = '') %}
+    container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl {{ additionalClasses }}
+{% endmacro %}
+
+{% macro flex(justify = 'between', items = 'center', additionalClasses = '') %}
+    flex {% if justify == 'between' %}justify-between{% elseif justify == 'center' %}justify-center{% elseif justify == 'start' %}justify-start{% elseif justify == 'end' %}justify-end{% endif %} {% if items == 'center' %}items-center{% elseif items == 'start' %}items-start{% elseif items == 'end' %}items-end{% elseif items == 'stretch' %}items-stretch{% endif %} {{ additionalClasses }}
+{% endmacro %}
+
+{% macro grid(columns = '1', gap = '4', additionalClasses = '') %}
+    grid grid-cols-1 sm:grid-cols-{{ columns }} gap-{{ gap }} {{ additionalClasses }}
+{% endmacro %}

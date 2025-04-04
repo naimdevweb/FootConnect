@@ -1,0 +1,15 @@
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\components\_imports.html.twig #}
+{# Imports centralisés des composants #}
+
+{# Composants UI #}
+{% from 'components/ui/button.html.twig' import primary as btn_primary, secondary as btn_secondary, icon as btn_icon, submit as btn_submit %}
+{% from 'components/ui/card.html.twig' import standard as card, profile as profile_card, post as post_card %}
+{% from 'components/ui/form.html.twig' import input, textarea, select, checkbox, radio %}
+{% from 'components/ui/dark_mode_toggle.html.twig' import toggle as dark_mode_toggle %}
+
+{# Composants Layout #}
+{% from 'components/layout/container.html.twig' import standard as container, narrow as narrow_container, wide as wide_container %}
+{% from 'components/layout/section.html.twig' import standard as section, hero as hero_section, card as card_section %}
+
+{# Utilitaires #}
+{% from 'components/utilities/styles.html.twig' import heading1, heading2, heading3, paragraph, badge, divider %}

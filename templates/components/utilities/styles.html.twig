@@ -1,0 +1,44 @@
+{# templates/components/utilities/styles.html.twig #}
+{# Classes utilitaires pour les styles courants #}
+
+{# Typographie #}
+{% macro heading1() %}text-2xl sm:text-3xl font-bold text-dark-900 dark:text-light-100 mb-4{% endmacro %}
+{% macro heading2() %}text-xl sm:text-2xl font-semibold text-dark-800 dark:text-light-200 mb-3{% endmacro %}
+{% macro heading3() %}text-lg font-semibold text-dark-800 dark:text-light-200 mb-2{% endmacro %}
+{% macro paragraph() %}text-dark-700 dark:text-light-300 leading-relaxed mb-4{% endmacro %}
+{% macro small() %}text-sm text-dark-600 dark:text-light-400{% endmacro %}
+
+{# Badges #}
+{% macro badge(type = 'default') %}
+    {% if type == 'primary' %}
+        inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-100
+    {% elseif type == 'success' %}
+        inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
+    {% elseif type == 'warning' %}
+        inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100
+    {% elseif type == 'danger' %}
+        inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100
+    {% else %}
+        inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-light-100 text-dark-800 dark:bg-dark-700 dark:text-light-200
+    {% endif %}
+{% endmacro %}
+
+{# Espacement #}
+{% macro spacer(size = 'md') %}
+    {% if size == 'sm' %}
+        py-2
+    {% elseif size == 'md' %}
+        py-4
+    {% elseif size == 'lg' %}
+        py-6
+    {% elseif size == 'xl' %}
+        py-8
+    {% endif %}
+{% endmacro %}
+
+{# Conteneurs #}
+{% macro panel() %}bg-white dark:bg-dark-800 rounded-lg shadow-md p-6 transition-colors duration-200{% endmacro %}
+{% macro card() %}bg-white dark:bg-dark-800 rounded-lg shadow-md overflow-hidden transition-colors duration-200{% endmacro %}
+
+{# Bordures et séparateurs #}
+{% macro divider() %}border-t border-light-200 dark:border-dark-700 my-4{% endmacro %}

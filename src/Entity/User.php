@@ -232,7 +232,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // Autres méthodes inchangées...
+    
     
     /**
      * @return Collection<int, Warning>
@@ -325,6 +325,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBannedAt(?\DateTimeInterface $bannedAt): self
     {
         $this->bannedAt = $bannedAt;
+        return $this;
+    }
+
+    /**
+     * Get the value of favoritePosts
+     */ 
+    public function getFavoritePosts()
+    {
+        return $this->favoritePosts;
+    }
+
+    /**
+     * Set the value of favoritePosts
+     *
+     * @return  self
+     */ 
+    public function setFavoritePosts($favoritePosts)
+    {
+        $this->favoritePosts = $favoritePosts;
+
         return $this;
     }
 }

@@ -16,13 +16,47 @@ class PhotoService
     ) {}
     
     /**
-     * Récupère les photos filtrées selon l'utilisateur
+     * Récupère les photos filtrées selon l'utilisateur et le type de filtre
+     * 
+     * @param User|null $currentUser L'utilisateur connecté
+     * @param string|null $filterType Type de filtre (following, all, etc.)
+     * @return array Photos filtrées
      */
-    public function getFilteredPhotos(?User $currentUser): array
+    public function getFilteredPhotos(?User $currentUser, ?string $filterType = null): array
     {
-        return $currentUser instanceof User
-            ? $this->photoRepository->findPhotosWithoutBlockedUsers($currentUser)
-            : $this->photoRepository->findBy([], ['createdAt' => 'DESC']);
+        try {
+            // Si l'utilisateur est connecté et demande uniquement les abonnements
+            if ($currentUser instanceof User && $filterType === 'following') {
+                // Récupérer les photos des utilisateurs que l'utilisateur actuel suit
+                $statuts = $this->statutRepository->findBy([
+                    'user' => $currentUser,
+                    'isFollowing' => true
+                ]);
+                
+                if (empty($statuts)) {
+                    return [];
+                }
+                
+                // Extraire les IDs des utilisateurs suivis
+                $followedUserIds = array_map(function($statut) {
+                    return $statut->getOtherUser()->getId();
+                }, $statuts);
+                
+                // Récupérer les photos des utilisateurs suivis
+                return $this->photoRepository->findBy(
+                    ['user' => $followedUserIds],
+                    ['createdAt' => 'DESC']
+                );
+            }
+            
+            // Comportement par défaut: filtrer les utilisateurs bloqués
+            return $currentUser instanceof User
+                ? $this->photoRepository->findPhotosWithoutBlockedUsers($currentUser)
+                : $this->photoRepository->findBy([], ['createdAt' => 'DESC']);
+        } catch (\Exception $e) {
+            // Gérer l'erreur de manière silencieuse et retourner un tableau vide
+            return [];
+        }
     }
     
     /**
@@ -34,6 +68,7 @@ class PhotoService
             return [];
         }
 
+        $userStatuts = [];
         foreach ($photos as $photo) {
             $photoUserId = $photo->getUser()->getId();
             $userStatuts[$photoUserId] = $this->statutRepository->findOneBy([

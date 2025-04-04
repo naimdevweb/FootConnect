@@ -1,0 +1,12 @@
+{# templates/components/ui/dark_mode_toggle.html.twig #}
+{# Toggle pour le mode sombre/clair #}
+
+{% macro toggle(id = 'darkModeToggle', additionalClasses = '') %}
+    <label class="switch {{ additionalClasses }}" for="{{ id }}">
+        <input type="checkbox" id="{{ id }}">
+        <span class="slider">
+            <i class="fas fa-sun light-icon text-xs"></i>
+            <i class="fas fa-moon dark-icon text-xs"></i>
+        </span>
+    </label>
+{% endmacro %}

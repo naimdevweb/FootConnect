@@ -67,4 +67,58 @@ public function findActiveUsers(int $limit = 5): array
         
     return $qb->getQuery()->getResult();
 }
+
+
+/**
+ * Récupère les photos des utilisateurs suivis par l'utilisateur courant
+ * 
+ * @param User $user L'utilisateur connecté
+ * @return array<Photo> Photos des utilisateurs suivis
+ */
+public function findByFollowedUsers(User $user): array
+{
+    try {
+        // Requête pour trouver les photos des utilisateurs que l'utilisateur actuel suit
+        return $this->createQueryBuilder('p')
+            ->join('p.user', 'u')
+            ->join('App\Entity\Statut', 's', 'WITH', 's.user = :currentUser AND s.otherUser = u AND s.isFollowing = 1')
+            ->setParameter('currentUser', $user)
+            ->orderBy('p.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    } catch (\Exception $e) {
+        return [];
+    }
+}
+
+ /**
+     * Récupère toutes les photos triées par date
+     */
+    public function findAllPhotosOrderedByDate(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+ /**
+     * Récupère les photos de la communauté (tous sauf admin/modérateurs)
+     */
+    public function findCommunityPhotos(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.user', 'u')
+            ->andWhere('u.roles NOT LIKE :adminRole')
+            ->andWhere('u.roles NOT LIKE :modRole')
+            ->setParameter('adminRole', '%ROLE_ADMIN%')
+            ->setParameter('modRole', '%ROLE_MODERATOR%')
+            ->orderBy('p.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+
 }

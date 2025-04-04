@@ -1,565 +1,647 @@
-{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/home/index.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
-	{{ parent() }}
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-	<style>
-		/* Animations et transitions */
-		.fade-in {
-			animation: fadeIn 0.5s ease-out forwards;
-		}
+    {{ parent() }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Animations et transitions */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
 
-		@keyframes fadeIn {
-			from {
-				opacity: 0;
-				transform: translateY(10px);
-			}
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-		.hover-scale {
-			transition: transform 0.3s ease;
-		}
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
 
-		.hover-scale:hover {
-			transform: scale(1.02);
-		}
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
 
-		.like-animation {
-			animation: heartBeat 0.45s ease-in-out;
-		}
+        .like-animation {
+            animation: heartBeat 0.45s ease-in-out;
+        }
 
-		@keyframes heartBeat {
-			0% {
-				transform: scale(1);
-			}
-			50% {
-				transform: scale(1.3);
-			}
-			100% {
-				transform: scale(1);
-			}
-		}
+        @keyframes heartBeat {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
 
-		/* Style des scrollbars personnalisées */
-		.custom-scrollbar::-webkit-scrollbar {
-			width: 4px;
-		}
+        /* Style des scrollbars personnalisées */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
 
-		.custom-scrollbar::-webkit-scrollbar-track {
-			background: #f1f1f1;
-			border-radius: 4px;
-		}
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
 
-		.custom-scrollbar::-webkit-scrollbar-thumb {
-			background: #cbd5e0;
-			border-radius: 4px;
-		}
+        .dark .custom-scrollbar::-webkit-scrollbar-track {
+            background: #374151;
+        }
 
-		.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-			background: #a0aec0;
-		}
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
 
-		/* Effet de fondu pour les images */
-		.image-fade::after {
-			content: '';
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			width: 100%;
-			height: 40%;
-			background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
-			opacity: 0;
-			transition: opacity 0.3s ease;
-		}
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #6b7280;
+        }
 
-		.image-fade:hover::after {
-			opacity: 1;
-		}
-	</style>
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* Effet de fondu pour les images */
+        .image-fade::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-fade:hover::after {
+            opacity: 1;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mode sombre toggle avec logging pour déboguer
+            console.log("Initialisation du mode sombre dans settings...");
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            
+            if (darkModeToggle) {
+                console.log("Toggle trouvé :", darkModeToggle);
+                
+                // Initialiser l'état du toggle
+                darkModeToggle.checked = document.documentElement.classList.contains('dark');
+                console.log("État initial du toggle :", darkModeToggle.checked);
+                
+                // Ajouter l'écouteur d'événement avec approche différente
+                darkModeToggle.addEventListener('click', function() {
+                    console.log("Toggle cliqué, nouvel état :", this.checked);
+                    
+                    if (this.checked) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('darkMode', 'true');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('darkMode', 'false');
+                    }
+                    
+                    // Émission d'un événement personnalisé pour signaler le changement
+                    document.dispatchEvent(new CustomEvent('darkModeChanged', { 
+                        detail: { darkMode: this.checked } 
+                    }));
+                });
+                
+                // Sync avec les changements externes (au cas où)
+                document.addEventListener('darkModeChanged', function(e) {
+                    darkModeToggle.checked = e.detail.darkMode;
+                });
+            } else {
+                console.error("Toggle de mode sombre non trouvé!");
+            }
+        });
+    </script>
 {% endblock %}
 
 {% block body %}
-	<!-- Layout principal avec un conteneur central pour le contenu -->
-	<main
-		class="min-h-screen bg-gray-50">
-		<!-- Navbar sticky avec effets de profondeur -->
-		<nav class="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
-			<div class="container mx-auto px-4 py-3 flex items-center justify-between">
-				<div class="flex items-center space-x-4"></div>
+{% include 'components/_imports.html.twig' %}
+    <!-- Layout principal avec un conteneur central pour le contenu -->
+    <main class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200">
+        <!-- Navbar sticky avec effets de profondeur -->
+        <nav class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-200">
+            <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center space-x-4"></div>
+            </div>
+        </nav>
 
+        <!-- Structure principale à deux colonnes pour desktop -->
+        <div class="container mx-auto px-4 md:px-0 py-6">
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Barre latérale avec navigation (visible sur desktop uniquement) -->
+                <aside class="hidden md:block w-64 space-y-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 sticky top-20 transition-colors duration-200">
+                        <!-- Profil utilisateur si connecté -->
+                        {% if app.user %}
+                            <div class="flex items-center space-x-3 pb-4 border-b border-gray-100 dark:border-gray-700">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                                    {{ app.user.pseudo|slice(0,1)|upper }}
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-800 dark:text-gray-100">{{ app.user.pseudo }}</p>
+                                    <a href="{{ path('app_profil') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">Mon profil</a>
+                                </div>
+                            </div>
+                        {% endif %}
 
-			</div>
-		</nav>
+                        <!-- Navigation principale -->
+                        <nav class="mt-4 space-y-2">
+                            <!-- Accueil - Lien existant conservé -->
+                            <a href="{{ path('app_home') }}" class="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 rounded-xl transition-all duration-200 hover:shadow-sm">
+                                <i class="fas fa-home text-lg"></i>
+                                <span class="font-medium">Accueil</span>
+                            </a>
 
-		<!-- Structure principale à deux colonnes pour desktop -->
-		<div class="container mx-auto px-4 md:px-0 py-6">
-			<div
-				class="flex flex-col md:flex-row gap-6">
-				<!-- Barre latérale avec navigation (visible sur desktop uniquement) -->
-				<aside class="hidden md:block w-64 space-y-6">
-					<div
-						class="bg-white rounded-2xl shadow-sm p-5 sticky top-20">
-						<!-- Profil utilisateur si connecté -->
-						{% if app.user %}
-							<div class="flex items-center space-x-3 pb-4 border-b border-gray-100">
-								<div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-									{{ app.user.pseudo|slice(0,1)|upper }}
-								</div>
-								<div>
-									<p class="font-semibold text-gray-800">{{ app.user.pseudo }}</p>
-									<a href="{{ path('app_profil') }}" class="text-xs text-blue-600 hover:underline">Voir profil</a>
-								</div>
-							</div>
-						{% endif %}
+                           
 
-						<!-- Navigation principale -->
+                            <!-- Communauté - Transformation en lien fonctionnel -->
+                            <a href="{{ path('app_home', {'type': 'community'}) }}" class="flex items-center space-x-3 p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 hover:shadow-sm">
+                                <i class="fas fa-users text-lg"></i>
+                                <span>Communauté</span>
+                            </a>
 
-						<nav
-							class="mt-4 space-y-2">
-							<!-- Accueil - Lien existant conservé -->
-							<a href="{{ path('app_home') }}" class="flex items-center space-x-3 p-3 bg-blue-50 text-blue-600 rounded-xl transition-all duration-200 hover:shadow-sm">
-								<i class="fas fa-home text-lg"></i>
-								<span class="font-medium">Accueil</span>
-							</a>
+                            <!-- Publications des personnes suivies -->
+                            <a href="{{ path('app_home', {'type': 'following'}) }}" class="flex items-center space-x-3 p-3
+                                                                {% if filterType == 'following' %}
+                                                                 bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300
+                                                                 {% else %}
+                                                                 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700
+                                                                {% endif %}
+                                                                 rounded-xl transition-all duration-200 hover:shadow-sm">
+                                <i class="fas fa-user-friends text-lg"></i>
+                                <span>Abonnements</span>
+                            </a>
+                        </nav>
 
-							<!-- Explorer - Ajout d'un lien vers la recherche -->
-							<a href="{{ path('app_discover') }}" class="flex items-center space-x-3 p-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-all duration-200 hover:shadow-sm">
-								<i class="fas fa-compass text-lg"></i>
-								<span>Explorer</span>
-							</a>
-
-							<!-- Communauté - Transformation en lien fonctionnel -->
-							<a href="{{ path('app_home', {'type': 'community'}) }}" class="flex items-center space-x-3 p-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-all duration-200 hover:shadow-sm">
-								<i class="fas fa-users text-lg"></i>
-								<span>Communauté</span>
-							</a>
-
-							<!-- Paramètres - Lien existant conservé -->
-							<a href="{{ path('app_profil') }}" class="flex items-center space-x-3 p-3 text-gray-700 hover:bg-gray-50 rounded-xl transition-all duration-200 hover:shadow-sm">
-								<i class="fas fa-cog text-lg"></i>
-								<span>Paramètres</span>
-							</a>
-						</nav>
-
-						<!-- Bouton de création de publication -->
-						<a href="{{ path('app_profil') }}" class="mt-6 flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 px-4 font-medium shadow-sm transition-colors">
-							<i class="fas fa-plus-circle"></i>
-							<span>Nouvelle publication</span>
+						<!-- Déconnexion - Lien existant conservé -->
+						<a href="{{ path('app_logout') }}" class="flex items-center space-x-3 p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 hover:shadow-sm">
+							<i class="fas fa-sign-out-alt text-lg"></i>
+							<span>Déconnexion</span>
 						</a>
-					</div>
-				</aside>
 
-				<!-- Flux principal des publications -->
-				<div
-					class="flex-1 max-w-2xl mx-auto">
-					<!-- Entête mobile seulement -->
-					<header class="md:hidden mb-6 flex justify-between items-center">
-						<h1 class="text-2xl font-bold text-gray-800">Fil d'actualités</h1>
-						<a href="{{ path('app_profil') }}" class="bg-blue-600 text-white p-3 rounded-full shadow-md">
-							<i class="fas fa-plus"></i>
-						</a>
-					</header>
+                        <!-- Bouton de création de publication -->
+                        <a href="{{ path('app_profil') }}" class="mt-6 flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-xl py-3 px-4 font-medium shadow-sm transition-colors">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Nouvelle publication</span>
+                        </a>
+                    </div>
+                </aside>
 
-					<!-- Nouvelle publication (version mobile) -->
-					<div class="md:hidden bg-white rounded-2xl shadow-sm p-4 mb-6">
-						<div class="flex items-center space-x-3">
-							{% if app.user %}
-								<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
-									{{ app.user.pseudo|slice(0,1)|upper }}
-								</div>
-								<a href="{{ path('app_profil') }}" class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-gray-500 text-sm">
-									Publier quelque chose...
-								</a>
-							{% else %}
-								<a href="{{ path('app_login') }}" class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-gray-500 text-sm text-center">
-									Connectez-vous pour publier
-								</a>
-							{% endif %}
-						</div>
-					</div>
+                <!-- Flux principal des publications -->
+                <div class="flex-1 max-w-2xl mx-auto">
+                    <!-- Entête mobile seulement -->
+                    <header class="md:hidden mb-6 flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Fil d'actualités</h1>
+                        <a href="{{ path('app_profil') }}" class="bg-blue-600 dark:bg-blue-700 text-white p-3 rounded-full shadow-md">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                    </header>
 
-					<!-- Liste des publications -->
-					{% if photos is defined and photos|length > 0 %}
-						<div class="space-y-6">
-							{% for photo in photos %}
-								<article
-									class="fade-in hover-scale bg-white rounded-2xl shadow-sm overflow-hidden" style="animation-delay: {{ loop.index * 0.15 }}s;">
-									<!-- En-tête de la publication -->
-									<header class="p-4 flex items-center justify-between">
-										<div class="flex items-center space-x-3">
-											<a href="{{ path('app_profil_user', {'id': photo.user.id}) }}" class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
-												{{ app.user.pseudo|slice(0,1)|upper }}
-											</a>
-											<div>
-												<a href="{{ path('app_profil_user', {'id': photo.user.id}) }}" class="font-semibold text-gray-900 hover:text-blue-600 transition-colors">
-													{{ photo.user.pseudo }}
-												</a>
-												<p class="text-xs text-gray-500 flex items-center space-x-1">
-													<span>{{ photo.createdAt|date('d/m/Y') }}</span>
-													<span>•</span>
-													<span>{{ photo.createdAt|date('H:i') }}</span>
-												</p>
-											</div>
-										</div>
-										<div class="relative">
-											<button class="text-gray-400 hover:text-gray-600 p-1">
-												<i class="fas fa-ellipsis-h"></i>
-											</button>
-										</div>
-									</header>
+                    <!-- Nouvelle publication (version mobile) -->
+                    <div class="md:hidden bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-4 mb-6 transition-colors duration-200">
+                        <div class="flex items-center space-x-3">
+                            {% if app.user %}
+                                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-semibold">
+                                    {{ app.user.pseudo|slice(0,1)|upper }}
+                                </div>
+                                <a href="{{ path('app_profil') }}" class="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2 text-gray-500 dark:text-gray-400 text-sm">
+                                    Publier quelque chose...
+                                </a>
+                            {% else %}
+                                <a href="{{ path('app_login') }}" class="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full px-4 py-2 text-gray-500 dark:text-gray-400 text-sm text-center">
+                                    Connectez-vous pour publier
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
 
-									<!-- Contenu de la publication -->
-									{% if photo.description %}
-										<div class="px-4 pb-3">
-											<p class="text-gray-800 leading-relaxed">{{ photo.description|nl2br }}</p>
-										</div>
-									{% endif %}
+                    <!-- Liste des publications -->
+                    {% if photos is defined and photos|length > 0 %}
+                        <div class="space-y-6">
+                            {% for photo in photos %}
+                                <article class="fade-in hover-scale bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden transition-colors duration-200" 
+                                     style="animation-delay: {{ loop.index * 0.15 }}s;">
+                                    <!-- En-tête de la publication -->
+                                    <header class="p-4 flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <a href="{{ path('app_profil_user', {'id': photo.user.id}) }}" class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                                                {{ app.user.pseudo|slice(0,1)|upper }}
+                                            </a>
+                                            <div>
+                                                <a href="{{ path('app_profil_user', {'id': photo.user.id}) }}" class="font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                                    {{ photo.user.pseudo }}
+                                                </a>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center space-x-1">
+                                                    <span>{{ photo.createdAt|date('d/m/Y') }}</span>
+                                                    <span>•</span>
+                                                    <span>{{ photo.createdAt|date('H:i') }}</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="relative">
+                                            <button class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1 transition-colors">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                        </div>
+                                    </header>
 
-									<!-- Image avec effets avancés -->
-									<figure class="relative image-fade overflow-hidden">
-										<img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" class="w-full object-cover transition-transform duration-500 hover:scale-105" style="aspect-ratio: 4/3;" loading="lazy">
-										<figcaption class="absolute bottom-0 left-0 right-0 text-white p-4 opacity-0 transform translate-y-2 transition-all duration-300 ease-out pointer-events-none">
-											<div class="font-medium">Photo de
-												{{ photo.user.pseudo }}</div>
-										</figcaption>
-									</figure>
+                                    <!-- Contenu de la publication -->
+                                    {% if photo.description %}
+                                        <div class="px-4 pb-3">
+                                            <p class="text-gray-800 dark:text-gray-200 leading-relaxed">{{ photo.description|nl2br }}</p>
+                                        </div>
+                                    {% endif %}
 
-									<!-- Actions (likes, commentaires, etc.) -->
-									<footer class="p-4">
-										<div
-											class="flex items-center justify-between mb-3">
-											<!-- Bouton like -->
-											{% if app.user %}
-												<button class="like-button flex items-center space-x-2 text-gray-600 hover:text-pink-600 transition-colors" data-photo-id="{{ photo.id }}">
-													<i class="fas fa-heart text-xl"></i>
-													<span class="like-count text-sm font-medium">{{ photo.likes|length }}</span>
-												</button>
-											{% else %}
-												<a href="{{ path('app_login') }}" class="flex items-center space-x-2 text-gray-600 hover:text-pink-600 transition-colors">
-													<i class="fas fa-heart text-xl"></i>
-													<span class="text-sm font-medium">{{ photo.likes|length }}</span>
-												</a>
-											{% endif %}
+                                    <!-- Image avec effets avancés -->
+                                    <figure class="relative image-fade overflow-hidden">
+                                        <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" class="w-full object-cover transition-transform duration-500 hover:scale-105" style="aspect-ratio: 4/3;" loading="lazy">
+                                        <figcaption class="absolute bottom-0 left-0 right-0 text-white p-4 opacity-0 transform translate-y-2 transition-all duration-300 ease-out pointer-events-none">
+                                            <div class="font-medium">Photo de
+                                                {{ photo.user.pseudo }}</div>
+                                        </figcaption>
+                                    </figure>
 
-											<!-- Bouton commentaire -->
-											<button class="comment-toggle flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors" data-target="comments-{{ photo.id }}">
-												<i class="fas fa-comment text-xl"></i>
-												<span class="text-sm font-medium">{{ photo.comments|length }}</span>
-											</button>
+                                    <!-- Actions (likes, commentaires, etc.) -->
+                                    <footer class="p-4">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <!-- Bouton like -->
+                                            {% if app.user %}
+                                                <button class="like-button flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-500 transition-colors" data-photo-id="{{ photo.id }}">
+                                                    <i class="fas fa-heart text-xl"></i>
+                                                    <span class="like-count text-sm font-medium">{{ photo.likes|length }}</span>
+                                                </button>
+                                            {% else %}
+                                                <a href="{{ path('app_login') }}" class="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-500 transition-colors">
+                                                    <i class="fas fa-heart text-xl"></i>
+                                                    <span class="text-sm font-medium">{{ photo.likes|length }}</span>
+                                                </a>
+                                            {% endif %}
 
-											<!-- Bouton enregistrer -->
-											{% if app.user and app.user != photo.user %}
-												<button class="flex items-center space-x-2 text-gray-600 hover:text-yellow-600 transition-colors">
-													<i class="fas fa-bookmark text-xl"></i>
-												</button>
-											{% endif %}
+                                            <!-- Bouton commentaire -->
+                                            <button class="comment-toggle flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" data-target="comments-{{ photo.id }}">
+                                                <i class="fas fa-comment text-xl"></i>
+                                                <span class="text-sm font-medium">{{ photo.comments|length }}</span>
+                                            </button>
 
-											<!-- Bouton supprimer si propriétaire -->
-											{% if app.user == photo.user %}
-												<a href="{{ path('app_delete_photo', {'id': photo.id}) }}" class="text-gray-600 hover:text-red-600 transition-colors" onclick="return confirm('Voulez-vous vraiment supprimer cette publication ?')">
-													<i class="fas fa-trash text-xl"></i>
-												</a>
-											{% endif %}
-										</div>
+                                            <!-- Bouton enregistrer -->
+                                            {% if app.user and app.user != photo.user %}
+                                                {% set isInFavorites = false %}
+                                                {% for favoritePost in app.user.favoritePosts %}
+                                                    {% if favoritePost.photo.id == photo.id %}
+                                                        {% set isInFavorites = true %}
+                                                    {% endif %}
+                                                {% endfor %}
 
-										<!-- Section des commentaires (initialement cachée) -->
-										<section id="comments-{{ photo.id }}" class="hidden comment-section mt-4 border-t border-gray-100 pt-4">
-											<div class="max-h-80 overflow-y-auto custom-scrollbar pr-2">
-												<div class="space-y-3">
-													{% for comment in photo.comments %}
-														<article id="comment-{{ comment.id }}" class="flex space-x-3 hover:bg-gray-50 p-2 rounded-xl transition-all duration-200">
-															<div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0">
-																{{ comment.user.pseudo|slice(0,1)|upper }}
-															</div>
-															<div class="flex-1 bg-gray-50 rounded-xl p-3">
-																<header class="flex justify-between items-start mb-1">
-																	<span class="font-medium text-xs text-gray-700">{{ comment.user.pseudo }}</span>
-																	<span class="text-xs text-gray-400">{{ comment.createdAt|date('H:i') }}</span>
-																</header>
-																<p class="text-sm text-gray-800 break-words">{{ comment.message }}</p>
-															</div>
-														</article>
-													{% else %}
-														<div class="text-center py-6 bg-gray-50 rounded-xl">
-															<p class="text-gray-500">Aucun commentaire pour le moment</p>
-														</div>
-													{% endfor %}
-												</div>
-											</div>
+                                                <button class="favorite-toggle flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors" data-photo-id="{{ photo.id }}" data-is-favorite="{{ isInFavorites ? 'true' : 'false' }}">
+                                                    <i class="fas fa-bookmark text-xl {{ isInFavorites ? 'text-yellow-600 dark:text-yellow-500' : '' }}"></i>
+                                                </button>
+                                            {% endif %}
 
-											<!-- Formulaire de commentaire -->
-											{% if app.user %}
-												{% if commentForms[photo.id] is defined %}
-													{{ form_start(commentForms[photo.id], {
+                                            <!-- Bouton supprimer si propriétaire -->
+                                            {% if app.user == photo.user %}
+                                                <a href="{{ path('app_delete_photo', {'id': photo.id}) }}" class="text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors" onclick="return confirm('Voulez-vous vraiment supprimer cette publication ?')">
+                                                    <i class="fas fa-trash text-xl"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Section des commentaires (initialement cachée) -->
+                                        <section id="comments-{{ photo.id }}" class="hidden comment-section mt-4 border-t border-gray-100 dark:border-gray-700 pt-4 transition-colors">
+                                            <div class="max-h-80 overflow-y-auto custom-scrollbar pr-2">
+                                                <div class="space-y-3">
+                                                    {% for comment in photo.comments %}
+                                                        <article id="comment-{{ comment.id }}" class="flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200">
+                                                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0">
+                                                                {{ comment.user.pseudo|slice(0,1)|upper }}
+                                                            </div>
+                                                            <div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3 transition-colors">
+                                                                <header class="flex justify-between items-start mb-1">
+                                                                    <span class="font-medium text-xs text-gray-700 dark:text-gray-300">{{ comment.user.pseudo }}</span>
+                                                                    <span class="text-xs text-gray-400">{{ comment.createdAt|date('H:i') }}</span>
+                                                                </header>
+                                                                <p class="text-sm text-gray-800 dark:text-gray-200 break-words">{{ comment.message }}</p>
+                                                            </div>
+                                                        </article>
+                                                    {% else %}
+                                                        <div class="text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors">
+                                                            <p class="text-gray-500 dark:text-gray-400">Aucun commentaire pour le moment</p>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+
+                                            <!-- Formulaire de commentaire -->
+                                            {% if app.user %}
+                                                {% if commentForms[photo.id] is defined %}
+                                                    {{ form_start(commentForms[photo.id], {
                                                         'attr': {
                                                             'class': 'mt-4 comment-form',
                                                             'id': 'comment-form-' ~ photo.id,
                                                             'data-photo-id': photo.id
                                                         }
                                                     }) }}
-													<div class="flex space-x-2 items-center">
-														<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold flex-shrink-0">
-															{{ app.user.pseudo|slice(0,1)|upper }}
-														</div>
-														<div class="flex-1 relative">
-															{{ form_widget(commentForms[photo.id].message, {
+                                                    <div class="flex space-x-2 items-center">
+                                                        <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-semibold flex-shrink-0">
+                                                            {{ app.user.pseudo|slice(0,1)|upper }}
+                                                        </div>
+                                                        <div class="flex-1 relative">
+                                                            {{ form_widget(commentForms[photo.id].message, {
                                                                 'attr': {
-                                                                    'class': 'w-full rounded-full pl-4 pr-10 py-2 border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-gray-50',
+                                                                    'class': 'w-full rounded-full pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
                                                                     'placeholder': 'Écrire un commentaire...'
                                                                 }
                                                             }) }}
-															<button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 hover:text-blue-700">
-																<i class="fas fa-paper-plane"></i>
-															</button>
-														</div>
-													</div>
-													{{ form_end(commentForms[photo.id]) }}
-												{% endif %}
-											{% else %}
-												<div class="mt-4 flex items-center justify-between bg-gray-50 p-3 rounded-xl">
-													<p class="text-sm text-gray-600">Connectez-vous pour commenter</p>
-													<a href="{{ path('app_login') }}" class="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors">
-														Se connecter
-													</a>
-												</div>
-											{% endif %}
-										</section>
-									</footer>
-								</article>
-							{% endfor %}
-						</div>
-					{% else %}
-						<!-- État vide stylisé -->
-						<div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-							<div class="w-20 h-20 mx-auto bg-blue-50 rounded-full flex items-center justify-center text-blue-500 mb-4">
-								<i class="fas fa-photo-video text-3xl"></i>
-							</div>
-							<h3 class="text-xl font-bold text-gray-900 mb-2">Aucune publication</h3>
-							<p class="text-gray-600 mb-6 max-w-sm mx-auto">Publiez votre première photo ou suivez d'autres utilisateurs pour voir leurs publications ici.</p>
-							<a href="{{ path('app_profil') }}" class="inline-flex items-center px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-sm">
-								<i class="fas fa-plus-circle mr-2"></i>
-								Créer une publication
-							</a>
-						</div>
-					{% endif %}
-				</div>
+                                                            <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+                                                                <i class="fas fa-paper-plane"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    {{ form_end(commentForms[photo.id]) }}
+                                                {% endif %}
+                                            {% else %}
+                                                <div class="mt-4 flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-3 rounded-xl transition-colors">
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">Connectez-vous pour commenter</p>
+                                                    <a href="{{ path('app_login') }}" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                                                        Se connecter
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        </section>
+                                    </footer>
+                                </article>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <!-- État vide stylisé -->
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 text-center transition-colors duration-200">
+                            <div class="w-20 h-20 mx-auto bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-500 dark:text-blue-400 mb-4 transition-colors">
+                                <i class="fas fa-photo-video text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Aucune publication</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-sm mx-auto">Publiez votre première photo ou suivez d'autres utilisateurs pour voir leurs publications ici.</p>
+                            <a href="{{ path('app_profil') }}" class="inline-flex items-center px-5 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-xl transition-colors shadow-sm">
+                                <i class="fas fa-plus-circle mr-2"></i>
+                                Créer une publication
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
-				<!-- Barre latérale droite (tendances, suggestions) -->
-				<aside class="hidden lg:block w-72 space-y-6">
-					<div class="bg-white rounded-2xl shadow-sm p-5 sticky top-20">
-						<h3 class="font-bold text-gray-800 mb-4">Suggestions pour vous</h3>
+        <!-- Navigation inférieure fixe (visible uniquement sur mobile) -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg z-10 transition-colors duration-200">
+            <div class="flex justify-around items-center py-3">
+                <a href="{{ path('app_home') }}" class="flex flex-col items-center text-blue-600 dark:text-blue-400">
+                    <i class="fas fa-home text-xl"></i>
+                    <span class="text-xs mt-1">Accueil</span>
+                </a>
+                <a href="#" class="flex flex-col items-center text-gray-600 dark:text-gray-400">
+                    <i class="fas fa-search text-xl"></i>
+                    <span class="text-xs mt-1">Recherche</span>
+                </a>
+                <a href="{{ path('app_profil') }}" class="flex flex-col items-center p-2 bg-blue-600 dark:bg-blue-700 text-white rounded-full shadow-md -mt-5">
+                    <i class="fas fa-plus text-xl"></i>
+                </a>
+                <a href="#" class="flex flex-col items-center text-gray-600 dark:text-gray-400">
+                    <i class="fas fa-bell text-xl"></i>
+                    <span class="text-xs mt-1">Alertes</span>
+                </a>
+                <a href="{{ path('app_profil') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400">
+                    <i class="fas fa-user text-xl"></i>
+                    <span class="text-xs mt-1">Profil</span>
+                </a>
+            </div>
+        </nav>
+    </main>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Gestion des likes
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', async function () {
+                    const photoId = this.dataset.photoId;
+                    const isLiked = this.classList.contains('text-pink-600') || 
+                                  this.classList.contains('dark:text-pink-500');
 
-						<p class="mt-2">© 2025 FootConnect. Tous droits réservés.</p>
-					</div>
-				</div>
-			</aside>
-		</div>
-	</div>
+                    try {
+                        const response = await fetch(`/like/${photoId}`);
+                        if (response.ok) {
+                            const icon = this.querySelector('.fa-heart');
+                            const count = this.querySelector('.like-count');
+                            const currentCount = parseInt(count.textContent);
 
-	<!-- Navigation inférieure fixe (visible uniquement sur mobile) -->
-	<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-10">
-		<div class="flex justify-around items-center py-3">
-			<a href="{{ path('app_home') }}" class="flex flex-col items-center text-blue-600">
-				<i class="fas fa-home text-xl"></i>
-				<span class="text-xs mt-1">Accueil</span>
-			</a>
-			<a href="#" class="flex flex-col items-center text-gray-600">
-				<i class="fas fa-search text-xl"></i>
-				<span class="text-xs mt-1">Recherche</span>
-			</a>
-			<a href="{{ path('app_profil') }}" class="flex flex-col items-center p-2 bg-blue-600 text-white rounded-full shadow-md -mt-5">
-				<i class="fas fa-plus text-xl"></i>
-			</a>
-			<a href="#" class="flex flex-col items-center text-gray-600">
-				<i class="fas fa-bell text-xl"></i>
-				<span class="text-xs mt-1">Alertes</span>
-			</a>
-			<a href="{{ path('app_profil') }}" class="flex flex-col items-center text-gray-600">
-				<i class="fas fa-user text-xl"></i>
-				<span class="text-xs mt-1">Profil</span>
-			</a>
-		</div>
-	</nav>
-</main>
+                            if (!isLiked) {
+                                this.classList.remove('text-gray-600', 'dark:text-gray-400');
+                                this.classList.add('text-pink-600', 'dark:text-pink-500');
+                                icon.classList.add('like-animation');
+                                count.textContent = currentCount + 1;
+                            } else {
+                                this.classList.remove('text-pink-600', 'dark:text-pink-500');
+                                this.classList.add('text-gray-600', 'dark:text-gray-400');
+                                count.textContent = currentCount - 1;
+                            }
 
-<script>
-	document.addEventListener('DOMContentLoaded', function () { // Gestion des likes
-document.querySelectorAll('.like-button').forEach(button => {
-button.addEventListener('click', async function () {
-const photoId = this.dataset.photoId;
-const isLiked = this.classList.contains('text-pink-600');
+                            setTimeout(() => icon.classList.remove('like-animation'), 500);
+                        }
+                    } catch (error) {
+                        console.error('Erreur lors du like:', error);
+                    }
+                });
+            });
 
-try {
-const response = await fetch (`/like/${photoId}`);
-if (response.ok) {
-const icon = this.querySelector('.fa-heart');
-const count = this.querySelector('.like-count');
-const currentCount = parseInt(count.textContent);
+            // Gestion des commentaires
+            document.querySelectorAll('.comment-toggle').forEach(button => {
+                button.addEventListener('click', function () {
+                    const targetId = this.dataset.target;
+                    const commentSection = document.getElementById(targetId);
 
-if (! isLiked) {
-this.classList.remove('text-gray-600');
-this.classList.add('text-pink-600');
-icon.classList.add('like-animation');
-count.textContent = currentCount + 1;
-} else {
-this.classList.remove('text-pink-600');
-this.classList.add('text-gray-600');
-count.textContent = currentCount - 1;
-}
+                    if (commentSection.classList.contains('hidden')) {
+                        // Fermer toutes les autres sections de commentaires
+                        document.querySelectorAll('.comment-section').forEach(section => {
+                            if (section.id !== targetId && !section.classList.contains('hidden')) {
+                                section.classList.add('hidden');
+                            }
+                        });
 
-setTimeout(() => icon.classList.remove('like-animation'), 500);
-}
-} catch (error) {
-console.error('Erreur lors du like:', error);
-}
-});
-});
+                        // Ouvrir cette section
+                        commentSection.classList.remove('hidden');
+                        setTimeout(() => {
+                            commentSection.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+                            const input = commentSection.querySelector('input, textarea');
+                            if (input) 
+                                input.focus();
+                        }, 100);
+                    } else {
+                        commentSection.classList.add('hidden');
+                    }
+                });
+            });
 
-// Gestion des commentaires
-document.querySelectorAll('.comment-toggle').forEach(button => {
-button.addEventListener('click', function () {
-const targetId = this.dataset.target;
-const commentSection = document.getElementById(targetId);
+            // Traitement des soumissions de commentaires
+            document.querySelectorAll('.comment-form').forEach(form => {
+                form.addEventListener('submit', async function (event) {
+                    event.preventDefault();
 
-if (commentSection.classList.contains('hidden')) { // Fermer toutes les autres sections de commentaires
-document.querySelectorAll('.comment-section').forEach(section => {
-if (section.id !== targetId && !section.classList.contains('hidden')) {
-section.classList.add('hidden');
-}
-});
+                    const photoId = this.dataset.photoId;
+                    const formData = new FormData(this);
+                    formData.append('photo_id', photoId);
+                    const commentSection = document.getElementById(`comments-${photoId}`);
+                    const commentList = commentSection.querySelector('.space-y-3');
+                    const messageInput = this.querySelector('[name="commentaire[message]"]');
+                    const message = messageInput.value.trim();
 
-// Ouvrir cette section
-commentSection.classList.remove('hidden');
-setTimeout(() => {
-commentSection.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-const input = commentSection.querySelector('input, textarea');
-if (input) 
-input.focus();
+                    if (!message) {
+                        messageInput.classList.add('ring-2', 'ring-red-500');
+                        setTimeout(() => messageInput.classList.remove('ring-2', 'ring-red-500'), 2000);
+                        return;
+                    }
 
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    const originalContent = submitButton.innerHTML;
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
-}, 100);
-} else {
-commentSection.classList.add('hidden');
-}
-});
-});
+                    try {
+                        const response = await fetch(this.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
 
-// Traitement des soumissions de commentaires
-document.querySelectorAll('.comment-form').forEach(form => {
-form.addEventListener('submit', async function (event) {
-event.preventDefault();
+                        if (response.ok) {
+                            const userInitial = document.querySelector('.w-8.h-8.rounded-full.bg-blue-100').textContent.trim();
+                            const userName = '{{ app.user ? app.user.pseudo : "Utilisateur" }}';
+                            const currentTime = new Date().toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
 
-const photoId = this.dataset.photoId;
-const formData = new FormData(this);
-formData.append('photo_id', photoId);
-const commentSection = document.getElementById (`comments-${photoId}`);
-const commentList = commentSection.querySelector('.space-y-3');
-const messageInput = this.querySelector('[name="commentaire[message]"]');
-const message = messageInput.value.trim();
+                            const commentElement = document.createElement('article');
+                            commentElement.id = `comment-temp-${Date.now()}`;
+                            commentElement.className = 'flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200';
+                            commentElement.style.opacity = '0';
+                            commentElement.style.transform = 'translateY(10px)';
 
-if (! message) {
-messageInput.classList.add('ring-2', 'ring-red-500');
-setTimeout(() => messageInput.classList.remove('ring-2', 'ring-red-500'), 2000);
-return;
-}
-
-const submitButton = this.querySelector('button[type="submit"]');
-const originalContent = submitButton.innerHTML;
-submitButton.disabled = true;
-submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-try {
-const response = await fetch(this.action, {
-method: 'POST',
-body: formData,
-headers: {
-'X-Requested-With': 'XMLHttpRequest'
-}
-});
-
-if (response.ok) {
-const userInitial = document.querySelector('.w-8.h-8.rounded-full.bg-blue-100').textContent.trim();
-const userName = '{{ app.user ? app.user.pseudo : "Utilisateur" }}';
-const currentTime = new Date().toLocaleTimeString([], {
-hour: '2-digit',
-minute: '2-digit'
-});
-
-const commentElement = document.createElement('article');
-commentElement.id = `comment-temp-${
-Date.now()
-}`;
-commentElement.className = 'flex space-x-3 hover:bg-gray-50 p-2 rounded-xl transition-all duration-200';
-commentElement.style.opacity = '0';
-commentElement.style.transform = 'translateY(10px)';
-
-commentElement.innerHTML = `
+                            commentElement.innerHTML = `
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0">
                                     ${userInitial}
                                 </div>
-                                <div class="flex-1 bg-gray-50 rounded-xl p-3">
+                                <div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
                                     <header class="flex justify-between items-start mb-1">
-                                        <span class="font-medium text-xs text-gray-700">${userName}</span>
+                                        <span class="font-medium text-xs text-gray-700 dark:text-gray-300">${userName}</span>
                                         <span class="text-xs text-gray-400">${currentTime}</span>
                                     </header>
-                                    <p class="text-sm text-gray-800 break-words">${message}</p>
+                                    <p class="text-sm text-gray-800 dark:text-gray-200 break-words">${message}</p>
                                 </div>
                             `;
 
-const noComments = commentList.querySelector('.text-center');
-if (noComments) {
-noComments.remove();
-}
+                            const noComments = commentList.querySelector('.text-center');
+                            if (noComments) {
+                                noComments.remove();
+                            }
 
-commentList.appendChild(commentElement);
+                            commentList.appendChild(commentElement);
 
-setTimeout(() => {
-commentElement.style.transition = 'all 0.3s ease-out';
-commentElement.style.opacity = '1';
-commentElement.style.transform = 'translateY(0)';
-}, 10);
+                            setTimeout(() => {
+                                commentElement.style.transition = 'all 0.3s ease-out';
+                                commentElement.style.opacity = '1';
+                                commentElement.style.transform = 'translateY(0)';
+                            }, 10);
 
-const commentCounter = document.querySelector (`[data-target="comments-${photoId}"] span`);
-if (commentCounter) {
-const currentCount = parseInt(commentCounter.textContent);
-commentCounter.textContent = currentCount + 1;
-}
+                            const commentCounter = document.querySelector(`[data-target="comments-${photoId}"] span`);
+                            if (commentCounter) {
+                                const currentCount = parseInt(commentCounter.textContent);
+                                commentCounter.textContent = currentCount + 1;
+                            }
 
-this.reset();
-} else {
-console.error('Erreur lors de l\'ajout du commentaire:', response.statusText);
-}
-} catch (error) {
-console.error('Erreur lors de l\'ajout du commentaire:', error);
-} finally {
-submitButton.disabled = false;
-submitButton.innerHTML = originalContent;
-}
-});
-});
+                            this.reset();
+                        } else {
+                            console.error('Erreur lors de l\'ajout du commentaire:', response.statusText);
+                        }
+                    } catch (error) {
+                        console.error('Erreur lors de l\'ajout du commentaire:', error);
+                    } finally {
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalContent;
+                    }
+                });
+            });
 
-// Animation au défilement
-const fadeElements = document.querySelectorAll('.fade-in');
-const observer = new IntersectionObserver((entries) => {
-entries.forEach(entry => {
-if (entry.isIntersecting) {
-entry.target.style.opacity = '1';
-entry.target.style.transform = 'translateY(0)';
-}
-});
-}, {threshold: 0.1});
+            // Animation au défilement
+            const fadeElements = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, {threshold: 0.1});
 
-fadeElements.forEach(el => {
-el.style.opacity = '0';
-el.style.transform = 'translateY(20px)';
-el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-observer.observe(el);
-});
-});
-</script>{% endblock %}
+            fadeElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                observer.observe(el);
+            });
+
+            // Gestion des boutons favoris
+            document.querySelectorAll('.favorite-toggle').forEach(button => {
+                button.addEventListener('click', async function() {
+                    const photoId = this.dataset.photoId;
+                    const isFavorite = this.dataset.isFavorite === 'true';
+                    const icon = this.querySelector('i.fa-bookmark');
+                    
+                    try {
+                        const response = await fetch(`/toggle-favorite/${photoId}`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            
+                            if (data.success) {
+                                // Mettre à jour l'apparence du bouton
+                                if (data.isFavorite) {
+                                    icon.classList.add('text-yellow-600', 'dark:text-yellow-500');
+                                    this.dataset.isFavorite = 'true';
+                                } else {
+                                    icon.classList.remove('text-yellow-600', 'dark:text-yellow-500');
+                                    this.dataset.isFavorite = 'false';
+                                }
+                            }
+                        } else {
+                            console.error('Erreur lors de la mise à jour des favoris');
+                        }
+                    } catch (error) {
+                        console.error('Erreur:', error);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

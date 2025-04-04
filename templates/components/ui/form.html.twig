@@ -1,0 +1,90 @@
+{# templates/components/ui/form.html.twig #}
+{# Composants de formulaire pour l'interface utilisateur #}
+
+{% macro input(type, name, label, value = '', placeholder = '', required = false, additionalClasses = '') %}
+    <div class="mb-4 {{ additionalClasses }}">
+        {% if label %}
+            <label for="{{ name }}" class="block text-sm font-medium text-dark-700 dark:text-light-300 mb-1">
+                {{ label }}{% if required %} <span class="text-red-500">*</span>{% endif %}
+            </label>
+        {% endif %}
+        <input 
+            type="{{ type }}" 
+            id="{{ name }}" 
+            name="{{ name }}" 
+            value="{{ value }}" 
+            placeholder="{{ placeholder }}"
+            {% if required %}required{% endif %}
+            class="w-full px-3 py-2 border border-light-300 dark:border-dark-600 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-dark-700 text-dark-800 dark:text-light-200 placeholder-light-400 dark:placeholder-dark-400 transition-colors duration-200"
+        >
+    </div>
+{% endmacro %}
+
+{% macro textarea(name, label, value = '', placeholder = '', rows = 4, required = false, additionalClasses = '') %}
+    <div class="mb-4 {{ additionalClasses }}">
+        {% if label %}
+            <label for="{{ name }}" class="block text-sm font-medium text-dark-700 dark:text-light-300 mb-1">
+                {{ label }}{% if required %} <span class="text-red-500">*</span>{% endif %}
+            </label>
+        {% endif %}
+        <textarea 
+            id="{{ name }}" 
+            name="{{ name }}" 
+            rows="{{ rows }}"
+            placeholder="{{ placeholder }}"
+            {% if required %}required{% endif %}
+            class="w-full px-3 py-2 border border-light-300 dark:border-dark-600 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-dark-700 text-dark-800 dark:text-light-200 placeholder-light-400 dark:placeholder-dark-400 transition-colors duration-200"
+        >{{ value }}</textarea>
+    </div>
+{% endmacro %}
+
+{% macro select(name, label, options, selected = '', required = false, additionalClasses = '') %}
+    <div class="mb-4 {{ additionalClasses }}">
+        {% if label %}
+            <label for="{{ name }}" class="block text-sm font-medium text-dark-700 dark:text-light-300 mb-1">
+                {{ label }}{% if required %} <span class="text-red-500">*</span>{% endif %}
+            </label>
+        {% endif %}
+        <select 
+            id="{{ name }}" 
+            name="{{ name }}"
+            {% if required %}required{% endif %}
+            class="w-full px-3 py-2 border border-light-300 dark:border-dark-600 rounded-md shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-dark-700 text-dark-800 dark:text-light-200 transition-colors duration-200"
+        >
+            {% for value, label in options %}
+                <option value="{{ value }}" {% if value == selected %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro checkbox(name, label, checked = false, additionalClasses = '') %}
+    <div class="flex items-center mb-4 {{ additionalClasses }}">
+        <input 
+            type="checkbox" 
+            id="{{ name }}" 
+            name="{{ name }}" 
+            {% if checked %}checked{% endif %}
+            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-light-300 dark:border-dark-600 rounded transition-colors duration-200"
+        >
+        <label for="{{ name }}" class="ml-2 block text-sm text-dark-700 dark:text-light-300">
+            {{ label }}
+        </label>
+    </div>
+{% endmacro %}
+
+{% macro radio(name, value, label, checked = false, additionalClasses = '') %}
+    <div class="flex items-center mb-2 {{ additionalClasses }}">
+        <input 
+            type="radio" 
+            id="{{ name }}_{{ value }}" 
+            name="{{ name }}" 
+            value="{{ value }}"
+            {% if checked %}checked{% endif %}
+            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-light-300 dark:border-dark-600 transition-colors duration-200"
+        >
+        <label for="{{ name }}_{{ value }}" class="ml-2 block text-sm text-dark-700 dark:text-light-300">
+            {{ label }}
+        </label>
+    </div>
+{% endmacro %}

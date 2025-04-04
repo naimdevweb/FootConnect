@@ -1,339 +1,452 @@
-{# filepath: /c:/Users/Dev404/Documents/foot_connect/FOOT_CONNECT/templates/profil/index.html.twig #}
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\profil\index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Votre profil{% endblock %}
+{% block title %}Votre profil
+{% endblock %}
 
 {% block stylesheets %}
-{{ parent() }}
-<style>
-    @keyframes fadeIn {
-        0% { opacity: 0; transform: translateY(10px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes slideIn {
-        0% { opacity: 0; transform: translateX(-10px); }
-        100% { opacity: 1; transform: translateX(0); }
-    }
-    
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-        70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-    }
-    
-    .animate-fade-in {
-        animation: fadeIn 0.6s ease-out forwards;
-    }
-    
-    .animate-slide-in {
-        animation: slideIn 0.5s ease-out forwards;
-    }
-    
-    .delay-100 { animation-delay: 0.1s; opacity: 0; }
-    .delay-200 { animation-delay: 0.2s; opacity: 0; }
-    .delay-300 { animation-delay: 0.3s; opacity: 0; }
-    .delay-400 { animation-delay: 0.4s; opacity: 0; }
-    .delay-500 { animation-delay: 0.5s; opacity: 0; }
-    
-    .card-hover {
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    
-    .card-hover:hover {
-        transform: translateY(-5px);
-    }
+    {{ parent() }}
+    <style>
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .gradient-text {
-        background-clip: text;
-        -webkit-background-clip: text;
-        color: transparent;
-        background-image: linear-gradient(to right, #3b82f6, #60a5fa);
-    }
-    
-    .material-icons {
-        font-family: 'Material Icons';
-        font-weight: normal;
-        font-style: normal;
-        font-size: 24px;
-        line-height: 1;
-        letter-spacing: normal;
-        text-transform: none;
-        display: inline-block;
-        white-space: nowrap;
-        word-wrap: normal;
-        direction: ltr;
-        -webkit-font-feature-settings: 'liga';
-        -webkit-font-smoothing: antialiased;
-    }
-</style>
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        .delay-100 {
+            animation-delay: 0.1s;
+            opacity: 0;
+        }
+        .delay-200 {
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+        .delay-300 {
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+        .delay-400 {
+            animation-delay: 0.4s;
+            opacity: 0;
+        }
+        .delay-500 {
+            animation-delay: 0.5s;
+            opacity: 0;
+        }
+
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+        }
+
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            background-image: linear-gradient(to right, #3b82f6, #60a5fa);
+        }
+
+        /* Style pour le mode sombre */
+        .dark .gradient-text {
+            background-image: linear-gradient(to right, #60a5fa, #93c5fd);
+        }
+
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+{% endblock %}
+
+{% block page_header %}
+    <div class="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-200">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                    <a href="{{ path('app_home') }}" class="p-2 -ml-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <a href="{{ path('app_home') }}" class="text-gray-600 dark:text-gray-400 font-semibold text-lg hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+                        Accueil
+                    </a>
+                </div>
+                <div class="flex items-center justify-center w-full">
+                    <div class="w-8 h-8 bg-blue-600 dark:bg-blue-700 rounded-full flex items-center justify-center mr-2 shadow-md hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-futbol text-white text-sm animate-pulse"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">Mon Profil</h1>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-6xl mx-auto space-y-8">
-        {# En-tête du profil #}
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover animate-fade-in">
-            <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-6 relative overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-white/20 to-transparent"></div>
-                <div class="flex flex-col items-center sm:flex-row sm:items-center sm:justify-between">
-                    <div class="flex items-center mb-4 sm:mb-0">
-                        <div class="h-20 w-20 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center text-white text-3xl font-bold mr-4 transform transition-all duration-500 hover:scale-110 hover:rotate-3 group">
-                            <span class="transform transition-all duration-500 group-hover:scale-110">{{ user.pseudo|slice(0, 1)|upper }}</span>
+{% include 'components/_imports.html.twig' %}
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+        <div class="max-w-6xl mx-auto space-y-8">
+            {# En-tête du profil #}
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden card-hover animate-fade-in transition-colors duration-200">
+                <div class="bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-700 dark:to-blue-600 p-6 relative overflow-hidden transition-colors duration-200">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-white/20 to-transparent"></div>
+                    <div class="flex flex-col items-center sm:flex-row sm:items-center sm:justify-between">
+                        <div class="flex items-center mb-4 sm:mb-0">
+                            <div class="h-20 w-20 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center text-white text-3xl font-bold mr-4 transform transition-all duration-500 hover:scale-110 hover:rotate-3 group">
+                                <span class="transform transition-all duration-500 group-hover:scale-110">{{ user.pseudo|slice(0, 1)|upper }}</span>
+                            </div>
+                            {% if app.user.pseudo == user.pseudo %}
+                                <h1 class="text-2xl sm:text-3xl font-bold text-white">
+                                    Bienvenue,
+                                    <span class="text-blue-200 relative inline-block after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-blue-200 hover:after:w-full after:transition-all after:duration-300">{{ user.pseudo }}</span>
+                                </h1>
+                            {% else %}
+                                <h1 class="text-2xl sm:text-3xl font-bold text-white">
+                                    Profil de
+                                    <span class="text-blue-200 relative inline-block">{{ user.pseudo }}</span>
+                                </h1>
+                            {% endif %}
                         </div>
                         {% if app.user.pseudo == user.pseudo %}
-                            <h1 class="text-2xl sm:text-3xl font-bold text-white">
-                                Bienvenue,
-                                <span class="text-blue-200 relative inline-block after:content-[''] after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-blue-200 hover:after:w-full after:transition-all after:duration-300">{{ user.pseudo }}</span>
-                            </h1>
+                            <div class="flex space-x-3">
+                                <a href="{{ path('app_profil_edit') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 dark:text-blue-200 bg-white dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
+                                    <i class="material-icons text-sm mr-1">edit</i>
+                                    Modifier
+                                </a>
+
+                                <a href="{{ path('app_logout') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
+                                    <i class="material-icons text-sm mr-1">logout</i>
+                                    Déconnexion
+                                </a>
+                            </div>
                         {% else %}
-                            <h1 class="text-2xl sm:text-3xl font-bold text-white">
-                                Profil de
-                                <span class="text-blue-200 relative inline-block">{{ user.pseudo }}</span>
-                            </h1>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="{{ path('conversation.show', {'recipient': user.id}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 dark:text-blue-200 bg-white dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
+                                    <i class="material-icons text-sm mr-1">message</i>
+                                    Message
+                                </a>
+                                <a href="{{ path('app_statut', {'id': user.id,'suivi': 'suivre'}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 dark:text-blue-200 bg-white dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
+                                    <i class="material-icons text-sm mr-1">person_add</i>
+                                    Suivre
+                                </a>
+                                <a href="{{ path('app_statut', {'id': user.id,'suivi': 'bloquer'}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
+                                    <i class="material-icons text-sm mr-1">block</i>
+                                    Bloquer
+                                </a>
+                            </div>
                         {% endif %}
                     </div>
-                    {% if app.user.pseudo == user.pseudo %}
-                        <div class="flex space-x-3">
-                            <a href="{{ path('app_profil_edit') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
-                                <i class="material-icons text-sm mr-1">edit</i>
-                                Modifier
-                            </a>
-
-                            <a href="{{ path('app_logout') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
-                                <i class="material-icons text-sm mr-1">logout</i>
-                                Déconnexion
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="flex flex-wrap gap-2">
-                            <a href="{{ path('conversation.show', {'recipient': user.id}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
-                                <i class="material-icons text-sm mr-1">message</i>
-                                Message
-                            </a>
-                            <a href="{{ path('app_statut', {'id': user.id,'suivi': 'suivre'}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
-                                <i class="material-icons text-sm mr-1">person_add</i>
-                                Suivre
-                            </a>
-                            <a href="{{ path('app_statut', {'id': user.id,'suivi': 'bloquer'}) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
-                                <i class="material-icons text-sm mr-1">block</i>
-                                Bloquer
-                            </a>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
-        </div>
 
-        {# Statistiques utilisateur #}
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover animate-fade-in delay-100">
-            <div class="p-6">
-                <div class="flex justify-center sm:justify-around gap-8">
-                    <div class="text-center group cursor-pointer">
-                        <div class="text-3xl font-bold text-gray-900 group-hover:gradient-text transition-all duration-300">{{ photos|length|default(0) }}</div>
-                        <div class="text-sm text-gray-500 group-hover:text-blue-500 transition-all duration-300">Publications</div>
-                    </div>
-                    <div class="text-center group cursor-pointer">
-                        <div class="text-3xl font-bold text-gray-900 group-hover:gradient-text transition-all duration-300">{{ followersCount|default(0) }}</div>
-                        <div class="text-sm text-gray-500 group-hover:text-blue-500 transition-all duration-300">Abonnés</div>
-                    </div>
-                    <div class="text-center group cursor-pointer">
-                        <a href="{{ path('app_followers', {'id': user.id}) }}" class="block">
-                            <div class="text-3xl font-bold text-gray-900 group-hover:gradient-text transition-all duration-300">{{ followingCount|default(0) }}</div>
-                            <div class="text-sm text-gray-500 group-hover:text-blue-500 transition-all duration-300">Abonnements</div>
-                        </a>
+            {# Statistiques utilisateur #}
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden card-hover animate-fade-in delay-100 transition-colors duration-200">
+                <div class="p-6">
+                    <div class="flex justify-center sm:justify-around gap-8">
+                        <div class="text-center group cursor-pointer">
+                            <div class="text-3xl font-bold text-gray-900 dark:text-gray-100 group-hover:gradient-text transition-all duration-300">{{ photos|length|default(0) }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-all duration-300">Publications</div>
+                        </div>
+                        <div class="text-center group cursor-pointer">
+                            <div class="text-3xl font-bold text-gray-900 dark:text-gray-100 group-hover:gradient-text transition-all duration-300">{{ followersCount|default(0) }}</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-all duration-300">Abonnés</div>
+                        </div>
+                        <div class="text-center group cursor-pointer">
+                            <a href="{{ path('app_followers', {'id': user.id}) }}" class="block">
+                                <div class="text-3xl font-bold text-gray-900 dark:text-gray-100 group-hover:gradient-text transition-all duration-300">{{ followingCount|default(0) }}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-all duration-300">Abonnements</div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {# Section des avertissements #}
-        {% if (app.user.pseudo == user.pseudo or is_granted('ROLE_MODERATEUR') or is_granted('ROLE_ADMIN')) and warnings is defined and warnings|length > 0 %}
-            <div id="warnings-section" class="bg-white rounded-xl shadow-lg overflow-hidden card-hover animate-fade-in delay-200">
-                <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
-                    <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
-                    <h3 class="text-xl font-bold text-white flex items-center relative z-10">
-                        <i class="material-icons mr-2">warning</i>
-                        Avertissements
-                        <span class="ml-2 text-sm bg-white text-amber-600 px-2 py-0.5 rounded-full">{{ warnings|length }}</span>
-                    </h3>
-                </div>
-                <div class="p-6 space-y-4">
-                    {% if unviewedWarnings is defined and unviewedWarnings|length > 0 and app.user.pseudo == user.pseudo %}
-                        <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-4 rounded-r-lg transition-all duration-300 hover:border-l-6 animate-pulse">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0">
-                                    <i class="material-icons text-amber-500">info</i>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-amber-700">
-                                        Vous avez
-                                        <span class="font-bold">{{ unviewedWarnings|length }}</span>
-                                        avertissement(s) non lu(s).
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    {% for warning in warnings %}
-                        <div id="warning-{{ warning.id }}" 
-                             class="border-l-4 {{ warning.viewed ? 'border-gray-300' : 'border-amber-500' }} bg-gray-50 p-4 rounded-r-lg transition-all duration-300 hover:shadow-md animate-slide-in"
-                             style="animation-delay: {{ loop.index0 * 0.1 + 0.3 }}s; opacity: 0;">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-grow">
-                                    <h4 class="font-bold text-gray-800 flex items-center">
-                                        <i class="material-icons mr-2 {{ warning.viewed ? 'text-gray-400' : 'text-amber-500' }}">warning</i>
-                                        {{ warning.reason }}
-                                    </h4>
-                                    <p class="text-sm text-gray-600 mt-1">{{ warning.description|length > 100 ? warning.description|slice(0, 100) ~ '...' : warning.description }}</p>
-                                    <div class="flex items-center mt-2 text-xs text-gray-500">
-                                        <i class="material-icons text-xs mr-1">calendar_today</i>
-                                        {{ warning.createdAt|date('d/m/Y H:i') }}
-                                    </div>
-                                </div>
-                                <div>
-                                    <span id="status-{{ warning.id }}" 
-                                          class="px-2 py-1 {{ warning.viewed ? 'bg-gray-200 text-gray-700' : 'bg-amber-100 text-amber-700' }} rounded-full text-xs {{ not warning.viewed ? 'animate-pulse' : '' }}">
-                                        {{ warning.viewed ? 'Lu' : 'Non lu' }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="mt-3 flex justify-end">
-                                {% if app.user.pseudo == user.pseudo or is_granted('ROLE_MODERATEUR') %}
-                                    <a href="{{ path('app_warning_user_view', {'id': warning.id}) }}" 
-                                       class="text-sm text-blue-600 hover:text-blue-800 flex items-center view-details group" 
-                                       data-id="{{ warning.id }}" 
-                                       onclick="markAsRead(event, {{ warning.id }})">
-                                        <span class="mr-1 group-hover:mr-2 transition-all duration-300">Voir les détails</span>
-                                        <i class="material-icons text-xs transform transition-all duration-300 group-hover:translate-x-1">arrow_forward</i>
-                                    </a>
-                                {% else %}
-                                    <a href="{{ path('app_warning_user_view', {'id': warning.id}) }}" 
-                                       class="text-sm text-blue-600 hover:text-blue-800 flex items-center group">
-                                        <span class="mr-1 group-hover:mr-2 transition-all duration-300">Voir les détails</span>
-                                        <i class="material-icons text-xs transform transition-all duration-300 group-hover:translate-x-1">arrow_forward</i>
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
-
-        {# Sections du profil #}
-        {% if app.user.pseudo == user.pseudo %}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {# Mon réseau #}
-                <div class="bg-white rounded-xl shadow-lg overflow-hidden h-full card-hover animate-fade-in delay-300">
-                    <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-12 translate-x-12"></div>
+            {# Section des avertissements #}
+            {% if (app.user.pseudo == user.pseudo or is_granted('ROLE_MODERATEUR') or is_granted('ROLE_ADMIN')) and warnings is defined and warnings|length > 0 %}
+                <div id="warnings-section" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden card-hover animate-fade-in delay-200 transition-colors duration-200">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-700 dark:to-blue-600 px-6 py-4 relative overflow-hidden transition-colors duration-200">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-16 translate-x-16"></div>
+                        <div class="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
                         <h3 class="text-xl font-bold text-white flex items-center relative z-10">
-                            <i class="material-icons mr-2">people</i>
-                            Mon réseau
+                            <i class="material-icons mr-2">warning</i>
+                            Avertissements
+                            <span class="ml-2 text-sm bg-white dark:bg-gray-700 text-amber-600 dark:text-amber-500 px-2 py-0.5 rounded-full transition-colors duration-200">{{ warnings|length }}</span>
                         </h3>
                     </div>
                     <div class="p-6 space-y-4">
-                        <a href="{{ path('app_followers', {'id': user.id}) }}" 
-                           class="flex items-center text-gray-800 hover:text-blue-600 p-3 rounded-lg hover:bg-blue-50 transition-all duration-300 group">
-                            <i class="material-icons text-blue-500 mr-2">group</i>
-                            <span class="transform transition-all duration-300 group-hover:translate-x-1">Voir mes abonnés</span>
-                        </a>
-                        <a href="{{ path('app_following', {'id': user.id}) }}" 
-                           class="flex items-center text-gray-800 hover:text-blue-600 p-3 rounded-lg hover:bg-blue-50 transition-all duration-300 group">
-                            <i class="material-icons text-blue-500 mr-2">person_add</i>
-                            <span class="transform transition-all duration-300 group-hover:translate-x-1">Voir mes abonnements</span>
-                        </a>
-                        <a href="{{ path('app_blocked_users', {'id': user.id}) }}" 
-                           class="flex items-center text-gray-800 hover:text-blue-600 p-3 rounded-lg hover:bg-blue-50 transition-all duration-300 group">
-                            <i class="material-icons text-blue-500 mr-2">block</i>
-                            <span class="transform transition-all duration-300 group-hover:translate-x-1">Voir les personnes bloquées</span>
-                        </a>
-                    </div>
-                </div>
-
-                {# Section Modération #}
-                {% if is_granted('ROLE_MODERATEUR') %}
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover animate-fade-in delay-400">
-                        <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 relative overflow-hidden">
-                            <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-12 translate-x-12"></div>
-                            <h3 class="text-xl font-bold text-white flex items-center relative z-10">
-                                <i class="material-icons mr-2">security</i>
-                                Modération
-                            </h3>
-                        </div>
-                        <div class="p-6 grid grid-cols-1 gap-4">
-                            <a href="{{ path('app_warning_dashboard') }}" 
-                               class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition-all duration-300 group hover:border-blue-200 hover:shadow-md">
-                                <i class="material-icons text-blue-500 mr-3 text-2xl">dashboard</i>
-                                <div>
-                                    <div class="font-medium text-gray-800 group-hover:text-blue-600 transition-all duration-300">Tableau de bord</div>
-                                    <div class="text-sm text-gray-500">Vue d'ensemble des avertissements</div>
-                                </div>
-                            </a>
-                            <a href="{{ path('app_warning_index') }}" 
-                               class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition-all duration-300 group hover:border-blue-200 hover:shadow-md">
-                                <i class="material-icons text-blue-500 mr-3 text-2xl">warning</i>
-                                <div>
-                                    <div class="font-medium text-gray-800 group-hover:text-blue-600 transition-all duration-300">Avertissements</div>
-                                    <div class="text-sm text-gray-500">Liste des avertissements envoyés</div>
-                                </div>
-                            </a>
-                            <a href="{{ path('app_moderator_photos') }}" 
-                               class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition-all duration-300 group hover:border-blue-200 hover:shadow-md">
-                                <i class="material-icons text-blue-500 mr-3 text-2xl">photo_library</i>
-                                <div>
-                                    <div class="font-medium text-gray-800 group-hover:text-blue-600 transition-all duration-300">Modérer les photos</div>
-                                    <div class="text-sm text-gray-500">Vérifier et supprimer les photos inappropriées</div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        {% endif %}
-
-        {# Section des photos #}
-        {% if photos is defined and photos|length > 0 %}
-            <div class="bg-white rounded-xl shadow-lg p-6 card-hover animate-fade-in delay-500">
-                <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                    <i class="material-icons mr-2">collections</i>
-                    Mes photos récentes
-                </h2>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {% for photo in photos|slice(0, 8) %}
-                        {% if photo.id is defined and photo.photoUrl is defined %}
-                            <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square group"
-                                 style="animation: fadeIn 0.5s ease-out {{ loop.index0 * 0.1 + 0.6 }}s forwards; opacity: 0;">
-                                <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
-                                    <div class="transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-75">
-                                        {% if app.user.pseudo == user.pseudo %}
-                                            <div class="flex space-x-2 mb-2">
-                                                <a href="{{ path('app_photo_edit', {'id': photo.id}) }}" class="p-1.5 bg-white/20 rounded-full text-white hover:bg-white/40 transition-all duration-300">
-                                                    <i class="material-icons text-xs">edit</i>
-                                                </a>
-                                                <a href="{{ path('app_delete_photo', {'id': photo.id}) }}" 
-                                                   class="p-1.5 bg-white/20 rounded-full text-white hover:bg-red-400/80 transition-all duration-300" 
-                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?')">
-                                                    <i class="material-icons text-xs">delete</i>
-                                                </a>
-                                            </div>
-                                        {% endif %}
-                                        <div class="text-white font-bold text-lg">{{ photo.description }}</div>
+                        {% if unviewedWarnings is defined and unviewedWarnings|length > 0 and app.user.pseudo == user.pseudo %}
+                            <div class="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-4 mb-4 rounded-r-lg transition-all duration-300 hover:border-l-6 animate-pulse">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0">
+                                        <i class="material-icons text-amber-500">info</i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-amber-700 dark:text-amber-400">
+                                            Vous avez
+                                            <span class="font-bold">{{ unviewedWarnings|length }}</span>
+                                            avertissement(s) non lu(s).
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         {% endif %}
-                    {% endfor %}
+
+                        {% for warning in warnings %}
+                            <div id="warning-{{ warning.id }}" class="border-l-4 {{ warning.viewed ? 'border-gray-300 dark:border-gray-600' : 'border-amber-500' }} bg-gray-50 dark:bg-gray-700 p-4 rounded-r-lg transition-all duration-300 hover:shadow-md animate-slide-in" style="animation-delay: {{ loop.index0 * 0.1 + 0.3 }}s; opacity: 0;">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-grow">
+                                        <h4 class="font-bold text-gray-800 dark:text-gray-200 flex items-center">
+                                            <i class="material-icons mr-2 {{ warning.viewed ? 'text-gray-400 dark:text-gray-500' : 'text-amber-500' }}">warning</i>
+                                            {{ warning.reason }}
+                                        </h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ warning.description|length > 100 ? warning.description|slice(0, 100) ~ '...' : warning.description }}</p>
+                                        <div class="flex items-center mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                            <i class="material-icons text-xs mr-1">calendar_today</i>
+                                            {{ warning.createdAt|date('d/m/Y H:i') }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span id="status-{{ warning.id }}" class="px-2 py-1 {{ warning.viewed ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300' : 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400' }} rounded-full text-xs {{ not warning.viewed ? 'animate-pulse' : '' }} transition-colors duration-200">
+                                            {{ warning.viewed ? 'Lu' : 'Non lu' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex justify-end">
+                                    {% if app.user.pseudo == user.pseudo or is_granted('ROLE_MODERATEUR') %}
+                                        <a href="{{ path('app_warning_user_view', {'id': warning.id}) }}" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center view-details group" data-id="{{ warning.id }}" onclick="markAsRead(event, {{ warning.id }})">
+                                            <span class="mr-1 group-hover:mr-2 transition-all duration-300">Voir les détails</span>
+                                            <i class="material-icons text-xs transform transition-all duration-300 group-hover:translate-x-1">arrow_forward</i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ path('app_warning_user_view', {'id': warning.id}) }}" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center group">
+                                            <span class="mr-1 group-hover:mr-2 transition-all duration-300">Voir les détails</span>
+                                            <i class="material-icons text-xs transform transition-all duration-300 group-hover:translate-x-1">arrow_forward</i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
+
+            {# Sections du profil #}
+            {% if app.user.pseudo == user.pseudo %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {# Mon réseau #}
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden h-full card-hover animate-fade-in delay-300 transition-colors duration-200">
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-700 dark:to-blue-600 px-6 py-4 relative overflow-hidden transition-colors duration-200">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-12 translate-x-12"></div>
+                            <h3 class="text-xl font-bold text-white flex items-center relative z-10">
+                                <i class="material-icons mr-2">people</i>
+                                Mon réseau
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <a href="{{ path('app_followers', {'id': user.id}) }}" class="flex items-center text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group">
+                                <i class="material-icons text-blue-500 dark:text-blue-400 mr-2">group</i>
+                                <span class="transform transition-all duration-300 group-hover:translate-x-1">Voir mes abonnés</span>
+                            </a>
+                            <a href="{{ path('app_following', {'id': user.id}) }}" class="flex items-center text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group">
+                                <i class="material-icons text-blue-500 dark:text-blue-400 mr-2">person_add</i>
+                                <span class="transform transition-all duration-300 group-hover:translate-x-1">Voir mes abonnements</span>
+                            </a>
+                            <a href="{{ path('app_blocked_users', {'id': user.id}) }}" class="flex items-center text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group">
+                                <i class="material-icons text-blue-500 dark:text-blue-400 mr-2">block</i>
+                                <span class="transform transition-all duration-300 group-hover:translate-x-1">Voir les personnes bloquées</span>
+                            </a>
+
+                            
+                            <a href="{{ path('app_saved_posts') }}" class="flex items-center text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 p-3 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group">
+                                <i class="fas fa-bookmark text-blue-500 dark:text-blue-400 mr-2"></i>
+                                <span class="transform transition-all duration-300 group-hover:translate-x-1">Voir mes enregistrements</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    {# Section Modération #}
+                    {% if is_granted('ROLE_MODERATEUR') %}
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden card-hover animate-fade-in delay-400 transition-colors duration-200">
+                            <div class="bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-700 dark:to-blue-600 px-6 py-4 relative overflow-hidden transition-colors duration-200">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-12 translate-x-12"></div>
+                                <h3 class="text-xl font-bold text-white flex items-center relative z-10">
+                                    <i class="material-icons mr-2">security</i>
+                                    Modération
+                                </h3>
+                            </div>
+                            <div class="p-6 grid grid-cols-1 gap-4">
+                                <a href="{{ path('app_warning_dashboard') }}" class="flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-md">
+                                    <i class="material-icons text-blue-500 dark:text-blue-400 mr-3 text-2xl">dashboard</i>
+                                    <div>
+                                        <div class="font-medium text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300">Tableau de bord</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">Vue d'ensemble des avertissements</div>
+                                    </div>
+                                </a>
+                                <a href="{{ path('app_warning_index') }}" class="flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-md">
+                                    <i class="material-icons text-blue-500 dark:text-blue-400 mr-3 text-2xl">warning</i>
+                                    <div>
+                                        <div class="font-medium text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300">Avertissements</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">Liste des avertissements envoyés</div>
+                                    </div>
+                                </a>
+                                <a href="{{ path('app_moderator_photos') }}" class="flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-300 group hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-md">
+                                    <i class="material-icons text-blue-500 dark:text-blue-400 mr-3 text-2xl">photo_library</i>
+                                    <div>
+                                        <div class="font-medium text-gray-800 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-all duration-300">Modérer les photos</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">Vérifier et supprimer les photos inappropriées</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {# Section des photos #}
+            {% if photos is defined and photos|length > 0 %}
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 card-hover animate-fade-in delay-500 transition-colors duration-200">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 flex items-center">
+                        <i class="material-icons mr-2">collections</i>
+                        Mes photos récentes
+                    </h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {% for photo in photos|slice(0, 8) %}
+                            {% if photo.id is defined and photo.photoUrl is defined %}
+                                <div class="relative bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden aspect-square group" style="animation: fadeIn 0.5s ease-out {{ loop.index0 * 0.1 + 0.6 }}s forwards; opacity: 0;">
+                                    <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo" class="w-full h-full object-cover transition-all duration-500 group-hover:scale-110">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                                        <div class="transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-75">
+                                            {% if app.user.pseudo == user.pseudo %}
+                                                <div class="flex space-x-2 mb-2">
+                                                    <a href="{{ path('app_photo_edit', {'id': photo.id}) }}" class="p-1.5 bg-white/20 rounded-full text-white hover:bg-white/40 transition-all duration-300">
+                                                        <i class="material-icons text-xs">edit</i>
+                                                    </a>
+                                                    <a href="{{ path('app_delete_photo', {'id': photo.id}) }}" class="p-1.5 bg-white/20 rounded-full text-white hover:bg-red-400/80 transition-all duration-300" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?')">
+                                                        <i class="material-icons text-xs">delete</i>
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                            <div class="text-white font-bold text-lg">{{ photo.description }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
     </div>
-</div>
 
+    <!-- Navigation mobile -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg z-10 transition-colors duration-200">
+        <div class="flex justify-around items-center py-2">
+            <a href="{{ path('app_home') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2">
+                <i class="fas fa-home text-xl"></i>
+                <span class="text-xs mt-1">Accueil</span>
+            </a>
+            <a href="{{ path('app_discover') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2">
+                <i class="fas fa-compass text-xl"></i>
+                <span class="text-xs mt-1">Explorer</span>
+            </a>
+            <div class="relative">
+                <a href="#" class="flex items-center justify-center p-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white rounded-full shadow-md -mt-5 relative z-10 transition-colors duration-200">
+                    <i class="fas fa-plus"></i>
+                </a>
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white dark:bg-gray-800 rounded-full -z-10 transition-colors duration-200"></div>
+            </div>
+            <a href="#" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2">
+                <i class="fas fa-bell text-xl"></i>
+                <span class="text-xs mt-1">Alertes</span>
+            </a>
+            <a href="{{ path('app_profil') }}" class="flex flex-col items-center text-blue-600 dark:text-blue-400 p-2 relative">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-xs mt-1">Profil</span>
+                <div class="absolute -bottom-2 w-10 h-1 bg-blue-600 dark:bg-blue-400 rounded-full transition-colors duration-200"></div>
+            </a>
+        </div>
+    </nav>
 
+    <script>
+        // Script pour marquer les avertissements comme lus
+        function markAsRead(event, warningId) {
+            // Ne pas interrompre la navigation si l'utilisateur est modérateur
+            if (!event.currentTarget.classList.contains('view-details')) {
+                return true;
+            }
+
+            // Pour les utilisateurs normaux, mettre à jour l'état visuellement
+            const statusElement = document.getElementById(`status-${warningId}`);
+            const warningElement = document.getElementById(`warning-${warningId}`);
+            
+            if (statusElement && statusElement.textContent.trim() === 'Non lu') {
+                statusElement.textContent = 'Lu';
+                statusElement.classList.remove('bg-amber-100', 'text-amber-700', 'dark:bg-amber-900/40', 'dark:text-amber-400', 'animate-pulse');
+                statusElement.classList.add('bg-gray-200', 'text-gray-700', 'dark:bg-gray-600', 'dark:text-gray-300');
+                
+                if (warningElement) {
+                    warningElement.classList.remove('border-amber-500');
+                    warningElement.classList.add('border-gray-300', 'dark:border-gray-600');
+                    
+                    const icon = warningElement.querySelector('.material-icons');
+                    if (icon) {
+                        icon.classList.remove('text-amber-500');
+                        icon.classList.add('text-gray-400', 'dark:text-gray-500');
+                    }
+                }
+            }
+            
+            return true;
+        }
+    </script>
 {% endblock %}

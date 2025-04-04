@@ -29,10 +29,15 @@ class HomeController extends AbstractController
     public function index(Request $request): Response
     {
         $currentUser = $this->getUser();
-        $photos = $this->photoService->getFilteredPhotos($currentUser);
+        $filterType = $request->query->get('type');
+        
+        // Récupérer les photos filtrées selon le type (following/all)
+        $photos = $this->photoService->getFilteredPhotos($currentUser, $filterType);
         $userStatuts = $this->photoService->getUserStatuts($photos, $currentUser);
         $commentForms = $this->commentFormService->createPhotoCommentForms($photos, $currentUser);
         
+        // Déterminer le titre de la page selon le filtre
+        $pageTitle = $filterType === 'following' ? 'Publications de vos abonnements' : 'Fil d\'actualités';
 
         if ($request->isMethod('POST')) {
             $response = $this->commentaireService->handleCommentSubmission($request, $currentUser);
@@ -45,9 +50,12 @@ class HomeController extends AbstractController
             'photos' => $photos,
             'commentForms' => $commentForms,
             'userStatuts' => $userStatuts,
-            'currentUser' => $currentUser
+            'currentUser' => $currentUser,
+            'filterType' => $filterType,
+            'pageTitle' => $pageTitle
         ]);
     }
+    
 
     #[Route('/search', name: 'app_search', methods: ['GET'])]
     public function search(Request $request, LoggerInterface $logger): Response

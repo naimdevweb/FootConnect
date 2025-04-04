@@ -1,63 +1,191 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Inscription - FootConnect{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .delay-100 {
+            animation-delay: 0.1s;
+            opacity: 0;
+        }
+
+        .delay-200 {
+            animation-delay: 0.2s;
+            opacity: 0;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <div class="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
-            <h2 class="text-center text-2xl font-bold text-gray-900">Créer un compte</h2>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center transition-colors duration-200">
+    <div class="w-full max-w-md">
+        {# Logo et en-tête #}
+        <div class="text-center mb-8 animate-fade-in">
+            <div class="mx-auto h-16 w-16 bg-blue-600 dark:bg-blue-700 rounded-full flex items-center justify-center shadow-lg mb-4 transition-colors duration-200">
+                <i class="fas fa-user-plus text-white text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-200">FootConnect</h1>
+            <p class="mt-2 text-gray-600 dark:text-gray-300 transition-colors duration-200">Créez votre compte pour rejoindre la communauté</p>
+        </div>
+        
+        {# Formulaire d'inscription #}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-colors duration-200 animate-fade-in delay-100">
+            {% if app.user %}
+                <div class="bg-blue-50 dark:bg-blue-900/30 p-4 border-l-4 border-blue-500 dark:border-blue-600 transition-colors duration-200">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 transition-colors duration-200"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700 dark:text-blue-300 transition-colors duration-200">
+                                Vous êtes déjà connecté en tant que <span class="font-medium">{{ app.user.userIdentifier }}</span>
+                            </p>
+                            <div class="mt-2">
+                                <a href="{{ path('app_home') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium underline transition-colors duration-200">Accéder à mon compte</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
 
             {% for flash_error in app.flashes('verify_email_error') %}
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                    {{ flash_error }}
+                <div class="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 dark:border-red-600 p-4 transition-colors duration-200 mx-6 mt-6 rounded-r" role="alert">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 pt-0.5">
+                            <i class="fas fa-exclamation-circle text-red-600 dark:text-red-400 transition-colors duration-200"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700 dark:text-red-300 transition-colors duration-200">{{ flash_error }}</p>
+                        </div>
+                    </div>
                 </div>
             {% endfor %}
 
-            {{ form_start(registrationForm, {'attr': {'class': 'space-y-4'}}) }}
-            
-                <!-- Email -->
-                <div>
-                    {{ form_label(registrationForm.email, "Email", {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
-                    {{ form_widget(registrationForm.email, {'attr': {'class': 'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
-                    {{ form_errors(registrationForm.email) }}
+            <div class="p-6 sm:p-8 space-y-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 transition-colors duration-200">Créer un compte</h2>
+
+                {{ form_start(registrationForm, {'attr': {'class': 'space-y-5'}}) }}
+                    <!-- Email -->
+                    <div>
+                        {{ form_label(registrationForm.email, "Email", {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200'}}) }}
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400 dark:text-gray-600 transition-colors duration-200"></i>
+                            </div>
+                            {{ form_widget(registrationForm.email, {'attr': {'class': 'block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200', 'placeholder': 'exemple@email.com'}}) }}
+                        </div>
+                        {% if form_errors(registrationForm.email) %}
+                            <div class="mt-1 text-sm text-red-600 dark:text-red-400 transition-colors duration-200">
+                                {{ form_errors(registrationForm.email) }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Pseudo -->
+                    <div>
+                        {{ form_label(registrationForm.pseudo, "Pseudo", {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200'}}) }}
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400 dark:text-gray-600 transition-colors duration-200"></i>
+                            </div>
+                            {{ form_widget(registrationForm.pseudo, {'attr': {'class': 'block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200', 'placeholder': 'Votre pseudo'}}) }}
+                        </div>
+                        {% if form_errors(registrationForm.pseudo) %}
+                            <div class="mt-1 text-sm text-red-600 dark:text-red-400 transition-colors duration-200">
+                                {{ form_errors(registrationForm.pseudo) }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Mot de passe -->
+                    <div>
+                        {{ form_label(registrationForm.plainPassword.first, "Mot de passe", {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200'}}) }}
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400 dark:text-gray-600 transition-colors duration-200"></i>
+                            </div>
+                            {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200', 'placeholder': 'Votre mot de passe'}}) }}
+                        </div>
+                        {% if form_errors(registrationForm.plainPassword.first) %}
+                            <div class="mt-1 text-sm text-red-600 dark:text-red-400 transition-colors duration-200">
+                                {{ form_errors(registrationForm.plainPassword.first) }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Confirmation du mot de passe -->
+                    <div>
+                        {{ form_label(registrationForm.plainPassword.second, "Confirmez le mot de passe", {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200'}}) }}
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400 dark:text-gray-600 transition-colors duration-200"></i>
+                            </div>
+                            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200', 'placeholder': 'Confirmez le mot de passe'}}) }}
+                        </div>
+                        {% if form_errors(registrationForm.plainPassword.second) %}
+                            <div class="mt-1 text-sm text-red-600 dark:text-red-400 transition-colors duration-200">
+                                {{ form_errors(registrationForm.plainPassword.second) }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Accepter les conditions -->
+                    <div class="flex items-center">
+                        {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'h-4 w-4 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-400 border-gray-300 dark:border-gray-600 rounded transition-colors duration-200'}}) }}
+                        {{ form_label(registrationForm.agreeTerms, "J'accepte les termes et conditions", {'label_attr': {'class': 'ml-2 block text-sm text-gray-700 dark:text-gray-300 transition-colors duration-200'}}) }}
+                    </div>
+                    {% if form_errors(registrationForm.agreeTerms) %}
+                        <div class="mt-1 text-sm text-red-600 dark:text-red-400 transition-colors duration-200">
+                            {{ form_errors(registrationForm.agreeTerms) }}
+                        </div>
+                    {% endif %}
+
+                    <!-- Bouton d'inscription -->
+                    <div class="pt-4">
+                        <button type="submit" class="w-full flex justify-center items-center py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-700 dark:to-blue-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 shadow-md transition-all duration-200">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            S'inscrire
+                        </button>
+                    </div>
+                {{ form_end(registrationForm) }}
+
+                <!-- Séparateur -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300 dark:border-gray-600 transition-colors duration-200"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors duration-200">ou</span>
+                    </div>
                 </div>
 
-                <!-- Pseudo -->
-                <div>
-                    {{ form_label(registrationForm.pseudo, "Pseudo", {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
-                    {{ form_widget(registrationForm.pseudo, {'attr': {'class': 'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
-                    {{ form_errors(registrationForm.pseudo) }}
+                <!-- Lien de connexion -->
+                <div class="text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400 transition-colors duration-200">
+                        Vous avez déjà un compte ?
+                        <a href="{{ path('app_login') }}" class="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors duration-200">
+                            Connectez-vous
+                        </a>
+                    </p>
                 </div>
-
-                <!-- Mot de passe -->
-                <div>
-                    {{ form_label(registrationForm.plainPassword.first, "Mot de passe", {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
-                    {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
-                    {{ form_errors(registrationForm.plainPassword.first) }}
-                </div>
-
-                <!-- Confirmation du mot de passe -->
-                <div>
-                    {{ form_label(registrationForm.plainPassword.second, "Confirmez le mot de passe", {'label_attr': {'class': 'block text-gray-700 text-sm font-bold mb-2'}}) }}
-                    {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'}}) }}
-                    {{ form_errors(registrationForm.plainPassword.second) }}
-                </div>
-
-                <!-- Accepter les conditions -->
-                <div class="flex items-center">
-                    {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'mr-2'}}) }}
-                    {{ form_label(registrationForm.agreeTerms, "J'accepte les termes et conditions", {'label_attr': {'class': 'text-gray-700 text-sm'}}) }}
-                    {{ form_errors(registrationForm.agreeTerms) }}
-                </div>
-
-                <!-- Bouton d'inscription -->
-                <div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        S'inscrire
-                    </button>
-                </div>
-
-            {{ form_end(registrationForm) }}
+            </div>
         </div>
     </div>
+</div>
 {% endblock %}

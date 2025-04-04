@@ -1,0 +1,81 @@
+{# templates/components/ui/card.html.twig #}
+{# Composants de cartes pour l'interface utilisateur #}
+
+{% macro standard(title, content, additionalClasses = '') %}
+    <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md overflow-hidden transition-colors duration-200 {{ additionalClasses }}">
+        {% if title %}
+            <div class="px-4 py-3 border-b border-light-200 dark:border-dark-700">
+                <h3 class="text-lg font-semibold text-dark-800 dark:text-light-200">{{ title }}</h3>
+            </div>
+        {% endif %}
+        <div class="p-4 text-dark-700 dark:text-light-300">
+            {{ content|raw }}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro profile(username, avatarUrl, bio = null, stats = null, additionalClasses = '') %}
+    <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md overflow-hidden transition-colors duration-200 {{ additionalClasses }}">
+        <div class="flex flex-col items-center p-6">
+            <div class="w-20 h-20 bg-light-300 dark:bg-dark-700 rounded-full overflow-hidden mb-4">
+                {% if avatarUrl %}
+                    <img src="{{ avatarUrl }}" alt="{{ username }}" class="w-full h-full object-cover">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-primary-500 text-white text-2xl font-bold">
+                        {{ username|slice(0, 1)|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <h3 class="text-xl font-bold text-dark-800 dark:text-light-200 mb-1">{{ username }}</h3>
+            {% if bio %}
+                <p class="text-dark-600 dark:text-light-400 text-center mb-4">{{ bio }}</p>
+            {% endif %}
+            {% if stats %}
+                <div class="flex justify-around w-full border-t border-light-200 dark:border-dark-700 pt-4 mt-2">
+                    {% for label, value in stats %}
+                        <div class="text-center">
+                            <span class="block text-lg font-semibold text-dark-800 dark:text-light-200">{{ value }}</span>
+                            <span class="text-sm text-dark-600 dark:text-light-400">{{ label }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro post(author, content, date, likes = 0, comments = 0, additionalClasses = '') %}
+    <div class="bg-white dark:bg-dark-800 rounded-lg shadow-md overflow-hidden transition-colors duration-200 {{ additionalClasses }}">
+        <div class="flex items-center p-4 border-b border-light-200 dark:border-dark-700">
+            <div class="h-10 w-10 rounded-full bg-light-300 dark:bg-dark-700 overflow-hidden mr-3">
+                {% if author.avatar %}
+                    <img src="{{ author.avatar }}" alt="{{ author.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-primary-500 text-white font-bold">
+                        {{ author.name|slice(0, 1)|upper }}
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                <h4 class="font-semibold text-dark-900 dark:text-light-100">{{ author.name }}</h4>
+                <p class="text-sm text-dark-500 dark:text-light-500">{{ date|date("d M Y, H:i") }}</p>
+            </div>
+        </div>
+        <div class="p-4 text-dark-800 dark:text-light-200">
+            {{ content|raw }}
+        </div>
+        <div class="px-4 py-3 border-t border-light-200 dark:border-dark-700 flex justify-between">
+            <div class="flex items-center text-dark-600 dark:text-light-400">
+                <button class="flex items-center mr-4 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
+                    <i class="fas fa-thumbs-up mr-1"></i> {{ likes }}
+                </button>
+                <button class="flex items-center hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
+                    <i class="fas fa-comment mr-1"></i> {{ comments }}
+                </button>
+            </div>
+            <button class="text-dark-600 dark:text-light-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </div>
+{% endmacro %}
