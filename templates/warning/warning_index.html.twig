@@ -5,6 +5,7 @@
 
 {% block stylesheets %}
 {{ parent() }}
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
     .animate-fade-in {
         animation: fadeIn 0.6s ease-out forwards;
@@ -23,6 +24,9 @@
     }
     .table-row:hover {
         background-color: rgba(59, 130, 246, 0.05);
+    }
+    .dark .table-row:hover {
+        background-color: rgba(59, 130, 246, 0.1);
     }
     .action-button {
         transition: all 0.2s;
@@ -47,6 +51,9 @@
         animation: move 1s linear infinite;
         border-radius: 9999px;
         z-index: 0;
+    }
+    .dark .status-badge::after {
+        background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%);
     }
     @keyframes move {
         from { background-position: 0 0; }
@@ -76,87 +83,130 @@
         opacity: 0;
         transition: 0s;
     }
+    
+    .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+    }
 </style>
 {% endblock %}
 
+{% block page_header %}
+    <div class="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-200">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <a href="{{ path('app_moderation_dashboard') }}" class="p-2 -ml-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <a href="{{ path('app_moderation_dashboard') }}" class="text-gray-600 dark:text-gray-400 font-semibold text-lg hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+                        Tableau de bord
+                    </a>
+                </div>
+                <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
+                    <div class="w-8 h-8 bg-amber-600 dark:bg-amber-700 rounded-full flex items-center justify-center mr-2 shadow-md hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                    </div>
+                    Avertissements
+                </h1>
+                <div></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block body %}
-<div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen pt-6 pb-12">
-    <div class="container mx-auto px-4 py-4">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+    <div class="max-w-7xl mx-auto">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 animate-fade-in">
             <div class="mb-4 md:mb-0">
-                <h1 class="text-3xl font-bold text-gray-800 tet">
-                    <span class="text-amber-600">Avertissements</span>
+                <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100 transition-colors duration-200">
+                    <span class="text-amber-600 dark:text-amber-500 transition-colors duration-200">Avertissements</span>
                 </h1>
-                <p class="text-gray-600 mt-1">Gestion des avertissements envoyés aux utilisateurs</p>
+                <p class="text-gray-600 dark:text-gray-400 mt-1 transition-colors duration-200">Gestion des avertissements envoyés aux utilisateurs</p>
             </div>
             
             <div class="flex flex-col sm:flex-row gap-3">
                 <a href="{{ path('app_moderation_dashboard') }}" 
-                   class="px-4 py-2 bg-white rounded-lg text-gray-700 hover:bg-blue-50 flex items-center justify-center shadow-sm border border-gray-200 transition-all duration-300 ease-in-out">
-                    <span class="material-icons mr-2"> Tableau de bord</span>
-                    
+                   class="px-4 py-2 bg-white dark:bg-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-600 flex items-center justify-center shadow-sm border border-gray-200 dark:border-gray-600 transition-all duration-300 ease-in-out">
+                    <span class="material-icons mr-2 text-gray-500 dark:text-gray-400 transition-colors duration-200">dashboard</span>
+                    Tableau de bord
                 </a>
                 <a href="{{ path('app_warning_new') }}" 
-                   class="px-4 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700 flex items-center justify-center shadow-md transition-all duration-300 ease-in-out btn-primary">
-                    <span class="material-icons mr-2"> Nouvel avertissement</span>
-                   
+                   class="px-4 py-2 bg-blue-600 dark:bg-blue-700 rounded-lg text-white hover:bg-blue-700 dark:hover:bg-blue-600 flex items-center justify-center shadow-md transition-all duration-300 ease-in-out btn-primary">
+                    <span class="material-icons mr-2">add_circle</span>
+                    Nouvel avertissement
                 </a>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-md overflow-hidden animate-fade-in animate-delay-1 border border-gray-100">
-            <div class="px-6 py-4 bg-gradient-to-r from-amber-50 to-white border-b border-gray-100">
-                <h2 class="text-xl font-bold text-gray-800 flex items-center">
-                    <span class="material-icons text-amber-600 mr-2">Tous les avertissements</span>
-                    
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden animate-fade-in animate-delay-1 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+            <div class="px-6 py-4 bg-gradient-to-r from-amber-50 to-white dark:from-amber-900/20 dark:to-gray-800 border-b border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center transition-colors duration-200">
+                    <span class="material-icons text-amber-600 dark:text-amber-500 mr-2 transition-colors duration-200">warning</span>
+                    Tous les avertissements
                 </h2>
             </div>
             
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-200">
+                    <thead class="bg-gray-50 dark:bg-gray-700/50 transition-colors duration-200">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
                                 Utilisateur
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
                                 Motif
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
                                 Date
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
                                 Statut
                             </th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider transition-colors duration-200">
                                 Actions
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-200">
                         {% for warning in warnings %}
-                            <tr class="table-row" style="animation: fadeIn 0.5s ease-out forwards; animation-delay: {{ loop.index0 * 0.05 }}s; opacity: 0;">
+                            <tr class="table-row transition-colors duration-200" style="animation: fadeIn 0.5s ease-out forwards; animation-delay: {{ loop.index0 * 0.05 }}s; opacity: 0;">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
-                                       
+                                        <div class="w-10 h-10 flex-shrink-0 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center text-white text-sm font-medium transition-colors duration-200">
+                                            {{ warning.user.pseudo|slice(0, 1)|upper }}
+                                        </div>
                                         <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">{{ warning.user.pseudo }}</div>
+                                            <div class="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors duration-200">{{ warning.user.pseudo }}</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">{{ warning.user.email }}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-900 line-clamp-1">{{ warning.reason }}</div>
+                                    <div class="text-sm text-gray-900 dark:text-gray-100 line-clamp-1 transition-colors duration-200">{{ warning.reason }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-500">{{ warning.createdAt|date('d/m/Y H:i') }}</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">{{ warning.createdAt|date('d/m/Y H:i') }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     {% if warning.viewed %}
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 status-badge">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 status-badge transition-colors duration-200">
                                             Lu
                                         </span>
                                     {% else %}
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 status-badge">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 status-badge transition-colors duration-200">
                                             Non lu
                                         </span>
                                     {% endif %}
@@ -164,19 +214,19 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end space-x-3">
                                         <a href="{{ path('app_warning_show', {'id': warning.id}) }}" 
-                                           class="text-blue-600 hover:text-blue-900 action-button" 
+                                           class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 action-button transition-colors duration-200" 
                                            data-tooltip="Voir les détails">
-                                            <span class="material-icons">voir</span>
+                                            <span class="material-icons">visibility</span>
                                         </a>
                                         <a href="{{ path('app_warning_edit', {'id': warning.id}) }}" 
-                                           class="text-indigo-600 hover:text-indigo-900 action-button"
+                                           class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 action-button transition-colors duration-200"
                                            data-tooltip="Modifier">
-                                            <span class="material-icons">modifier</span>
+                                            <span class="material-icons">edit</span>
                                         </a>
                                         <form method="post" action="{{ path('app_warning_delete', {'id': warning.id}) }}" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet avertissement ?');">
                                             <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ warning.id) }}">
-                                            <button type="submit" class="text-red-600 hover:text-red-900 border-0 bg-transparent cursor-pointer action-button" data-tooltip="Supprimer">
-                                                <span class="material-icons">supprimer</span>
+                                            <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 border-0 bg-transparent cursor-pointer action-button transition-colors duration-200" data-tooltip="Supprimer">
+                                                <span class="material-icons">delete</span>
                                             </button>
                                         </form>
                                     </div>
@@ -186,10 +236,10 @@
                             <tr class="animate-fade-in animate-delay-1">
                                 <td colspan="5" class="px-6 py-12 text-center">
                                     <div class="flex flex-col items-center">
-                                        <span class="material-icons text-gray-400 text-5xl mb-3">warning_off</span>
-                                        <p class="text-gray-500 text-lg">Aucun avertissement trouvé</p>
-                                        <p class="text-gray-400 text-sm mt-1">Tous les utilisateurs respectent les règles</p>
-                                        <a href="{{ path('app_warning_new') }}" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+                                        <span class="material-icons text-gray-400 dark:text-gray-500 text-5xl mb-3 transition-colors duration-200">sentiment_satisfied_alt</span>
+                                        <p class="text-gray-500 dark:text-gray-400 text-lg transition-colors duration-200">Aucun avertissement trouvé</p>
+                                        <p class="text-gray-400 dark:text-gray-500 text-sm mt-1 transition-colors duration-200">Tous les utilisateurs respectent les règles</p>
+                                        <a href="{{ path('app_warning_new') }}" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors duration-200">
                                             <span class="material-icons mr-2">add</span> Créer un avertissement
                                         </a>
                                     </div>
@@ -201,8 +251,8 @@
             </div>
             
             {% if warnings|length > 0 %}
-            <div class="py-3 px-6 border-t border-gray-200 bg-gray-50">
-                <p class="text-sm text-gray-500">
+            <div class="py-3 px-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 transition-colors duration-200">
+                <p class="text-sm text-gray-500 dark:text-gray-400 transition-colors duration-200">
                     Total : {{ warnings|length }} avertissement(s)
                 </p>
             </div>
@@ -211,5 +261,32 @@
     </div>
 </div>
 
-
+<!-- Navigation mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg z-10 transition-colors duration-200">
+    <div class="flex justify-around items-center py-2">
+        <a href="{{ path('app_home') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2 transition-colors duration-200">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-1">Accueil</span>
+        </a>
+        <a href="{{ path('app_discover') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2 transition-colors duration-200">
+            <i class="fas fa-compass text-xl"></i>
+            <span class="text-xs mt-1">Explorer</span>
+        </a>
+        <div class="relative">
+            <a href="#" class="flex items-center justify-center p-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white rounded-full shadow-md -mt-5 relative z-10 transition-colors duration-200">
+                <i class="fas fa-plus"></i>
+            </a>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white dark:bg-gray-800 rounded-full -z-10 transition-colors duration-200"></div>
+        </div>
+        <a href="{{ path('app_moderation_dashboard') }}" class="flex flex-col items-center text-amber-600 dark:text-amber-400 p-2 relative transition-colors duration-200">
+            <i class="fas fa-shield-alt text-xl"></i>
+            <span class="text-xs mt-1">Modération</span>
+            <div class="absolute -bottom-2 w-10 h-1 bg-amber-600 dark:bg-amber-400 rounded-full transition-colors duration-200"></div>
+        </a>
+        <a href="{{ path('app_profil') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2 transition-colors duration-200">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-1">Profil</span>
+        </a>
+    </div>
+</nav>
 {% endblock %}

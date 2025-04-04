@@ -5,547 +5,608 @@
 {% endblock %}
 
 {% block stylesheets %}
-	{{ parent() }}
-	<style>
-		/* Animations et transitions */
-		@keyframes fadeIn {
-			from {
-				opacity: 0;
-				transform: translateY(15px);
-			}
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
+    {{ parent() }}
+    <style>
+        /* Animations et transitions */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-		@keyframes slideIn {
-			from {
-				opacity: 0;
-				transform: translateX(-15px);
-			}
-			to {
-				opacity: 1;
-				transform: translateX(0);
-			}
-		}
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
 
-		@keyframes pulse {
-			0% {
-				transform: scale(1);
-				box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
-			}
-			70% {
-				transform: scale(1.05);
-				box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
-			}
-			100% {
-				transform: scale(1);
-				box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
-			}
-		}
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+        
+        .dark @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(96, 165, 250, 0.4);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(96, 165, 250, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(96, 165, 250, 0);
+            }
+        }
 
-		@keyframes shimmer {
-			0% {
-				background-position: -200% 0;
-			}
-			100% {
-				background-position: 200% 0;
-			}
-		}
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
 
-		@keyframes countUp {
-			from {
-				opacity: 0;
-				transform: translateY(10px);
-			}
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-		/* Classes d'animation */
-		.animate-fade-in {
-			animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-			opacity: 0;
-		}
+        /* Classes d'animation */
+        .animate-fade-in {
+            animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 0;
+        }
 
-		.animate-slide-in {
-			animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-			opacity: 0;
-		}
+        .animate-slide-in {
+            animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 0;
+        }
 
-		.animate-delay-1 {
-			animation-delay: 0.1s;
-		}
-		.animate-delay-2 {
-			animation-delay: 0.2s;
-		}
-		.animate-delay-3 {
-			animation-delay: 0.3s;
-		}
-		.animate-delay-4 {
-			animation-delay: 0.4s;
-		}
+        .animate-delay-1 {
+            animation-delay: 0.1s;
+        }
+        .animate-delay-2 {
+            animation-delay: 0.2s;
+        }
+        .animate-delay-3 {
+            animation-delay: 0.3s;
+        }
+        .animate-delay-4 {
+            animation-delay: 0.4s;
+        }
 
-		/* Effets des cartes */
-		.card-hover {
-			transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-			will-change: transform, box-shadow;
-		}
+        /* Effets des cartes */
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow;
+        }
 
-		.card-hover:hover {
-			transform: translateY(-5px);
-			box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-		}
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .dark .card-hover:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
 
-		.stat-card {
-			position: relative;
-			overflow: hidden;
-			border-left-width: 4px;
-			transition: border-color 0.3s ease;
-		}
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            border-left-width: 4px;
+            transition: border-color 0.3s ease;
+        }
 
-		.stat-card:hover {
-			border-color: currentColor;
-		}
+        .stat-card:hover {
+            border-color: currentColor;
+        }
 
-		.stat-card::after {
-			content: '';
-			position: absolute;
-			top: -50%;
-			left: -50%;
-			width: 200%;
-			height: 200%;
-			background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
-			transform: rotate(30deg);
-			opacity: 0;
-			transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
-			pointer-events: none;
-		}
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+            transform: rotate(30deg);
+            opacity: 0;
+            transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+            pointer-events: none;
+        }
+        
+        .dark .stat-card::after {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+        }
 
-		.stat-card:hover::after {
-			opacity: 1;
-			left: 100%;
-		}
+        .stat-card:hover::after {
+            opacity: 1;
+            left: 100%;
+        }
 
-		/* Effets supplémentaires */
-		.pulse-icon {
-			animation: pulse 3s infinite;
-		}
+        /* Effets supplémentaires */
+        .pulse-icon {
+            animation: pulse 3s infinite;
+        }
 
-		.photo-card {
-			transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-			will-change: transform;
-			backface-visibility: hidden;
-		}
+        .photo-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+            backface-visibility: hidden;
+        }
 
-		.photo-card:hover {
-			transform: scale(1.02) translateY(-5px);
-			box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-		}
+        .photo-card:hover {
+            transform: scale(1.02) translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .dark .photo-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
 
-		.photo-card img {
-			transition: transform 0.7s cubic-bezier(0.2, 1, 0.3, 1);
-		}
+        .photo-card img {
+            transition: transform 0.7s cubic-bezier(0.2, 1, 0.3, 1);
+        }
 
-		.photo-card:hover img {
-			transform: scale(1.1);
-		}
+        .photo-card:hover img {
+            transform: scale(1.1);
+        }
 
-		.action-button {
-			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-			position: relative;
-			z-index: 1;
-		}
+        .action-button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
 
-		.action-button:hover {
-			transform: scale(1.15);
-		}
+        .action-button:hover {
+            transform: scale(1.15);
+        }
 
-		.action-button::before {
-			content: '';
-			position: absolute;
-			z-index: -1;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background: currentColor;
-			border-radius: 50%;
-			opacity: 0;
-			transform: scale(0);
-			transition: transform 0.3s ease, opacity 0.3s ease;
-		}
+        .action-button::before {
+            content: '';
+            position: absolute;
+            z-index: -1;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: currentColor;
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
 
-		.action-button:hover::before {
-			opacity: 0.1;
-			transform: scale(1.5);
-		}
+        .action-button:hover::before {
+            opacity: 0.1;
+            transform: scale(1.5);
+        }
 
-		/* Compteur avec animation */
-		.count-number {
-			display: inline-block;
-			animation: countUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-			background: linear-gradient(90deg, currentColor 30%, #4f46e5 100%);
-			-webkit-background-clip: text;
-			-webkit-text-fill-color: transparent;
-			position: relative;
-		}
+        /* Compteur avec animation */
+        .count-number {
+            display: inline-block;
+            animation: countUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            background: linear-gradient(90deg, currentColor 30%, #4f46e5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        
+        .dark .count-number {
+            background: linear-gradient(90deg, currentColor 30%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-		/* Tooltip amélioré */
-		.tooltip {
-			position: relative;
-			display: inline-block;
-		}
+        /* Tooltip amélioré */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
 
-		.tooltip .tooltiptext {
-			visibility: hidden;
-			background-color: #1f2937;
-			color: #fff;
-			text-align: center;
-			border-radius: 0.375rem;
-			padding: 0.5rem 0.75rem;
-			position: absolute;
-			z-index: 10;
-			bottom: 125%;
-			left: 50%;
-			transform: translateX(-50%);
-			opacity: 0;
-			transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
-			transform-origin: bottom center;
-			box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-			white-space: nowrap;
-			font-size: 0.75rem;
-		}
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: #1f2937;
+            color: #fff;
+            text-align: center;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.75rem;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+            transform-origin: bottom center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            white-space: nowrap;
+            font-size: 0.75rem;
+        }
+        
+        .dark .tooltip .tooltiptext {
+            background-color: #111827;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+        }
 
-		.tooltip .tooltiptext::after {
-			content: "";
-			position: absolute;
-			top: 100%;
-			left: 50%;
-			margin-left: -5px;
-			border-width: 5px;
-			border-style: solid;
-			border-color: #1f2937 transparent transparent transparent;
-		}
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1f2937 transparent transparent transparent;
+        }
+        
+        .dark .tooltip .tooltiptext::after {
+            border-color: #111827 transparent transparent transparent;
+        }
 
-		.tooltip:hover .tooltiptext {
-			visibility: visible;
-			opacity: 1;
-			transform: translateX(-50%) translateY(-5px);
-		}
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
 
-		/* Bouton avec effet */
-		.btn-effect {
-			position: relative;
-			overflow: hidden;
-			transition: all 0.3s;
-		}
+        /* Bouton avec effet */
+        .btn-effect {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
 
-		.btn-effect:after {
-			content: '';
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: -100%;
-			background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
-			transition: all 0.6s;
-		}
+        .btn-effect:after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+            transition: all 0.6s;
+        }
+        
+        .dark .btn-effect:after {
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+        }
 
-		.btn-effect:hover:after {
-			left: 100%;
-		}
+        .btn-effect:hover:after {
+            left: 100%;
+        }
 
-		/* Amélioration des fonds et sections */
-		.section-heading {
-			position: relative;
-			display: inline-block;
-		}
+        /* Amélioration des fonds et sections */
+        .section-heading {
+            position: relative;
+            display: inline-block;
+        }
 
-		.section-heading:after {
-			content: '';
-			position: absolute;
-			width: 60%;
-			height: 3px;
-			background: linear-gradient(90deg, #3b82f6 0%, transparent 100%);
-			bottom: -5px;
-			left: 0;
-			border-radius: 2px;
-		}
+        .section-heading:after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6 0%, transparent 100%);
+            bottom: -5px;
+            left: 0;
+            border-radius: 2px;
+        }
+        
+        .dark .section-heading:after {
+            background: linear-gradient(90deg, #60a5fa 0%, transparent 100%);
+        }
 
-		/* Barre de progression */
-		.progress-bar {
-			height: 6px;
-			border-radius: 3px;
-			background: linear-gradient(90deg, #3b82f6 0%, #93c5fd 100%);
-			background-size: 200% 100%;
-			animation: shimmer 2s infinite;
-		}
+        /* Barre de progression */
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #3b82f6 0%, #93c5fd 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        .dark .progress-bar {
+            background: linear-gradient(90deg, #60a5fa 0%, #93c5fd 100%);
+        }
 
-		/* Image de fond subtile */
-		.bg-pattern {
-			background-color: #f9fafb;
-			background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.03'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-		}
-	</style>
+        /* Image de fond subtile */
+        .bg-pattern {
+            background-color: #f9fafb;
+            background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.03'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .dark .bg-pattern {
+            background-color: #111827;
+            background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%2360a5fa' fill-opacity='0.03'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
 {% endblock %}
 
 {% block body %}
-	<section class="bg-pattern min-h-screen pt-6 pb-12">
-		<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-			<header class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 animate-fade-in">
-				<div class="mb-4 sm:mb-0">
-					<h1 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center">
-						<span class="bg-blue-600 text-white p-2 rounded-lg mr-3 shadow-md">
-							<span class="material-icons">dashboard</span>
-						</span>
-						Tableau de
-						<span class="text-blue-600 ml-1">bord</span>
-					</h1>
-					<p class="text-gray-600 mt-2">Superviser et gérer le contenu de la plateforme</p>
-				</div>
-				<a href="{{ path('app_home') }}" class="btn-effect px-4 py-2 bg-white rounded-lg text-gray-700 hover:bg-blue-50 flex items-center shadow-sm border border-gray-200 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md">
-					<span class="material-icons mr-2">home</span>
-					Retour à l'accueil
-				</a>
-			</header>
+    <section class="bg-pattern min-h-screen pt-6 pb-12 dark:bg-gray-900 transition-colors duration-200">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 animate-fade-in">
+                <div class="mb-4 sm:mb-0">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 flex items-center transition-colors duration-200">
+                        <span class="bg-blue-600 dark:bg-blue-700 text-white p-2 rounded-lg mr-3 shadow-md transition-colors duration-200">
+                            <span class="material-icons">dashboard</span>
+                        </span>
+                        Tableau de
+                        <span class="text-blue-600 dark:text-blue-400 ml-1 transition-colors duration-200">bord</span>
+                    </h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-2 transition-colors duration-200">Superviser et gérer le contenu de la plateforme</p>
+                </div>
+                <a href="{{ path('app_home') }}" class="btn-effect px-4 py-2 bg-white dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 flex items-center shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md">
+                    <span class="material-icons mr-2">home</span>
+                    Retour à l'accueil
+                </a>
+            </header>
 
-			<section
-				class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10">
-				<!-- Carte Utilisateurs -->
-				<article class="bg-white rounded-xl shadow-md p-5 sm:p-6 stat-card animate-fade-in animate-delay-1 border-l-4 border-blue-500 text-blue-600">
-					<header class="flex items-center">
-						<div class="rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 flex items-center justify-center mr-4 pulse-icon shadow-inner">
-							<span class="material-icons text-blue-600 text-xl">person</span>
-						</div>
-						<div>
-							<p class="text-sm font-medium text-gray-500">Utilisateurs</p>
-							<p class="text-2xl sm:text-3xl font-bold text-gray-800 count-number">{{ totalUsers|default(0) }}</p>
-						</div>
-					</header>
-					<div class="mt-3 pt-3 border-t border-gray-100">
-						<div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-							<div class="progress-bar" style="width: 85%"></div>
-						</div>
-						<p class="text-xs text-gray-500 flex items-center mt-2">
-							<span class="material-icons text-green-500 text-sm mr-1">trending_up</span>
-							Communauté active
-						</p>
-					</div>
-				</article>
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10">
+                <!-- Carte Utilisateurs -->
+                <article class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 sm:p-6 stat-card animate-fade-in animate-delay-1 border-l-4 border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400 transition-colors duration-200">
+                    <header class="flex items-center">
+                        <div class="rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-4 pulse-icon shadow-inner transition-colors duration-200">
+                            <span class="material-icons text-blue-600 dark:text-blue-400 text-xl transition-colors duration-200">person</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 transition-colors duration-200">Utilisateurs</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 count-number transition-colors duration-200">{{ totalUsers|default(0) }}</p>
+                        </div>
+                    </header>
+                    <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                        <div class="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden transition-colors duration-200">
+                            <div class="progress-bar" style="width: 85%"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-2 transition-colors duration-200">
+                            <span class="material-icons text-green-500 dark:text-green-400 text-sm mr-1 transition-colors duration-200">trending_up</span>
+                            Communauté active
+                        </p>
+                    </div>
+                </article>
 
-				<!-- Carte Photos -->
-				<article class="bg-white rounded-xl shadow-md p-5 sm:p-6 stat-card animate-fade-in animate-delay-2 border-l-4 border-indigo-500 text-indigo-600">
-					<header class="flex items-center">
-						<div class="rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-indigo-100 flex items-center justify-center mr-4 pulse-icon shadow-inner">
-							<span class="material-icons text-indigo-600 text-xl">photo_library</span>
-						</div>
-						<div>
-							<p class="text-sm font-medium text-gray-500">Photos</p>
-							<p class="text-2xl sm:text-3xl font-bold text-gray-800 count-number">{{ totalPhotos|default(0) }}</p>
-						</div>
-					</header>
-					<div class="mt-3 pt-3 border-t border-gray-100">
-						<div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-							<div class="progress-bar" style="width: 75%"></div>
-						</div>
-						<p class="text-xs text-gray-500 flex items-center mt-2">
-							<span class="material-icons text-indigo-500 text-sm mr-1">photo</span>
-							Contenu partagé
-						</p>
-					</div>
-				</article>
+                <!-- Carte Photos -->
+                <article class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 sm:p-6 stat-card animate-fade-in animate-delay-2 border-l-4 border-indigo-500 dark:border-indigo-600 text-indigo-600 dark:text-indigo-400 transition-colors duration-200">
+                    <header class="flex items-center">
+                        <div class="rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mr-4 pulse-icon shadow-inner transition-colors duration-200">
+                            <span class="material-icons text-indigo-600 dark:text-indigo-400 text-xl transition-colors duration-200">photo_library</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 transition-colors duration-200">Photos</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 count-number transition-colors duration-200">{{ totalPhotos|default(0) }}</p>
+                        </div>
+                    </header>
+                    <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                        <div class="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden transition-colors duration-200">
+                            <div class="progress-bar" style="width: 75%"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-2 transition-colors duration-200">
+                            <span class="material-icons text-indigo-500 dark:text-indigo-400 text-sm mr-1 transition-colors duration-200">photo</span>
+                            Contenu partagé
+                        </p>
+                    </div>
+                </article>
 
-				<!-- Carte Avertissements -->
-				<article class="bg-white rounded-xl shadow-md p-5 sm:p-6 stat-card animate-fade-in animate-delay-3 border-l-4 border-amber-500 text-amber-600">
-					<header class="flex items-center">
-						<div class="rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-amber-100 flex items-center justify-center mr-4 pulse-icon shadow-inner">
-							<span class="material-icons text-amber-600 text-xl">warning</span>
-						</div>
-						<div>
-							<p class="text-sm font-medium text-gray-500">Avertissements</p>
-							<p class="text-2xl sm:text-3xl font-bold text-gray-800 count-number">{{ totalWarnings|default(0) }}</p>
-						</div>
-					</header>
-					<div class="mt-3 pt-3 border-t border-gray-100">
-						<div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-							<div class="progress-bar" style="width: 65%"></div>
-						</div>
-						<p class="text-xs text-gray-500 flex items-center mt-2">
-							<span class="material-icons text-amber-500 text-sm mr-1">flag</span>
-							Infractions signalées
-						</p>
-					</div>
-				</article>
-			</section>
+                <!-- Carte Avertissements -->
+                <article class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 sm:p-6 stat-card animate-fade-in animate-delay-3 border-l-4 border-amber-500 dark:border-amber-600 text-amber-600 dark:text-amber-400 transition-colors duration-200">
+                    <header class="flex items-center">
+                        <div class="rounded-full w-12 h-12 sm:w-14 sm:h-14 bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mr-4 pulse-icon shadow-inner transition-colors duration-200">
+                            <span class="material-icons text-amber-600 dark:text-amber-400 text-xl transition-colors duration-200">warning</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400 transition-colors duration-200">Avertissements</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 count-number transition-colors duration-200">{{ totalWarnings|default(0) }}</p>
+                        </div>
+                    </header>
+                    <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                        <div class="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden transition-colors duration-200">
+                            <div class="progress-bar" style="width: 65%"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-2 transition-colors duration-200">
+                            <span class="material-icons text-amber-500 dark:text-amber-400 text-sm mr-1 transition-colors duration-200">flag</span>
+                            Infractions signalées
+                        </p>
+                    </div>
+                </article>
+            </section>
 
-			<section>
-				<h2 class="text-xl font-bold text-gray-800 mb-5 animate-fade-in animate-delay-1 section-heading">Actions rapides</h2>
-				<div
-					class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-10">
-					<!-- Action Modérer les photos -->
-					<a href="{{ path('app_moderator_photos') }}" class="bg-white rounded-xl shadow-md p-5 sm:p-6 transition-all duration-300 ease-in-out transform card-hover border border-gray-100 animate-fade-in animate-delay-2 group">
-						<header class="flex items-start">
-							<div class="rounded-lg p-3 bg-blue-50 text-blue-600 mr-4 shadow-sm transition-all duration-300 group-hover:bg-blue-600 group-hover:text-white">
-								<span class="material-icons text-xl">photo_library</span>
-							</div>
-							<div>
-								<p class="font-medium text-gray-800 text-lg group-hover:text-blue-600 transition-colors">Modérer les photos</p>
-								<p class="text-sm text-gray-500 mt-1">Vérifier et supprimer les photos inappropriées</p>
-							</div>
-						</header>
-						<footer class="mt-4 flex justify-end">
-							<span class="text-blue-600 flex items-center text-sm font-medium group-hover:translate-x-1 transition-transform">
-								Accéder
-								<span class="material-icons text-sm ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
-							</span>
-						</footer>
-					</a>
+            <section>
+                <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-5 animate-fade-in animate-delay-1 section-heading transition-colors duration-200">Actions rapides</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-10">
+                                                         <!-- Action Modérer les photos -->
+                    <a href="{{ path('app_moderation_posts') }}" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 sm:p-6 ease-in-out transform card-hover border border-gray-100 dark:border-gray-700 animate-fade-in animate-delay-2 group transition-colors duration-200">
+                        <header class="flex items-start">
+                            <div class="rounded-lg p-3 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mr-4 shadow-sm group-hover:bg-blue-600 dark:group-hover:bg-blue-700 group-hover:text-white dark:group-hover:text-white transition-colors duration-200">
+                                <span class="material-icons text-xl">photo_library</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800 dark:text-gray-100 text-lg group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200">Modérer les photos</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors duration-200">Vérifier et supprimer les photos inappropriées</p>
+                            </div>
+                        </header>
+                        <footer class="mt-4 flex justify-end">
+                            <span class="text-blue-600 dark:text-blue-400 flex items-center text-sm font-medium group-hover:translate-x-1 duration-200">
+                                Accéder
+                                <span class="material-icons text-sm ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
+                            </span>
+                        </footer>
+                    </a>
 
-					<!-- Action Gérer les avertissements -->
-					<a href="{{ path('app_warning_index') }}" class="bg-white rounded-xl shadow-md p-5 sm:p-6 transition-all duration-300 ease-in-out transform card-hover border border-gray-100 animate-fade-in animate-delay-3 group">
-						<header class="flex items-start">
-							<div class="rounded-lg p-3 bg-amber-50 text-amber-600 mr-4 shadow-sm transition-all duration-300 group-hover:bg-amber-600 group-hover:text-white">
-								<span class="material-icons text-xl">warning</span>
-							</div>
-							<div>
-								<p class="font-medium text-gray-800 text-lg group-hover:text-amber-600 transition-colors">Gérer les avertissements</p>
-								<p class="text-sm text-gray-500 mt-1">Superviser les avertissements envoyés aux utilisateurs</p>
-							</div>
-						</header>
-						<footer class="mt-4 flex justify-end">
-							<span class="text-amber-600 flex items-center text-sm font-medium group-hover:translate-x-1 transition-transform">
-								Accéder
-								<span class="material-icons text-sm ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
-							</span>
-						</footer>
-					</a>
-				</div>
-			</section>
+                    <!-- Action Gérer les avertissements -->
+                    <a href="{{ path('app_warning_index') }}" class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 sm:p-6 ease-in-out transform card-hover border border-gray-100 dark:border-gray-700 animate-fade-in animate-delay-3 group transition-colors duration-200">
+                        <header class="flex items-start">
+                            <div class="rounded-lg p-3 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 mr-4 shadow-sm group-hover:bg-amber-600 dark:group-hover:bg-amber-700 group-hover:text-white dark:group-hover:text-white transition-colors duration-200">
+                                <span class="material-icons text-xl">warning</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-800 dark:text-gray-100 text-lg group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors duration-200">Gérer les avertissements</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 transition-colors duration-200">Superviser les avertissements envoyés aux utilisateurs</p>
+                            </div>
+                        </header>
+                        <footer class="mt-4 flex justify-end">
+                            <span class="text-amber-600 dark:text-amber-400 flex items-center text-sm font-medium group-hover:translate-x-1 transition-colors duration-200">
+                                Accéder
+                                <span class="material-icons text-sm ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
+                            </span>
+                        </footer>
+                    </a>
+                </div>
+            </section>
 
-			<!-- Photos récentes -->
-			<section class="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in animate-delay-2 mb-6 border border-gray-100">
-				<header class="px-5 sm:px-6 py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center bg-gradient-to-r from-blue-50 to-white border-b border-gray-100">
-					<h2 class="text-xl font-bold text-gray-800 flex items-center mb-2 sm:mb-0">
-						<span class="material-icons text-blue-600 mr-2">collections</span>
-						Photos récentes
-					</h2>
-					<a href="{{ path('app_moderator_photos') }}" class="text-blue-600 hover:text-blue-800 flex items-center text-sm font-medium transition-colors duration-300 group">
-						Tout voir
-						<span class="material-icons text-sm ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
-					</a>
-				</header>
-				<div class="p-4 sm:p-6">
-					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-						{% for photo in latestPhotos %}
-							<article class="rounded-xl overflow-hidden border border-gray-200 shadow-md bg-white animate-slide-in" style="animation-delay: {{ loop.index0 * 0.1 + 0.4 }}s; opacity: 0;">
-								<figure class="relative h-48 sm:h-64 overflow-hidden group">
-									<img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-									<figcaption class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-										<div class="p-4 w-full text-white">
-											<p class="text-sm font-medium truncate">{{ photo.user.pseudo }}</p>
-											<p class="text-xs">{{ photo.createdAt|date('d/m/Y H:i') }}</p>
-										</div>
-									</figcaption>
-								</figure>
-								<div class="p-4">
-									<header class="flex justify-between items-start">
-										<div>
-											<p class="font-semibold text-gray-800">{{ photo.user.pseudo }}</p>
-											<p class="text-xs text-gray-500">{{ photo.createdAt|date('H:i') }}</p>
-										</div>
-										<div class="flex space-x-3">
-											<form method="post" action="{{ path('app_moderator_delete_photo', {'id': photo.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
-												<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
-												<button type="submit" class="text-red-500 hover:text-red-700 action-button tooltip">
-													<span class="material-icons">delete</span>
-													<span class="tooltiptext">Supprimer</span>
-												</button>
-											</form>
-											<a href="{{ path('app_moderator_warn_user', {'id': photo.user.id}) }}" class="text-amber-500 hover:text-amber-700 action-button tooltip">
-												<span class="material-icons">warning</span>
-												<span class="tooltiptext">Avertir</span>
-											</a>
-										</div>
-									</header>
-                                  <p class="description-text text-gray-800 mb-4 text-base leading-6 bg-gray-50 p-3 rounded-lg shadow-sm border border-gray-200">
-                                    {{ photo.description|nl2br }}
-                                </p>
+            <!-- Photos récentes -->
+            <section class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-fade-in animate-delay-2 mb-6 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                <header class="px-5 sm:px-6 py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center bg-gradient-to-r from-blue-50 to-white dark:from-blue-900/30 dark:to-gray-800 border-b border-gray-100 dark:border-gray-700 transition-colors duration-200">
+                    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center mb-2 sm:mb-0 transition-colors duration-200">
+                        <span class="material-icons text-blue-600 dark:text-blue-400 mr-2 transition-colors duration-200">collections</span>
+                        Photos récentes
+                    </h2>
+                    <a href="{{ path('app_moderator_photos') }}" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center text-sm font-medium transition-colors duration-300 group">
+                        Tout voir
+                        <span class="material-icons text-sm ml-1 transition-transform group-hover:translate-x-1">arrow_forward</span>
+                    </a>
+                </header>
+                <div class="p-4 sm:p-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {% for photo in latestPhotos %}
+                            <article class="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md bg-white dark:bg-gray-800 animate-slide-in transition-colors duration-200" style="animation-delay: {{ loop.index0 * 0.1 + 0.4 }}s; opacity: 0;">
+                                <figure class="relative h-48 sm:h-64 overflow-hidden group">
+                                    <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                    <figcaption class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                                        <div class="p-4 w-full text-white">
+                                            <p class="text-sm font-medium truncate">{{ photo.user.pseudo }}</p>
+                                            <p class="text-xs">{{ photo.createdAt|date('d/m/Y H:i') }}</p>
+                                        </div>
+                                    </figcaption>
+                                </figure>
+                                <div class="p-4">
+                                    <header class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-semibold text-gray-800 dark:text-gray-100 transition-colors duration-200">{{ photo.user.pseudo }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">{{ photo.createdAt|date('H:i') }}</p>
+                                        </div>
+                                        <div class="flex space-x-3">
+                                            <form method="post" action="{{ path('app_moderator_delete_photo', {'id': photo.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
+                                                <button type="submit" class="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 action-button tooltip transition-colors duration-200">
+                                                    <span class="material-icons">delete</span>
+                                                    <span class="tooltiptext">Supprimer</span>
+                                                </button>
+                                            </form>
+                                            <a href="{{ path('app_moderator_warn_user', {'id': photo.user.id}) }}" class="text-amber-500 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 action-button tooltip transition-colors duration-200">
+                                                <span class="material-icons">warning</span>
+                                                <span class="tooltiptext">Avertir</span>
+                                            </a>
+                                        </div>
+                                    </header>
+                                  <p class="description-text text-gray-800 dark:text-gray-200 mb-4 text-base leading-6 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 transition-colors duration-200">
+                                        {{ photo.description|nl2br }}
+                                    </p>
 
-                                <p>
-                                    <span class="material-icons text-gray-500 text-sm">visibility</span>
-                                    <span class="text-gray-500 text-sm">{{ photo.comments }}</span>
+                                     <p>
+                                        <span class="material-icons text-gray-500 dark:text-gray-400 text-sm transition-colors duration-200">visibility</span>
+                                        <span class="text-gray-500 dark:text-gray-400 text-sm transition-colors duration-200">
+                                            {% if photo.comments is iterable %}
+                                                {{ photo.comments|length }}
+                                            {% else %}
+                                                {{ photo.comments ?? 0 }}
+                                            {% endif %}
+                                        </span>
+                                    </p>
+                                </div>
+                            </article>
+                        {% else %}
+                            <p class="text-gray-500 dark:text-gray-400 col-span-4 text-center py-12 animate-fade-in transition-colors duration-200">
+                                <span class="material-icons text-gray-300 dark:text-gray-600 text-5xl block mb-4 transition-colors duration-200">photo_library</span>
+                                <span class="text-lg">Aucune photo récente à modérer</span>
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
 
-
-                                </p>
-								</div>
-							</article>
-						{% else %}
-							<p class="text-gray-500 col-span-4 text-center py-12 animate-fade-in">
-								<span class="material-icons text-gray-300 text-5xl block mb-4">photo_library</span>
-								<span class="text-lg">Aucune photo récente à modérer</span>
-							</p>
-						{% endfor %}
-					</div>
-				</div>
-			</section>
-		</div>
-	</section>
-
-	<script>
-		document.addEventListener('DOMContentLoaded', function () { // Animation des compteurs
-const countElements = document.querySelectorAll('.count-number');
-countElements.forEach(el => {
-const finalValue = parseInt(el.textContent);
-if (isNaN(finalValue)) 
-return;
-
-
-let startValue = 0;
-const duration = 1800;
-const startTime = Date.now();
-
-const updateCount = () => {
-const currentTime = Date.now();
-const elapsedTime = currentTime - startTime;
-
-if (elapsedTime < duration) {
-const progress = elapsedTime / duration;
-// Fonction d'easing pour un effet plus naturel
-const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-let value = Math.floor(easeOutQuart * finalValue);
-if (value > finalValue) 
-value = finalValue;
-
-el.textContent = value;
-requestAnimationFrame(updateCount);
-} else {
-el.textContent = finalValue;
-}
-};
-
-updateCount();
-});
-
-// Observer pour animations au scroll
-const animatedElements = document.querySelectorAll('.animate-fade-in, .animate-slide-in');
-
-const observer = new IntersectionObserver((entries) => {
-entries.forEach(entry => {
-if (entry.isIntersecting) {
-entry.target.style.animationPlayState = 'running';
-observer.unobserve(entry.target);
-}
-});
-}, {threshold: 0.1});
-
-animatedElements.forEach(el => {
-el.style.animationPlayState = 'paused';
-observer.observe(el);
-});
-});
-	</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation des compteurs
+            const countElements = document.querySelectorAll('.count-number');
+            countElements.forEach(el => {
+                const finalValue = parseInt(el.textContent);
+                if (isNaN(finalValue)) 
+                    return;
+                
+                let startValue = 0;
+                const duration = 1800;
+                const startTime = Date.now();
+                
+                const updateCount = () => {
+                    const currentTime = Date.now();
+                    const elapsedTime = currentTime - startTime;
+                    
+                    if (elapsedTime < duration) {
+                        const progress = elapsedTime / duration;
+                        // Fonction d'easing pour un effet plus naturel
+                        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                        let value = Math.floor(easeOutQuart * finalValue);
+                        if (value > finalValue) 
+                            value = finalValue;
+                        
+                        el.textContent = value;
+                        requestAnimationFrame(updateCount);
+                    } else {
+                        el.textContent = finalValue;
+                    }
+                };
+                
+                updateCount();
+            });
+            
+            // Observer pour animations au scroll
+            const animatedElements = document.querySelectorAll('.animate-fade-in, .animate-slide-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {threshold: 0.1});
+            
+            animatedElements.forEach(el => {
+                el.style.animationPlayState = 'paused';
+                observer.observe(el);
+            });
+        });
+    </script>
 {% endblock %}

@@ -22,11 +22,13 @@ trait PhotoModerationTrait
             $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
             $photosWithComments = $this->preparePhotosWithComments($photos);
 
-            return $this->render('moderation/photos.html.twig', [
-                'photosWithComments' => $photosWithComments
+            // Utilisation de posts.html.twig au lieu de photos.html.twig
+            return $this->render('warning/posts.html.twig', [
+                'photos' => $photos
             ]);
         } catch (\Exception $e) {
-            return $this->handleModerationException($e, 'chargement des photos', 'app_moderation_dashboard');
+            // Utilisation de la méthode générique handleException
+            return $this->handleException($e, 'chargement des photos', 'app_moderation_dashboard');
         }
     }
 
@@ -51,9 +53,11 @@ trait PhotoModerationTrait
 
             $this->addFlash('success', 'Photo #' . $photoId . ' supprimée avec succès.');
 
-            return $this->redirectToRoute('app_moderator_photos');
+            // Redirection vers la liste des publications après suppression
+            return $this->redirectToRoute('app_moderation_posts');
         } catch (\Exception $e) {
-            return $this->handleModerationException($e, 'suppression', 'app_moderator_photos');
+            // Utilisation de la méthode générique handleException
+            return $this->handleException($e, 'suppression', 'app_moderation_posts');
         }
     }
 
@@ -65,11 +69,12 @@ trait PhotoModerationTrait
         try {
             $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
 
-            return $this->render('moderation/posts.html.twig', [
+            return $this->render('warning/posts.html.twig', [
                 'photos' => $photos,
             ]);
         } catch (\Exception $e) {
-            return $this->handleModerationException($e, 'chargement des publications', 'app_moderation_dashboard');
+            // Utilisation de la méthode générique handleException
+            return $this->handleException($e, 'chargement des publications', 'app_moderation_dashboard');
         }
     }
 
@@ -99,5 +104,16 @@ trait PhotoModerationTrait
         if (file_exists($photoPath)) {
             unlink($photoPath);
         }
+    }
+
+    /**
+     * Gère les exceptions spécifiques aux opérations sur les photos
+     * 
+     * Note: Renommée pour éviter le conflit avec ModerationUtilityTrait
+     */
+    private function handleException(\Exception $e, string $action, string $redirectRoute): Response
+    {
+        $this->addFlash('error', 'Une erreur est survenue lors de l\'' . $action . ': ' . $e->getMessage());
+        return $this->redirectToRoute($redirectRoute);
     }
 }

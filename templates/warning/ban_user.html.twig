@@ -3,11 +3,47 @@
 
 {% block title %}{{ user.banned ? 'Débannir' : 'Bannir' }} {{ user.pseudo }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        .slide-up {
+            animation: slideUp 0.5s ease-in-out;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.03);
+        }
+        .form-input {
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+        }
+        .dark .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.3);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-<div class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen py-12 px-4">
+<div class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen py-12 px-4 transition-colors duration-200 fade-in">
     <div class="max-w-2xl mx-auto">
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="bg-gradient-to-r from-{{ user.banned ? 'green' : 'red' }}-500 to-{{ user.banned ? 'green' : 'red' }}-600 px-6 py-5">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover-scale slide-up transition-colors duration-200">
+            <div class="bg-gradient-to-r {{ user.banned ? 'from-green-500 to-green-600 dark:from-green-600 dark:to-green-700' : 'from-red-500 to-red-600 dark:from-red-600 dark:to-red-700' }} px-6 py-5 transition-colors duration-200">
                 <h1 class="text-xl font-bold text-white flex items-center justify-center">
                     <span class="material-icons mr-2">{{ user.banned ? 'lock_open' : 'lock' }}</span>
                     {{ user.banned ? 'Débannir' : 'Bannir' }} l'utilisateur
@@ -15,17 +51,17 @@
             </div>
             
             <div class="p-6">
-                <div class="flex items-center mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <div class="h-16 w-16 rounded-full bg-{{ user.banned ? 'green' : 'blue' }}-100 flex items-center justify-center mr-4">
-                        <span class="text-{{ user.banned ? 'green' : 'blue' }}-600 text-xl font-bold">{{ user.pseudo|slice(0, 1)|upper }}</span>
+                <div class="flex items-center mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 transition-colors duration-200">
+                    <div class="h-16 w-16 rounded-full {{ user.banned ? 'bg-green-100 dark:bg-green-900/30' : 'bg-blue-100 dark:bg-blue-900/30' }} flex items-center justify-center mr-4 transition-colors duration-200">
+                        <span class="{{ user.banned ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400' }} text-xl font-bold transition-colors duration-200">{{ user.pseudo|slice(0, 1)|upper }}</span>
                     </div>
                     <div>
-                        <h2 class="text-lg font-medium text-gray-900">{{ user.pseudo }}</h2>
-                        <p class="text-gray-500">{{ user.email }}</p>
-                        <p class="text-xs text-gray-400 mt-1">Inscrit le {{ user.createdAt|date('d/m/Y') }}</p>
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 transition-colors duration-200">{{ user.pseudo }}</h2>
+                        <p class="text-gray-500 dark:text-gray-400 transition-colors duration-200">{{ user.email }}</p>
+                        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 transition-colors duration-200">Inscrit le {{ user.createdAt|date('d/m/Y') }}</p>
                         
                         {% if user.banned %}
-                            <div class="mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 inline-block">
+                            <div class="mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300 inline-block transition-colors duration-200">
                                 Actuellement banni
                             </div>
                         {% endif %}
@@ -33,22 +69,22 @@
                 </div>
                 
                 {% if user.banned %}
-                    <div class="mb-6 p-4 bg-red-50 rounded-lg border border-red-200">
-                        <h3 class="text-sm font-medium text-red-800 mb-1">Raison du bannissement actuel</h3>
-                        <p class="text-sm text-red-700">{{ user.banReason }}</p>
-                        <p class="text-xs text-red-600 mt-2">Banni le {{ user.bannedAt|date('d/m/Y H:i') }}</p>
+                    <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800/50 transition-colors duration-200">
+                        <h3 class="text-sm font-medium text-red-800 dark:text-red-300 mb-1 transition-colors duration-200">Raison du bannissement actuel</h3>
+                        <p class="text-sm text-red-700 dark:text-red-400 transition-colors duration-200">{{ user.banReason }}</p>
+                        <p class="text-xs text-red-600 dark:text-red-500 mt-2 transition-colors duration-200">Banni le {{ user.bannedAt|date('d/m/Y H:i') }}</p>
                     </div>
                     
                     <div class="mb-6 text-center">
-                        <p class="text-sm text-gray-600">Êtes-vous sûr de vouloir réactiver ce compte ?</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 transition-colors duration-200">Êtes-vous sûr de vouloir réactiver ce compte ?</p>
                     </div>
                     
                     <form method="post" action="{{ path('app_moderation_ban_user', {'id': user.id}) }}">
-                        <div class="flex justify-between">
-                            <a href="{{ path('app_moderation_users') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                        <div class="flex flex-col sm:flex-row justify-between gap-4 sm:gap-0">
+                            <a href="{{ path('app_moderation_users') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors duration-200 text-center">
                                 Annuler
                             </a>
-                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                            <button type="submit" class="px-4 py-2 bg-green-600 dark:bg-green-700 text-white rounded-md hover:bg-green-700 dark:hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors duration-200 flex items-center justify-center sm:justify-start">
                                 <span class="material-icons mr-1 text-sm">lock_open</span>
                                 Débannir l'utilisateur
                             </button>
@@ -58,26 +94,35 @@
                     <form method="post" action="{{ path('app_moderation_ban_user', {'id': user.id}) }}">
                         <div class="space-y-6">
                             <div>
-                                {{ form_row(form.banType, {
-                                    'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'},
+                                {{ form_label(form.banType, null, {
+                                    'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200'}
+                                }) }}
+                                {{ form_widget(form.banType, {
+                                    'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring-0 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 transition-colors duration-200'},
                                     'row_attr': {'class': 'mb-4'}
                                 }) }}
+                                {{ form_errors(form.banType, {'attr': {'class': 'text-red-500 dark:text-red-400 text-sm mt-1 transition-colors duration-200'}}) }}
                             </div>
                             
                             <div>
-                                {{ form_row(form.banReason, {
-                                    'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}
+                                {{ form_label(form.banReason, null, {
+                                    'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200'}
                                 }) }}
-                                <p class="mt-1 text-xs text-gray-500">
+                                {{ form_widget(form.banReason, {
+                                    'attr': {'class': 'form-input mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring-0 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 transition-colors duration-200', 'rows': 4}
+                                }) }}
+                                {{ form_errors(form.banReason, {'attr': {'class': 'text-red-500 dark:text-red-400 text-sm mt-1 transition-colors duration-200'}}) }}
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">
+                                    <i class="fas fa-info-circle mr-1 text-gray-400 dark:text-gray-500"></i>
                                     Décrivez clairement la raison du bannissement pour assurer la transparence.
                                 </p>
                             </div>
                             
-                            <div class="pt-4 flex justify-between border-t border-gray-200">
-                                <a href="{{ path('app_moderation_users') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                            <div class="pt-4 flex flex-col sm:flex-row justify-between gap-4 sm:gap-0 border-t border-gray-200 dark:border-gray-700 transition-colors duration-200">
+                                <a href="{{ path('app_moderation_users') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors duration-200 text-center">
                                     Annuler
                                 </a>
-                                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                <button type="submit" class="px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded-md hover:bg-red-700 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors duration-200 flex items-center justify-center sm:justify-start">
                                     <span class="material-icons mr-1 text-sm">lock</span>
                                     Bannir l'utilisateur
                                 </button>
@@ -86,6 +131,10 @@
                     </form>
                 {% endif %}
             </div>
+        </div>
+        
+        <div class="text-center mt-6 text-gray-500 dark:text-gray-400 text-sm fade-in transition-colors duration-200">
+            <p>Centre de modération - FootConnect</p>
         </div>
     </div>
 </div>
