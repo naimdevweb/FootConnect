@@ -32,6 +32,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(max: 180, maxMessage: 'L\'adresse email ne peut pas dépasser {{ limit }} caractères')]
     private ?string $email = null;
 
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $resetToken = null;
+    
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $resetTokenCreatedAt = null;
+
     /**
      * @var list<string> The user roles
      */
@@ -232,8 +238,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    
-    
     /**
      * @return Collection<int, Warning>
      */
@@ -346,5 +350,61 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->favoritePosts = $favoritePosts;
 
         return $this;
+    }
+
+    /**
+     * Récupère le jeton de réinitialisation de mot de passe
+     */
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    /**
+     * Définit le jeton de réinitialisation de mot de passe
+     */
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+        
+        return $this;
+    }
+
+    /**
+     * Récupère la date de création du jeton de réinitialisation
+     */
+    public function getResetTokenCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->resetTokenCreatedAt;
+    }
+    
+    /**
+     * Définit la date de création du jeton de réinitialisation
+     */
+    public function setResetTokenCreatedAt(?\DateTimeInterface $resetTokenCreatedAt): self
+    {
+        $this->resetTokenCreatedAt = $resetTokenCreatedAt;
+        
+        return $this;
+    }
+
+    /**
+     * Vérifie si le jeton de réinitialisation est expiré
+     */
+    public function isResetTokenExpired(?int $expirationHours = 24): bool
+    {
+        if (!$this->resetToken || !$this->resetTokenCreatedAt) {
+            return true;
+        }
+        
+        if ($this->resetTokenCreatedAt instanceof \DateTimeInterface) {
+            $resetTokenDate = $this->resetTokenCreatedAt instanceof \DateTimeImmutable 
+                ? $this->resetTokenCreatedAt 
+                : \DateTimeImmutable::createFromMutable($this->resetTokenCreatedAt);
+            $expirationDate = $resetTokenDate->modify("+{$expirationHours} hours");
+        } else {
+            throw new \LogicException('Invalid resetTokenCreatedAt value.');
+        }
+        return new \DateTime() > $expirationDate;
     }
 }

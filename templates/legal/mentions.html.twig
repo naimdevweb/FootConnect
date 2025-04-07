@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions légales - FootConnect{% endblock %}
+
+{% block body %}
+<main class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 md:p-8 mb-6 transition-colors duration-200 hover:shadow-lg">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 border-b border-gray-200 dark:border-gray-700 pb-4 flex items-center">
+            <i class="fas fa-gavel text-blue-600 dark:text-blue-400 mr-3"></i>
+            Mentions légales
+        </h1>
+        
+        <div class="prose prose-blue dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
+            <p class="mb-4 leading-relaxed flex items-center text-sm text-gray-500 dark:text-gray-400">
+                <i class="fas fa-calendar-alt mr-2"></i> 
+                Dernière mise à jour : 7 avril 2025
+            </p>
+            
+            <div class="my-6 bg-gray-50 dark:bg-gray-700 p-5 rounded-xl transition-colors">
+                <h2 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200 flex items-center">
+                    <i class="fas fa-building text-blue-500 dark:text-blue-400 mr-2"></i>
+                    Éditeur du site
+                </h2>
+                <div class="pl-6 border-l-2 border-blue-500 dark:border-blue-400">
+                    <p class="mb-1">Le site FootConnect est édité par :</p>
+                    <div class="mt-3 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                        <p class="font-medium text-gray-900 dark:text-gray-100 mb-1">FootConnect SAS</p>
+                        <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                            <li>Société par Actions Simplifiée au capital de 10 000 €</li>
+                            <li>Siège social : 123 Avenue du Football, 75000 Paris</li>
+                            <li>SIRET : 123 456 789 00012</li>
+                            <li>RCS Paris B 123 456 789</li>
+                            <li>N° TVA intracommunautaire : FR 12 123456789</li>
+                            <li>Directeur de la publication : Jean Dupont</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="my-6 bg-gray-50 dark:bg-gray-700 p-5 rounded-xl transition-colors">
+                <h2 class="text-xl font-semibold mb-3 text-gray-800 dark:text-gray-200 flex items-center">
+                    <i class="fas fa-server text-blue-500 dark:text-blue-400 mr-2"></i>
+                    Hébergeur
+                </h2>
+                <div class="pl-6 border-l-2 border-blue-500 dark:border-blue-400">
+                    <p class="mb-1">Le site FootConnect est hébergé par :</p>
+                    <div class="mt-3 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                        <p class="font-medium text-gray-900 dark:text-gray-100 mb-1">OVHcloud</p>
+                        <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                            <li>SAS au capital de 10 174 560 €</li>
+                            <li>Siège social : 2 rue Kellermann, 59100 Roubaix, France</li>
+                            <li>RCS Lille Métropole 424 761 419 00045</li>
+                            <li>Tél : +33 (0)9 72 10 10 10</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="text-xl font-semibold mb-3 mt-8 text-gray-800 dark:text-gray-200 flex items-center">
+                <i class="fas fa-copyright text-blue-500 dark:text-blue-400 mr-2"></i>
+                Propriété intellectuelle
+            </h2>
+            <div class=" dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
+                <p class="mb-3">
+                    La structure générale, les textes, images, sons, graphismes, animations, logos, et tous les autres éléments composant le site sont la propriété exclusive de FootConnect SAS.
+                </p>
+                <p>
+                    Toute représentation, reproduction, exploitation, rediffusion ou utilisation, totale ou partielle, des éléments du site, par quelque procédé que ce soit, sans l'autorisation expresse et préalable de FootConnect SAS, est strictement interdite et constituerait une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la Propriété Intellectuelle.
+                </p>
+            </div>
+            
+            <h2 class="text-xl font-semibold mb-3 mt-8 text-gray-800 dark:text-gray-200 flex items-center">
+                <i class="fas fa-exclamation-triangle text-blue-500 dark:text-blue-400 mr-2"></i>
+                Limitation de responsabilité
+            </h2>
+            <p class="mb-4">
+                FootConnect SAS ne saurait être tenu pour responsable des erreurs rencontrées sur le site, problèmes techniques, interprétation des informations publiées et conséquences de leur utilisation. En conséquence, l'utilisateur reconnaît utiliser ces informations sous sa responsabilité exclusive.
+            </p>
+            
+            <h2 class="text-xl font-semibold mb-3 mt-8 text-gray-800 dark:text-gray-200 flex items-center">
+                <i class="fas fa-user-shield text-blue-500 dark:text-blue-400 mr-2"></i>
+                Données personnelles
+            </h2>
+            <div class="mb-6">
+                <p class="mb-4">
+                    Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition aux données vous concernant.
+                </p>
+                
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-4">
+                    <p class="font-medium mb-2 text-gray-800 dark:text-gray-200">Pour exercer ces droits, vous pouvez nous contacter :</p>
+                    <ul class="list-none space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope text-blue-500 dark:text-blue-400 mt-1 mr-2"></i>
+                            <span>Par email : <a href="mailto:dpo@footconnect.com" class="text-blue-600 dark:text-blue-400 hover:underline">dpo@footconnect.com</a></span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope-open-text text-blue-500 dark:text-blue-400 mt-1 mr-2"></i>
+                            <span>Par courrier : FootConnect SAS - Délégué à la Protection des Données, 123 Avenue du Football, 75000 Paris</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <p class="mb-4">
+                    Pour plus d'informations sur la gestion de vos données personnelles, veuillez consulter notre 
+                    <a href="{{ path('app_privacy') }}" class="text-blue-600 dark:text-blue-400 hover:underline font-medium hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
+                        politique de confidentialité
+                    </a>.
+                </p>
+            </div>
+            
+            <h2 class="text-xl font-semibold mb-3 mt-8 text-gray-800 dark:text-gray-200 flex items-center">
+                <i class="fas fa-cookie-bite text-blue-500 dark:text-blue-400 mr-2"></i>
+                Cookies
+            </h2>
+            <p class="mb-4">
+                Le site FootConnect utilise des cookies pour améliorer l'expérience utilisateur. Pour en savoir plus sur l'utilisation des cookies, veuillez consulter notre 
+                <a href="{{ path('app_cookies') }}" class="text-blue-600 dark:text-blue-400 hover:underline font-medium hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
+                    politique de cookies
+                </a>.
+            </p>
+            
+            <h2 class="text-xl font-semibold mb-3 mt-8 text-gray-800 dark:text-gray-200 flex items-center">
+                <i class="fas fa-balance-scale text-blue-500 dark:text-blue-400 mr-2"></i>
+                Droit applicable et juridiction compétente
+            </h2>
+            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-4">
+                <p>
+                    Les présentes mentions légales sont régies par le droit français. En cas de litige, les tribunaux français seront seuls compétents.
+                </p>
+            </div>
+            
+            <h2 class="text-xl font-semibold mb-3 mt-8 text-gray-800 dark:text-gray-200 flex items-center">
+                <i class="fas fa-envelope text-blue-500 dark:text-blue-400 mr-2"></i>
+                Contact
+            </h2>
+            <div class=" dark:bg-blue-900/20 p-4 rounded-lg flex items-center mb-4">
+                <i class="fas fa-paper-plane text-blue-500 dark:text-blue-400 text-xl mr-3"></i>
+                <div>
+                    <p class="mb-1 font-medium">Pour toute question relative à ces mentions légales :</p>
+                    <a href="mailto:contact@footconnect.com" class="text-blue-600 dark:text-blue-400 hover:underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
+                        contact@footconnect.com
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex justify-center space-x-6 mt-8">
+        <a href="{{ path('app_home') }}" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+            <i class="fas fa-arrow-left mr-2"></i> Retour à l'accueil
+        </a>
+        <a href="{{ path('app_cookies') }}" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors py-2 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+            <i class="fas fa-cookie-bite mr-2"></i> Politique de cookies
+        </a>
+    </div>
+</main>
+{% endblock %}

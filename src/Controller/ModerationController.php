@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Entity\Comment;
+use App\Entity\Commentaire;
 
 /**
  * Contrôleur pour les fonctionnalités de modération
@@ -84,6 +86,36 @@ class ModerationController extends AbstractController
     ): Response {
         return $this->deletePhoto($request, $photo, $entityManager);
     }
+
+
+/**
+ * Supprime un commentaire
+ */
+#[Route('/moderation/comment/{id}/delete', name: 'app_moderator_delete_comment', methods: ['POST'])]
+public function moderatorDeleteComment(
+    Request $request,
+    Commentaire $comment,
+    EntityManagerInterface $entityManager
+): Response {
+    // Vérification du token CSRF
+    if ($this->isCsrfTokenValid('delete_comment' . $comment->getId(), $request->request->get('_token'))) {
+        try {
+            // Supprimer le commentaire
+            $entityManager->remove($comment);
+            $entityManager->flush();
+            
+            $this->addFlash('success', 'Le commentaire a été supprimé avec succès.');
+            
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de la suppression du commentaire: ' . $e->getMessage());
+        }
+    } else {
+        $this->addFlash('error', 'Token CSRF invalide.');
+    }
+    
+    // Rediriger vers la page des publications
+    return $this->redirectToRoute('app_moderation_posts');
+}
 
     /**
      * Envoi d'un avertissement à un utilisateur depuis la modération
@@ -178,6 +210,11 @@ class ModerationController extends AbstractController
     #[Route('/moderation/publications', name: 'app_moderation_posts', methods: ['GET'])]
     public function moderationPosts(PhotoRepository $photoRepository): Response
     {
-        return $this->listPosts($photoRepository);
+        $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
+        
+        // Rendu direct du template au lieu d'utiliser la méthode du trait
+        return $this->render('warning/posts.html.twig', [
+            'photos' => $photos,
+        ]);
     }
 }

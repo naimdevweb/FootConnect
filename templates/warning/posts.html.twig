@@ -5,154 +5,555 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        /* Animations et transitions */
+        /* Design système minimaliste et élégant */
+        :root {
+            /* Palette de couleurs réduite et harmonieuse */
+            --color-primary: #3b82f6;
+            --color-surface: #ffffff;
+            --color-surface-alt: #f9fafb;
+            --color-text: #1f2937;
+            --color-text-muted: #6b7280;
+            --color-border: #e5e7eb;
+            
+            /* Ombres subtiles */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 4px 16px -8px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            
+            /* Arrondis */
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition-all: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        
+        /* Mode sombre */
+        .dark {
+            --color-primary: #60a5fa;
+            --color-surface: #1f2937;
+            --color-surface-alt: #111827;
+            --color-text: #f9fafb;
+            --color-text-muted: #d1d5db;
+            --color-border: #374151;
+        }
+
+        /* Styles globaux */
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            color: var(--color-text);
+            line-height: 1.5;
+        }
+        
+        /* Animation d'apparition délicate */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out forwards;
-            opacity: 0;
-        }
-
-        .animate-slide-in {
-            animation: slideIn 0.5s ease-out forwards;
-            opacity: 0;
-        }
-
-        .photo-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: transform, box-shadow;
-            backface-visibility: hidden;
+        
+        .fade-in {
+            animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
         
-        .photo-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        /* Card sophistiquée */
+        .post-card {
+            position: relative;
+            background-color: var(--color-surface);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition-all);
+            opacity: 0;
+            transform: translateY(10px);
         }
         
-        .dark .photo-card:hover {
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        .post-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
         }
-
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
+        
+        /* Image de publication améliorée */
+        .post-image {
+            position: relative;
+            padding-top: 100%; /* Format carré */
+            overflow: hidden;
+        }
+        
+        .post-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        
+        .post-card:hover .post-image img {
+            transform: scale(1.05);
+        }
+        
+        .post-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(0deg, 
+                rgba(0,0,0,0.7) 0%, 
+                rgba(0,0,0,0.2) 30%, 
+                rgba(0,0,0,0) 60%);
+            z-index: 1;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .post-card:hover .post-overlay {
+            opacity: 1;
+        }
+        
+        /* Information utilisateur */
+        .user-info {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            display: flex;
+            align-items: center;
+            z-index: 2;
+            color: white;
+        }
+        
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* Stats en overlay sur l'image */
+        .post-stats {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 2;
+        }
+        
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: var(--radius-full);
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75rem;
+            color: black;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .stat-badge i {
+            margin-right: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--color-primary);
+        }
+        
+        /* Conteneur de post */
+        .post-content {
+            padding: 1.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .post-description {
+            font-size: 0.9375rem;
+            color: var(--color-text-muted);
+            background-color: var(--color-surface-alt);
+            border-radius: var(--radius-md);
+            padding: 0.875rem;
+            margin-bottom: 1.25rem;
+            border-left: 3px solid var(--color-primary);
+        }
+        
+        /* Actions de modération */
+        .mod-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+        
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .action-btn i {
+            margin-right: 0.375rem;
+            font-size: 1rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .action-btn:hover i {
+            transform: translateY(-1px);
+        }
+        
+        .btn-delete {
+            color: #ef4444;
+            background-color: #fee2e2;
+        }
+        
+        .btn-delete:hover {
+            background-color: #fecaca;
+        }
+        
+        .btn-warn {
+            color: #f59e0b;
+            background-color: #fef3c7;
+        }
+        
+        .btn-warn:hover {
+            background-color: #fde68a;
+        }
+        
+        /* Section de commentaires élégante */
+        .comments-section {
+            margin-top: 1rem;
+            border-top: 1px solid var(--color-border);
+            padding-top: 1rem;
+        }
+        
+        .comments-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: var(--color-text);
+            font-size: 0.875rem;
+        }
+        
+        .comments-header i {
+            color: var(--color-primary);
+            margin-right: 0.5rem;
+        }
+        
+        .comments-container {
+            position: relative;
+            height: auto;
+            max-height: 200px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        
+        .comments-container.expanded {
+            max-height: none;
+            overflow: visible;
+        }
+        
+        /* Commentaires stylisés */
+        .comment-item {
+            background-color: var(--color-surface-alt);
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: transform 0.2s ease;
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .comment-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .comment-avatar {
+            width: 2rem;
+            height: 2rem;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: var(--color-text);
+        }
+        
+        .dark .comment-avatar {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            color: var(--color-text-muted);
+        }
+        
+        .comment-content {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        
+        .comment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+        
+        .comment-author {
+            font-weight: 500;
+            font-size: 0.75rem;
+            color: var(--color-text);
+        }
+        
+        .comment-date {
+            font-size: 0.6875rem;
+            color: var(--color-text-muted);
+        }
+        
+        .comment-text {
+            font-size: 0.8125rem;
+            line-height: 1.4;
+            overflow-wrap: break-word;
+            color: var(--color-text-muted);
+        }
+        
+        /* Bouton élégant "voir plus" */
+        .comment-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        
+        .comment-actions .action-btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .comments-toggle {
+            width: 100%;
+            text-align: center;
+            padding: 0.5rem;
+            margin-top: 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--color-primary);
+            background-color: rgba(59, 130, 246, 0.05);
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .comments-toggle:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        
+        .comments-toggle i {
+            transition: transform 0.3s ease;
+            margin-right: 0.375rem;
+        }
+        
+        .comments-toggle.expanded i {
+            transform: rotate(180deg);
+        }
+        
+        /* Overlay pour suggérer plus de contenu */
+        .fade-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: linear-gradient(to bottom, 
+                rgba(255, 255, 255, 0) 0%, 
+                var(--color-surface) 90%);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        
+        .dark .fade-overlay {
+            background: linear-gradient(to bottom, 
+                rgba(31, 41, 55, 0) 0%, 
+                var(--color-surface) 90%);
+        }
+        
+        .comments-container.expanded .fade-overlay {
+            opacity: 0;
+        }
+        
+        /* Style pour modérer les commentaires avec un popup */
+        .comments-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .comments-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .comments-modal-content {
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            background-color: var(--color-surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .comments-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .comments-modal-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--color-text);
+        }
+        
+        .comments-modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--color-text-muted);
+            transition: color 0.2s ease;
+        }
+        
+        .comments-modal-close:hover {
+            color: var(--color-text);
+        }
+        
+        /* Optimisations mobiles */
+        @media (max-width: 640px) {
+            .post-image {
+                padding-top: 80%; /* Moins haut sur mobile */
+            }
+            
+            .post-content {
+                padding: 1rem;
+            }
+            
+            .post-description {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            .action-btn {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+        }
+        
+        /* Style pour cacher les commentaires supplémentaires */
+        .comment-item.hidden {
+            display: none;
+        }
+        
+        /* Grid conteneurs pour disposition uniformes des cartes */
+        .post-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
-    <div class="max-w-7xl mx-auto">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 animate-fade-in">
-            <div class="mb-4 sm:mb-0">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100 flex items-center transition-colors duration-200">
-                    <span class="bg-blue-600 dark:bg-blue-700 text-white p-2 rounded-lg mr-3 shadow-md transition-colors duration-200">
-                        <span class="material-icons">photo_library</span>
-                    </span>
-                    Modération des
-                    <span class="text-blue-600 dark:text-blue-400 ml-1 transition-colors duration-200">publications</span>
-                </h1>
-                <p class="text-gray-600 dark:text-gray-400 mt-2 transition-colors duration-200">Gérer les photos publiées par les utilisateurs</p>
-            </div>
-            
-            <a href="{{ path('app_moderation_dashboard') }}" class="px-4 py-2 bg-white dark:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 flex items-center shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md">
-                <span class="material-icons mr-2">dashboard</span>
-                Tableau de bord
-            </a>
-        </div>
-
-        {# Filtres #}
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-6 animate-fade-in delay-100 border border-gray-100 dark:border-gray-700 transition-colors duration-200">
-            <form method="get" action="{{ path('app_moderation_posts') }}" class="flex flex-wrap gap-4 items-end">
-                <div class="w-full md:w-auto flex-grow">
-                    <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200">Rechercher</label>
-                    <input type="text" id="search" name="search" value="{{ app.request.query.get('search') }}" 
-                           class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 transition-colors duration-200"
-                           placeholder="Description ou pseudo...">
-                </div>
-                
-                <div class="w-full md:w-auto">
-                    <label for="sort" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200">Trier par</label>
-                    <select id="sort" name="sort" 
-                            class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100 transition-colors duration-200">
-                        <option value="newest" {% if app.request.query.get('sort') == 'newest' %}selected{% endif %}>Plus récentes</option>
-                        <option value="oldest" {% if app.request.query.get('sort') == 'oldest' %}selected{% endif %}>Plus anciennes</option>
-                        <option value="user" {% if app.request.query.get('sort') == 'user' %}selected{% endif %}>Par utilisateur</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 shadow-sm transition-colors duration-200">
-                        <span class="material-icons mr-1">search</span>
-                        Filtrer
-                    </button>
-                </div>
-            </form>
+<div class="bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8 min-h-screen">
+    <div class="max-w-6xl mx-auto">
+        <div class="mb-10">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2 flex items-center">
+                <span class="inline-flex items-center justify-center bg-blue-500 text-white p-2 rounded-md mr-3">
+                    <i class="material-icons">photo_library</i>
+                </span>
+                Modération des publications
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400">Gestion du contenu partagé par la communauté</p>
         </div>
         
-        {# Liste des publications #}
-        <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 animate-fade-in delay-200 transition-colors duration-200">
-            Publications <span class="text-blue-600 dark:text-blue-400 transition-colors duration-200">({{ photos|length }})</span>
-        </h2>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for photo in photos %}
-                <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md photo-card border border-gray-100 dark:border-gray-700 transition-colors duration-200"
-                     style="animation: fadeIn 0.5s ease-out forwards; animation-delay: {{ loop.index0 * 0.05 }}s; opacity: 0;">
-                    <div class="relative h-48 overflow-hidden">
+                <div class="post-card" style="animation-delay: {{ loop.index0 * 0.08 }}s;">
+                    <!-- Image avec overlay -->
+                    <div class="post-image">
                         <img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" 
-                             alt="Photo par {{ photo.user.pseudo }}" 
-                             class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3">
-                            <div class="text-white">
-                                <p class="font-medium">{{ photo.user.pseudo }}</p>
-                                <p class="text-xs opacity-80">{{ photo.createdAt|date('d/m/Y') }}</p>
+                             alt="Publication par {{ photo.user.pseudo }}"
+                             loading="lazy">
+                        <div class="post-overlay"></div>
+                        
+                        <!-- Infos utilisateur -->
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                {{ photo.user.pseudo|slice(0, 1)|upper }}
                             </div>
-                            <div class="flex space-x-2">
-                                <form method="post" action="{{ path('app_moderator_delete_photo', {'id': photo.id}) }}" 
-                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
-                                    <button type="submit" class="p-1.5 bg-red-600/80 hover:bg-red-700 text-white rounded-full tooltip">
-                                        <span class="material-icons text-sm">delete</span>
-                                        <span class="tooltiptext">Supprimer</span>
-                                    </button>
-                                </form>
-                                <a href="{{ path('app_moderator_warn_user', {'id': photo.user.id}) }}" 
-                                   class="p-1.5 bg-amber-500/80 hover:bg-amber-600 text-white rounded-full tooltip">
-                                    <span class="material-icons text-sm">warning</span>
-                                    <span class="tooltiptext">Avertir</span>
-                                </a>
+                            <div class="ml-2">
+                                <p class="text-sm font-medium leading-tight">{{ photo.user.pseudo }}</p>
+                                <p class="text-xs opacity-80">{{ photo.createdAt|date('d M Y') }}</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="p-4">
-                        <div class="flex justify-between items-start mb-3">
-                            <div class="flex items-center">
-                                <div class="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-2 transition-colors duration-200">
-                                    <span class="text-blue-600 dark:text-blue-400 text-xs font-bold transition-colors duration-200">{{ photo.user.pseudo|slice(0, 1)|upper }}</span>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900 dark:text-gray-100 transition-colors duration-200">{{ photo.user.pseudo }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">{{ photo.createdAt|date('H:i') }}</p>
-                                </div>
+                        
+                        <!-- Statistiques -->
+                        <div class="post-stats">
+                            <div class="stat-badge">
+                                <i class="material-icons">favorite</i>
+                                <span>
+                                    {% if photo.likes is defined %}
+                                        {% if photo.likes is iterable %}
+                                            {{ photo.likes|length }}
+                                        {% elseif photo.likes is not null %}
+                                            {{ photo.likes }}
+                                        {% else %}
+                                            0
+                                        {% endif %}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                </span>
                             </div>
-                        </div>
-
-                        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-2.5 mb-3 transition-colors duration-200">
-                            <p class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 transition-colors duration-200">{{ photo.description }}</p>
-                        </div>
-
-                        <div class="pt-2 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center transition-colors duration-200">
-                            <div class="flex items-center text-gray-500 dark:text-gray-400 transition-colors duration-200">
-                                <span class="material-icons text-sm mr-1">comment</span>
-                                <span class="text-xs">
+                            
+                            <div class="stat-badge">
+                                <i class="material-icons">comment</i>
+                                <span>
                                     {% if photo.comments is defined %}
                                         {% if photo.comments is iterable %}
                                             {{ photo.comments|length }}
@@ -166,86 +567,265 @@
                                     {% endif %}
                                 </span>
                             </div>
-                            <a href="{{ path('app_photo_show', {'id': photo.id}) }}" 
-                               class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm flex items-center group transition-colors duration-200">
-                                <span class="material-icons text-sm mr-1">visibility</span>
-                                <span class="group-hover:underline">Détails</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Contenu & Description -->
+                    <div class="post-content">
+                        {% if photo.description %}
+                        <div class="post-description">
+                            {{ photo.description }}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Actions de modération -->
+                        <div class="mod-actions">
+                            <form method="post" action="{{ path('app_moderator_delete_photo', {'id': photo.id}) }}" 
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ photo.id) }}">
+                                <button type="submit" class="action-btn btn-delete">
+                                    <i class="material-icons">delete</i>
+                                    Supprimer
+                                </button>
+                            </form>
+                            
+                            <a href="{{ path('app_moderator_warn_user', {'id': photo.user.id}) }}" 
+                               class="action-btn btn-warn">
+                                <i class="material-icons">warning</i>
+                                Avertir
                             </a>
                         </div>
+                        
+                        <!-- Section de commentaires - affiche que les 2 premiers -->
+                        {% if photo.comments is defined and photo.comments is iterable and photo.comments|length > 0 %}
+                        <div class="comments-section">
+                            <div class="comments-header">
+                                <i class="material-icons">forum</i>
+                                <span>Commentaires ({{ photo.comments|length }})</span>
+                            </div>
+                            
+                            <div class="comments-container" id="comments-{{ photo.id }}">
+                                {% for comment in photo.comments %}
+                                    {% if loop.index <= 2 %}
+                                    <div class="comment-item" data-index="{{ loop.index }}">
+                                        <div class="comment-avatar">
+                                            {{ comment.user.pseudo|slice(0, 1)|upper }}
+                                        </div>
+                                        <div class="comment-content">
+                                            <div class="comment-meta">
+                                                <span class="comment-author">{{ comment.user.pseudo }}</span>
+                                                <span class="comment-date">{{ comment.createdAt|date('d M') }}</span>
+                                            </div>
+                                            <p class="comment-text">{{ comment.message }}</p>
+                                            
+                                            <div class="comment-actions">
+                                                <form method="post" action="{{ path('app_moderator_delete_comment', {'id': comment.id}) }}" 
+                                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_comment' ~ comment.id) }}">
+                                                    <button type="submit" class="action-btn btn-delete">
+                                                        <i class="material-icons text-xs">delete</i>
+                                                        Supprimer
+                                                    </button>
+                                                </form>
+                                                
+                                                <a href="{{ path('app_moderator_warn_user', {'id': comment.user.id, 'comment': comment.id}) }}" 
+                                                   class="action-btn btn-warn">
+                                                    <i class="material-icons text-xs">warning</i>
+                                                    Avertir
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                <div class="fade-overlay"></div>
+                            </div>
+                            
+                            {% if photo.comments|length > 2 %}
+                                <button type="button" 
+                                        class="comments-toggle" 
+                                        data-photo-id="{{ photo.id }}"
+                                        data-count="{{ photo.comments|length - 2 }}"
+                                        onclick="showAllComments(this, {{ photo.id }})">
+                                    <i class="material-icons">expand_more</i>
+                                    <span class="toggle-text">Voir tous les commentaires ({{ photo.comments|length - 2 }} de plus)</span>
+                                </button>
+                            {% endif %}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             {% else %}
-                <div class="col-span-full bg-white dark:bg-gray-800 rounded-xl shadow-md p-10 text-center border border-gray-100 dark:border-gray-700 animate-fade-in delay-200 transition-colors duration-200">
-                    <span class="material-icons text-gray-400 dark:text-gray-500 text-5xl mb-3 transition-colors duration-200">photo_library</span>
-                    <p class="text-gray-500 dark:text-gray-400 text-lg transition-colors duration-200">Aucune publication trouvée</p>
-                    <p class="text-gray-400 dark:text-gray-500 mt-2 transition-colors duration-200">Modifiez les filtres de recherche pour plus de résultats</p>
+                <div class="col-span-full flex flex-col items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow p-10 text-center">
+                    <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
+                        <i class="material-icons text-gray-400 text-3xl">photo_album</i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Aucune publication à modérer</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Toutes les publications ont été traitées</p>
                 </div>
             {% endfor %}
         </div>
+    </div>
+</div>
 
-        {% if photos|length > 0 %}
-            <div class="mt-8 flex justify-center animate-fade-in delay-300">
-                <a href="#" 
-                   class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 shadow-sm transition-colors duration-200">
-                    <span class="material-icons mr-2 text-sm">refresh</span>
-                    Charger plus de publications
-                </a>
-            </div>
-        {% endif %}
+<!-- Modal pour afficher tous les commentaires -->
+<div id="comments-modal" class="comments-modal">
+    <div class="comments-modal-content">
+        <div class="comments-modal-header">
+            <h3 class="comments-modal-title">Commentaires de la publication</h3>
+            <button class="comments-modal-close" onclick="closeCommentsModal()">
+                <i class="material-icons">close</i>
+            </button>
+        </div>
+        <div id="modal-comments-container"></div>
     </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Observer pour les animations au scroll
-        const animatedElements = document.querySelectorAll('.animate-fade-in, .animate-slide-in, .photo-card');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = 'running';
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, {threshold: 0.1});
-        
-        animatedElements.forEach(el => {
-            el.style.animationPlayState = 'paused';
-            observer.observe(el);
+    // Animation d'entrée progressive
+    document.addEventListener('DOMContentLoaded', () => {
+        const cards = document.querySelectorAll('.post-card');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('fade-in');
+            }, 50 * index);
         });
+    });
 
-        // Tooltips
-        const tooltips = document.querySelectorAll('.tooltip');
-        tooltips.forEach(tooltip => {
-            const tooltiptext = tooltip.querySelector('.tooltiptext');
-            if (tooltiptext) {
-                tooltiptext.style.visibility = 'hidden';
-                tooltiptext.style.position = 'absolute';
-                tooltiptext.style.zIndex = '1';
-                tooltiptext.style.backgroundColor = '#1f2937';
-                tooltiptext.style.color = 'white';
-                tooltiptext.style.textAlign = 'center';
-                tooltiptext.style.borderRadius = '6px';
-                tooltiptext.style.padding = '5px 8px';
-                tooltiptext.style.bottom = '125%';
-                tooltiptext.style.left = '50%';
-                tooltiptext.style.marginLeft = '-30px';
-                tooltiptext.style.opacity = '0';
-                tooltiptext.style.transition = 'opacity 0.3s';
-                tooltiptext.style.whiteSpace = 'nowrap';
-                tooltiptext.style.fontSize = '0.75rem';
+    // Afficher tous les commentaires dans une fenêtre modale
+    function showAllComments(button, photoId) {
+        const modal = document.getElementById('comments-modal');
+        const modalContainer = document.getElementById('modal-comments-container');
+        const commentsCount = parseInt(button.getAttribute('data-count') || '0') + 2; // +2 pour inclure les deux premiers
+        
+        // Vider le contenu précédent
+        modalContainer.innerHTML = '';
+        
+        // Récupérer tous les commentaires (y compris cachés)
+        fetch(`/api/photos/${photoId}/comments`)
+            .then(response => {
+                // Si l'API n'existe pas encore, on simule avec les données du DOM
+                if (!response.ok) {
+                    const comments = [];
+                    {% for photo in photos %}
+                        {% if photo.comments is defined and photo.comments is iterable %}
+                            if ({{ photo.id }} === photoId) {
+                                {% for comment in photo.comments %}
+                                    comments.push({
+                                        id: {{ comment.id }},
+                                        user: {
+                                            id: {{ comment.user.id }},
+                                            pseudo: "{{ comment.user.pseudo }}"
+                                        },
+                                        message: `{{ comment.message|e('js') }}`,
+                                        createdAt: "{{ comment.createdAt|date('d M') }}"
+                                    });
+                                {% endfor %}
+                            }
+                        {% endif %}
+                    {% endfor %}
+                    return { comments };
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Si nous avons récupéré des données
+                if (data && (data.comments || Array.isArray(data))) {
+                    const comments = data.comments || data;
+                    comments.forEach(comment => {
+                        const commentElement = createCommentElement(comment);
+                        modalContainer.appendChild(commentElement);
+                    });
+                } else {
+                    // Utiliser les commentaires du DOM directement
+                    const allComments = document.querySelectorAll(`[data-photo-id="${photoId}"] .comment-item`);
+                    allComments.forEach(comment => {
+                        const clonedComment = comment.cloneNode(true);
+                        modalContainer.appendChild(clonedComment);
+                    });
+                }
                 
-                tooltip.addEventListener('mouseenter', () => {
-                    tooltiptext.style.visibility = 'visible';
-                    tooltiptext.style.opacity = '1';
-                });
-                
-                tooltip.addEventListener('mouseleave', () => {
-                    tooltiptext.style.visibility = 'hidden';
-                    tooltiptext.style.opacity = '0';
-                });
-            }
-        });
+                // Afficher la modal
+                modal.classList.add('active');
+            })
+            .catch(error => {
+                console.error('Erreur lors du chargement des commentaires:', error);
+                modalContainer.innerHTML = `<p class="text-red-500">Erreur lors du chargement des commentaires</p>`;
+                modal.classList.add('active');
+            });
+    }
+    
+    // Fermer la modal de commentaires
+    function closeCommentsModal() {
+        const modal = document.getElementById('comments-modal');
+        modal.classList.remove('active');
+    }
+    
+    // Créer un élément de commentaire pour la modal
+    function createCommentElement(comment) {
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'comment-item';
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'comment-avatar';
+        avatarDiv.textContent = comment.user.pseudo ? comment.user.pseudo.slice(0, 1).toUpperCase() : '?';
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'comment-content';
+        
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'comment-meta';
+        
+        const authorSpan = document.createElement('span');
+        authorSpan.className = 'comment-author';
+        authorSpan.textContent = comment.user.pseudo;
+        
+        const dateSpan = document.createElement('span');
+        dateSpan.className = 'comment-date';
+        dateSpan.textContent = comment.createdAt;
+        
+        metaDiv.appendChild(authorSpan);
+        metaDiv.appendChild(dateSpan);
+        
+        const textP = document.createElement('p');
+        textP.className = 'comment-text';
+        textP.textContent = comment.message;
+        
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'comment-actions';
+        actionsDiv.innerHTML = `
+            <form method="post" action="/moderation/comment/${comment.id}/delete" 
+                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                <input type="hidden" name="_token" value="">
+                <button type="submit" class="action-btn btn-delete">
+                    <i class="material-icons text-xs">delete</i>
+                    Supprimer
+                </button>
+            </form>
+            
+            <a href="/moderation/warn-user/${comment.user.id}?comment=${comment.id}" 
+               class="action-btn btn-warn">
+                <i class="material-icons text-xs">warning</i>
+                Avertir
+            </a>
+        `;
+        
+        contentDiv.appendChild(metaDiv);
+        contentDiv.appendChild(textP);
+        contentDiv.appendChild(actionsDiv);
+        
+        commentDiv.appendChild(avatarDiv);
+        commentDiv.appendChild(contentDiv);
+        
+        return commentDiv;
+    }
+
+    // Fermer la modal si on clique en dehors
+    document.getElementById('comments-modal').addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeCommentsModal();
+        }
     });
 </script>
 {% endblock %}

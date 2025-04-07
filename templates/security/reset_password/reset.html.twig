@@ -1,0 +1,106 @@
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\security\reset_password\reset.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe - FootConnect{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .delay-100 {
+            animation-delay: 0.1s;
+            opacity: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center transition-colors duration-200">
+    <div class="w-full max-w-md">
+        {# Logo et en-tête #}
+        <div class="text-center mb-8 animate-fade-in">
+            <div class="mx-auto h-16 w-16 bg-blue-600 dark:bg-blue-700 rounded-full flex items-center justify-center shadow-lg mb-4 transition-colors duration-200">
+                <i class="fas fa-lock-open text-white text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white transition-colors duration-200">Nouveau mot de passe</h1>
+            <p class="mt-2 text-gray-600 dark:text-gray-300 transition-colors duration-200">
+                Veuillez choisir un nouveau mot de passe
+            </p>
+        </div>
+
+        {# Formulaire de réinitialisation de mot de passe #}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-colors duration-200 animate-fade-in delay-100">
+            {{ form_start(resetForm, {'attr': {'class': 'p-6 sm:p-8 space-y-6'}}) }}
+                <div class="space-y-5">
+                    <div>
+                        <label for="{{ resetForm.plainPassword.first.vars.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200">{{ form_label(resetForm.plainPassword.first) }}</label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400 dark:text-gray-600 transition-colors duration-200"></i>
+                            </div>
+                            {{ form_widget(resetForm.plainPassword.first, {
+                                'attr': {
+                                    'class': 'block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200',
+                                    'placeholder': '********'
+                                }
+                            }) }}
+                            <div class="text-red-600 dark:text-red-400 text-sm mt-1 transition-colors duration-200">
+                                {{ form_errors(resetForm.plainPassword.first) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="{{ resetForm.plainPassword.second.vars.id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 transition-colors duration-200">{{ form_label(resetForm.plainPassword.second) }}</label>
+                        <div class="mt-1 relative rounded-md shadow-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400 dark:text-gray-600 transition-colors duration-200"></i>
+                            </div>
+                            {{ form_widget(resetForm.plainPassword.second, {
+                                'attr': {
+                                    'class': 'block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200',
+                                    'placeholder': '********'
+                                }
+                            }) }}
+                            <div class="text-red-600 dark:text-red-400 text-sm mt-1 transition-colors duration-200">
+                                {{ form_errors(resetForm.plainPassword.second) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg transition-colors duration-200">
+                        <p><i class="fas fa-info-circle mr-1"></i> Votre mot de passe doit comporter au moins 8 caractères, incluant des lettres et des chiffres.</p>
+                    </div>
+
+                    <button type="submit" class="w-full flex justify-center items-center py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-700 dark:to-blue-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 shadow-md transition-all duration-200">
+                        <i class="fas fa-save mr-2"></i>
+                        Enregistrer
+                    </button>
+                </div>
+            {{ form_end(resetForm) }}
+        </div>
+
+        {# Lien de retour #}
+        <div class="mt-6 text-center">
+            <a href="{{ path('app_login') }}" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors duration-200">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Retour à la connexion
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

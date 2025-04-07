@@ -270,7 +270,7 @@
                 {% endif %}
             </div>
         </nav>
-
+{% include "partials/flash.html.twig" %}
         <!-- Mobile Menu - sous le header -->
         <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800 shadow-md p-4 transition-colors duration-200">
             <a class="block text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 mb-2" href="{{ path('app_home') }}">Accueil</a>
@@ -291,11 +291,107 @@
 
     {% block body %}{% endblock %}
 
-    <footer class="bg-gray-900 dark:bg-gray-950 text-white text-center py-4 mt-8 transition-colors duration-200">
-        <p>&copy; 2025 FootConnect</p>
-    </footer>
-    
-    {% block javascripts %}
+  <footer class="bg-gray-900 text-gray-300 pt-10 pb-6 mt-8 transition-colors duration-200">
+    <div class="container mx-auto px-4 md:px-6">
+        <!-- Section principale du footer -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <!-- Logo et description -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center mr-2 shadow-md">
+                        <i class="fas fa-futbol text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-semibold text-white">FootConnect</span>
+                </div>
+                <p class="text-sm text-gray-400 leading-relaxed">
+                    La communauté qui connecte les passionnés de football à travers le monde. Partagez vos moments, vos opinions et votre passion pour le football.
+                </p>
+            </div>
+            
+            <!-- Liens rapides -->
+            <div>
+                <h3 class="text-white font-semibold mb-4 text-lg">Liens utiles</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{{ path('app_home') }}" class="text-gray-400 hover:text-blue-400 transition-colors">Accueil</a></li>
+                    <li><a href="{{ path('app_discover') }}" class="text-gray-400 hover:text-blue-400 transition-colors">Explorer</a></li>
+                    <li><a href="{{ path('app_login') }}" class="text-gray-400 hover:text-blue-400 transition-colors">Connexion</a></li>
+                    <li><a href="{{ path('app_register') }}" class="text-gray-400 hover:text-blue-400 transition-colors">Inscription</a></li>
+                </ul>
+            </div>
+            
+            <!-- Informations légales -->
+            <div>
+                <h3 class="text-white font-semibold mb-4 text-lg">Informations légales</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="{{ path('app_terms')}}" class="text-gray-400 hover:text-blue-400 transition-colors">Conditions générales</a></li>
+                    <li><a href="{{ path('app_privacy')}}" class="text-gray-400 hover:text-blue-400 transition-colors">Politique de confidentialité</a></li>
+                    <li><a href="{{ path('app_cookies')}}" class="text-gray-400 hover:text-blue-400 transition-colors">Politique de cookies</a></li>
+                    <li><a href="{{ path('app_legal_notice')}}" class="text-gray-400 hover:text-blue-400 transition-colors">Mentions légales</a></li>
+                </ul>
+            </div>
+            
+            <!-- Contact et réseaux sociaux -->
+            <div>
+                <h3 class="text-white font-semibold mb-4 text-lg">Nous contacter</h3>
+                <p class="text-gray-400 text-sm mb-4">Une question ? N'hésitez pas à nous contacter.</p>
+                <a href="mailto:contact@footconnect.com" class="text-blue-400 hover:text-blue-300 transition-colors text-sm">contact@footconnect.com</a>
+                
+                <div class="mt-6">
+                    <h4 class="text-white font-medium mb-3 text-sm">Suivez-nous</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+      <!-- Bannière de cookies - visible jusqu'à acceptation -->
+<div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-800/95 dark:bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 dark:border-gray-800 p-4 z-50 transform transition-transform duration-300 translate-y-full">
+    <div class="container mx-auto flex flex-col sm:flex-row items-center justify-between">
+        <div class="text-sm text-gray-300 dark:text-gray-300 mb-4 sm:mb-0 max-w-3xl">
+            <p class="mb-1">Ce site utilise des cookies pour améliorer votre expérience. En continuant à naviguer, vous acceptez notre <a href="{{ path('app_cookies') }}" class="text-blue-400 dark:text-blue-400 hover:underline font-medium">politique de cookies</a>.</p>
+            <p class="text-xs text-gray-400 dark:text-gray-400">Vous pouvez personnaliser vos choix ou accepter tous les cookies.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+            <button id="cookie-refuse" class="bg-gray-600 hover:bg-gray-500 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-300 dark:text-gray-300 py-2 px-4 text-sm rounded-lg transition-colors shadow-sm">
+                Refuser
+            </button>
+            <button id="cookie-customize" class="bg-gray-700 hover:bg-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-200 dark:text-gray-200 py-2 px-4 text-sm rounded-lg transition-colors shadow-sm" data-cookie-page="{{ path('app_cookies') }}">
+                Personnaliser
+            </button>
+            <button id="cookie-accept" class="bg-blue-600 hover:bg-blue-500 dark:bg-blue-600 dark:hover:bg-blue-500 text-white py-2 px-4 text-sm rounded-lg transition-colors shadow-sm">
+                Accepter tout
+            </button>
+        </div>
+    </div>
+</div>
+        
+        <!-- Section copyright -->
+        <div class="border-t border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm text-gray-500">
+                &copy; 2025 FootConnect. Tous droits réservés.
+            </p>
+            <div class="flex flex-wrap justify-center gap-x-4 gap-y-2 mt-4 md:mt-0 text-xs text-gray-500">
+                <span>Développé avec <i class="fas fa-heart text-red-500"></i> par l'équipe FOOT CONNECT</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+   {% block javascripts %}
+<script src="{{ asset('js/cookie-manager.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Menu burger toggle

@@ -1,0 +1,83 @@
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\security\reset_password\email.html.twig #}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Réinitialisation de votre mot de passe FootConnect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #3b82f6;
+        }
+        .header h1 {
+            color: #3b82f6;
+            margin: 0;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: white !important;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .info {
+            background-color: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>FootConnect</h1>
+    </div>
+    
+    <div class="content">
+        <p>Bonjour{% if username is defined %} {{ username }}{% endif %},</p>
+        
+        <p>Vous recevez cet email car vous avez demandé la réinitialisation de votre mot de passe sur FootConnect.</p>
+        
+        <p>Pour réinitialiser votre mot de passe, veuillez cliquer sur le bouton ci-dessous :</p>
+        
+        <p style="text-align: center;">
+            <a href="{{ resetLink }}" class="button" style="background-color: #3b82f6; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; display: inline-block;">Réinitialiser mon mot de passe</a>
+        </p>
+        
+        <div class="info">
+            <p><strong>Important :</strong> Ce lien expirera dans {{ tokenLifetime|default('24') }} heures.</p>
+            <p>Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.</p>
+        </div>
+        
+        <p>Si le bouton ne fonctionne pas, vous pouvez copier et coller le lien suivant dans votre navigateur :</p>
+        <p style="word-break: break-all;">{{ resetLink }}</p>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; {{ 'now'|date('Y') }} FootConnect. Tous droits réservés.</p>
+        <p>Ceci est un email automatique, merci de ne pas y répondre.</p>
+    </div>
+</body>
+</html>

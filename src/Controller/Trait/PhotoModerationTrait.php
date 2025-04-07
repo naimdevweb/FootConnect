@@ -22,12 +22,12 @@ trait PhotoModerationTrait
             $photos = $photoRepository->findBy([], ['createdAt' => 'DESC']);
             $photosWithComments = $this->preparePhotosWithComments($photos);
 
-            // Utilisation de posts.html.twig au lieu de photos.html.twig
+            // Correction du chemin de template à utiliser
             return $this->render('warning/posts.html.twig', [
                 'photos' => $photos
             ]);
         } catch (\Exception $e) {
-            // Utilisation de la méthode générique handleException
+            // On utilise la méthode handleException du contrôleur parent
             return $this->handleException($e, 'chargement des photos', 'app_moderation_dashboard');
         }
     }
@@ -56,7 +56,7 @@ trait PhotoModerationTrait
             // Redirection vers la liste des publications après suppression
             return $this->redirectToRoute('app_moderation_posts');
         } catch (\Exception $e) {
-            // Utilisation de la méthode générique handleException
+            // On utilise la méthode handleException du contrôleur parent
             return $this->handleException($e, 'suppression', 'app_moderation_posts');
         }
     }
@@ -73,7 +73,7 @@ trait PhotoModerationTrait
                 'photos' => $photos,
             ]);
         } catch (\Exception $e) {
-            // Utilisation de la méthode générique handleException
+            // On utilise la méthode handleException du contrôleur parent
             return $this->handleException($e, 'chargement des publications', 'app_moderation_dashboard');
         }
     }
@@ -105,11 +105,9 @@ trait PhotoModerationTrait
             unlink($photoPath);
         }
     }
-
+    
     /**
      * Gère les exceptions spécifiques aux opérations sur les photos
-     * 
-     * Note: Renommée pour éviter le conflit avec ModerationUtilityTrait
      */
     private function handleException(\Exception $e, string $action, string $redirectRoute): Response
     {
