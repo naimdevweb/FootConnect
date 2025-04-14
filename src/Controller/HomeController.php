@@ -35,6 +35,12 @@ class HomeController extends AbstractController
         $photos = $this->photoService->getFilteredPhotos($currentUser, $filterType);
         $userStatuts = $this->photoService->getUserStatuts($photos, $currentUser);
         $commentForms = $this->commentFormService->createPhotoCommentForms($photos, $currentUser);
+
+        // Ajouter les informations sur les likes et les enregistrements
+        foreach ($photos as $photo) {
+            $photo->isLikedByUser = $userStatuts[$photo->getId()]['isLiked'] ?? false;
+            $photo->isFavoritedByUser = $userStatuts[$photo->getId()]['isFavorite'] ?? false;
+        }
         
         // Déterminer le titre de la page selon le filtre
         $pageTitle = $filterType === 'following' ? 'Publications de vos abonnements' : 'Fil d\'actualités';
@@ -45,6 +51,8 @@ class HomeController extends AbstractController
                 return $response;
             }
         }
+
+        // dd($photos, $userStatuts, $commentForms);
 
         return $this->render('home/index.html.twig', [
             'photos' => $photos,

@@ -1,0 +1,354 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion de mes données personnelles - FootConnect{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        <!-- En-tête de page avec animation subtile -->
+        <div class="text-center mb-10">
+            <div class="mx-auto h-20 w-20 bg-gradient-to-br from-blue-500 to-blue-700 dark:from-blue-600 dark:to-blue-900 rounded-full flex items-center justify-center shadow-lg mb-6 transform hover:scale-105 transition-all duration-300">
+                <i class="fas fa-user-shield text-white text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2 transition-colors duration-200">Mes données personnelles</h1>
+            <div class="h-1 w-20 bg-blue-600 dark:bg-blue-500 mx-auto rounded-full mb-3"></div>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-300 max-w-xl mx-auto transition-colors duration-200">
+                FootConnect s'engage à protéger votre vie privée et à vous donner le contrôle sur vos données
+            </p>
+        </div>
+
+        <!-- Message flash avec animation -->
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mb-6 p-4 rounded-lg shadow-sm transform transition-all duration-300 hover:shadow-md {{ label == 'success' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 border-l-4 border-green-500' : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300 border-l-4 border-red-500' }}">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas {{ label == 'success' ? 'fa-check-circle text-green-600 dark:text-green-400' : 'fa-exclamation-circle text-red-600 dark:text-red-400' }} mt-0.5"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="font-medium">{{ message }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <!-- Carte principale avec ombres améliorées -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden transition-all duration-200 border border-gray-100 dark:border-gray-700 hover:shadow-2xl">
+            <!-- Onglets de navigation avec effets au survol -->
+            <div class="border-b border-gray-200 dark:border-gray-700">
+                <nav class="flex -mb-px" aria-label="Tabs">
+                    <a href="#export" class="tab-link active w-1/3 py-4 px-1 text-center border-b-2 text-sm font-semibold transition-colors duration-200" data-target="export-panel">
+                        <span class="inline-flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900/50 rounded-full mb-1 mx-auto">
+                            <i class="fas fa-file-export text-blue-600 dark:text-blue-400"></i>
+                        </span>
+                        <span class="block">Export des données</span>
+                    </a>
+                    <a href="#retention" class="tab-link w-1/3 py-4 px-1 text-center border-b-2 text-sm font-semibold transition-colors duration-200" data-target="retention-panel">
+                        <span class="inline-flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full mb-1 mx-auto">
+                            <i class="fas fa-clock text-gray-600 dark:text-gray-400"></i>
+                        </span>
+                        <span class="block">Durée de conservation</span>
+                    </a>
+                    <a href="#deletion" class="tab-link w-1/3 py-4 px-1 text-center border-b-2 text-sm font-semibold transition-colors duration-200" data-target="deletion-panel">
+                        <span class="inline-flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 rounded-full mb-1 mx-auto">
+                            <i class="fas fa-user-slash text-gray-600 dark:text-gray-400"></i>
+                        </span>
+                        <span class="block">Suppression du compte</span>
+                    </a>
+                </nav>
+            </div>
+            
+            <!-- Contenu des onglets avec espacement amélioré -->
+            <div class="p-6 sm:p-8">
+                <!-- Export des données -->
+                <div id="export-panel" class="tab-panel">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center">
+                        <span class="flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-blue-900/40 rounded-full mr-3">
+                            <i class="fas fa-file-export text-blue-600 dark:text-blue-400"></i>
+                        </span>
+                        Export de mes données
+                    </h2>
+                    
+                    <p class="mb-6 text-gray-600 dark:text-gray-400 leading-relaxed pl-13">
+                        Conformément au RGPD, vous pouvez exporter toutes vos données personnelles stockées sur FootConnect au format JSON. 
+                        Cette opération peut prendre quelques instants selon la quantité de données associées à votre compte.
+                    </p>
+                    
+                    <div class="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-500 p-4 my-6 rounded-r-lg shadow-sm transition-all duration-200 hover:shadow-md">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle text-blue-600 dark:text-blue-400 mt-1"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-blue-800 dark:text-blue-300 text-sm">
+                                    L'export contiendra vos informations personnelles, vos photos, commentaires, likes, relations, messages, et autres données associées à votre compte.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 pl-13">
+                        <a href="{{ path('app_user_data_export') }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-md text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:-translate-y-1">
+                            <i class="fas fa-download mr-2"></i>
+                            Exporter mes données
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Durée de conservation avec design amélioré -->
+                <div id="retention-panel" class="tab-panel hidden">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center">
+                        <span class="flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-blue-900/40 rounded-full mr-3">
+                            <i class="fas fa-clock text-blue-600 dark:text-blue-400"></i>
+                        </span>
+                        Durée de conservation des données
+                    </h2>
+                    
+                    <p class="mb-6 text-gray-600 dark:text-gray-400 leading-relaxed pl-13">
+                        FootConnect conserve vos données pendant une durée limitée en fonction de leur nature et de leur finalité :
+                    </p>
+                    
+                    <div class="mt-6 grid gap-4 pl-13">
+                        {% for key, period in retentionPolicies %}
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-5 border border-gray-100 dark:border-gray-600 shadow-sm hover:shadow-md transition-all duration-200">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-semibold text-gray-800 dark:text-gray-200 mb-1">
+                                            {% if key == 'inactive_accounts' %}
+                                                <span class="flex items-center">
+                                                    <i class="fas fa-user-clock text-blue-600 dark:text-blue-400 mr-2"></i>
+                                                    Comptes inactifs
+                                                </span>
+                                            {% elseif key == 'deleted_accounts' %}
+                                                <span class="flex items-center">
+                                                    <i class="fas fa-user-times text-blue-600 dark:text-blue-400 mr-2"></i>
+                                                    Comptes supprimés
+                                                </span>
+                                            {% elseif key == 'user_photos' %}
+                                                <span class="flex items-center">
+                                                    <i class="fas fa-images text-blue-600 dark:text-blue-400 mr-2"></i>
+                                                    Photos
+                                                </span>
+                                            {% elseif key == 'comments' %}
+                                                <span class="flex items-center">
+                                                    <i class="fas fa-comments text-blue-600 dark:text-blue-400 mr-2"></i>
+                                                    Commentaires
+                                                </span>
+                                            {% elseif key == 'logs' %}
+                                                <span class="flex items-center">
+                                                    <i class="fas fa-history text-blue-600 dark:text-blue-400 mr-2"></i>
+                                                    Logs de connexion
+                                                </span>
+                                            {% elseif key == 'messages' %}
+                                                <span class="flex items-center">
+                                                    <i class="fas fa-envelope text-blue-600 dark:text-blue-400 mr-2"></i>
+                                                    Messages privés
+                                                </span>
+                                            {% endif %}
+                                        </h3>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                                            {% if key == 'inactive_accounts' %}
+                                                Les comptes inactifs sont anonymisés après cette période
+                                            {% elseif key == 'deleted_accounts' %}
+                                                Période de grâce avant suppression définitive
+                                            {% elseif key == 'user_photos' %}
+                                                Durée de conservation de vos photos sur nos serveurs
+                                            {% elseif key == 'comments' %}
+                                                Durée de conservation de vos commentaires
+                                            {% elseif key == 'logs' %}
+                                                Durée de conservation des journaux de connexion
+                                            {% elseif key == 'messages' %}
+                                                Durée de conservation des messages privés
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="bg-blue-100 dark:bg-blue-900/50 px-4 py-2 rounded-lg text-blue-800 dark:text-blue-300 text-sm font-medium shadow-sm">
+                                        {{ period }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mt-8 pl-13">
+                        <a href="{{ path('app_user_data_retention_info') }}" class="inline-flex items-center px-5 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-650 transition-all duration-200 transform hover:-translate-y-1">
+                            <i class="fas fa-info-circle mr-2 text-blue-600 dark:text-blue-400"></i>
+                            En savoir plus sur notre politique de conservation
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Suppression du compte avec design amélioré -->
+                <div id="deletion-panel" class="tab-panel hidden">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 flex items-center">
+                        <span class="flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-blue-900/40 rounded-full mr-3">
+                            <i class="fas fa-user-slash text-blue-600 dark:text-blue-400"></i>
+                        </span>
+                        Suppression de mon compte
+                    </h2>
+                    
+                    <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500 p-4 my-6 rounded-r-lg shadow-sm transition-all duration-200 hover:shadow-md">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-yellow-600 dark:text-yellow-400 mt-1"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-yellow-800 dark:text-yellow-300 text-sm">
+                                    <strong>Attention :</strong> La suppression de votre compte entraînera la perte de toutes vos données personnelles, photos, commentaires et messages après la période de grâce de 30 jours.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="mb-6 text-gray-600 dark:text-gray-400 leading-relaxed pl-13">
+                        Lorsque vous supprimez votre compte, celui-ci est d'abord désactivé pendant 30 jours. Durant cette période, vous pouvez annuler la suppression en vous reconnectant. Après 30 jours, toutes vos données seront définitivement supprimées.
+                    </p>
+                    
+                    <div class="mt-8 pl-13">
+                        {% if user.isDeleted %}
+                            <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-100 dark:border-red-800 mb-6">
+                                <p class="text-red-600 dark:text-red-400 font-medium flex items-center">
+                                    <i class="fas fa-calendar-times mr-2"></i>
+                                    Votre compte est programmé pour être supprimé le {{ user.deletedAt|date_modify("+30 days")|date('d/m/Y') }}.
+                                </p>
+                            </div>
+                            
+                            <a href="{{ path('app_user_data_cancel_deletion') }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-md text-base font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:-translate-y-1">
+                                <i class="fas fa-undo mr-2"></i>
+                                Annuler la suppression
+                            </a>
+                        {% else %}
+                            <div class="bg-white dark:bg-gray-700 p-6 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm">
+                                {{ form_start(deletionForm) }}
+                                    <div class="space-y-6">
+                                        <div>
+                                            {{ form_label(deletionForm.confirmation, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'}}) }}
+                                            {{ form_widget(deletionForm.confirmation, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white sm:text-sm transition-colors duration-200'}}) }}
+                                            {{ form_errors(deletionForm.confirmation, {'attr': {'class': 'text-sm text-red-600 dark:text-red-400 mt-1'}}) }}
+                                        </div>
+                                        
+                                        <div class="flex items-center bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                            {{ form_widget(deletionForm.understand, {'attr': {'class': 'h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-700'}}) }}
+                                            <div class="ml-3">
+                                                {{ form_label(deletionForm.understand, null, {'label_attr': {'class': 'text-sm font-medium text-gray-700 dark:text-gray-300'}}) }}
+                                                {{ form_errors(deletionForm.understand, {'attr': {'class': 'text-sm text-red-600 dark:text-red-400 mt-1'}}) }}
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" class="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-md text-base font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 transform hover:-translate-y-1">
+                                            <i class="fas fa-trash-alt mr-2"></i>
+                                            Supprimer mon compte
+                                        </button>
+                                    </div>
+                                {{ form_end(deletionForm) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lien de retour avec effet au survol -->
+        <div class="mt-10 text-center">
+            <a href="{{ path('app_profil') }}" class="inline-flex items-center px-5 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-650 transition-all duration-200 transform hover:-translate-y-1">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Retour à mon profil
+            </a>
+        </div>
+        
+        <!-- Date de mise à jour -->
+        <div class="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">
+            <p>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion des onglets
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+        
+        function activateTab(link) {
+            // Masquer tous les panneaux
+            tabPanels.forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            
+            // Réinitialiser les styles des onglets
+            tabLinks.forEach(tab => {
+                tab.classList.remove('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400', 'dark:hover:text-gray-300');
+                
+                // Réinitialiser les icônes
+                const iconContainer = tab.querySelector('span.inline-flex');
+                if (iconContainer) {
+                    iconContainer.classList.remove('bg-blue-100', 'dark:bg-blue-900/50');
+                    iconContainer.classList.add('bg-gray-100', 'dark:bg-gray-700');
+                }
+                
+                const icon = tab.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('text-blue-600', 'dark:text-blue-400');
+                    icon.classList.add('text-gray-600', 'dark:text-gray-400');
+                }
+            });
+            
+            // Activer l'onglet cliqué
+            link.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400', 'dark:hover:text-gray-300');
+            link.classList.add('active', 'border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+            
+            // Activer l'icône
+            const iconContainer = link.querySelector('span.inline-flex');
+            if (iconContainer) {
+                iconContainer.classList.remove('bg-gray-100', 'dark:bg-gray-700');
+                iconContainer.classList.add('bg-blue-100', 'dark:bg-blue-900/50');
+            }
+            
+            const icon = link.querySelector('i');
+            if (icon) {
+                icon.classList.remove('text-gray-600', 'dark:text-gray-400');
+                icon.classList.add('text-blue-600', 'dark:text-blue-400');
+            }
+            
+            // Afficher le panneau correspondant avec une animation subtile
+            const targetPanelId = link.getAttribute('data-target');
+            const targetPanel = document.getElementById(targetPanelId);
+            if (targetPanel) {
+                targetPanel.classList.remove('hidden');
+                targetPanel.classList.add('animate-fadeIn');
+                setTimeout(() => {
+                    targetPanel.classList.remove('animate-fadeIn');
+                }, 300);
+            }
+        }
+        
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                activateTab(link);
+                
+                // Mettre à jour l'URL sans recharger la page
+                const hash = link.getAttribute('href');
+                history.pushState(null, '', hash);
+            });
+        });
+        
+        // Initialisation: activer le premier onglet par défaut
+        const firstActiveTab = document.querySelector('.tab-link.active');
+        if (firstActiveTab) {
+            activateTab(firstActiveTab);
+        }
+        
+        // Utiliser l'ancre de l'URL pour activer un onglet spécifique si présent
+        if (window.location.hash) {
+            const hashValue = window.location.hash.substring(1); // Enlever le #
+            const matchingLink = document.querySelector(`.tab-link[href="#${hashValue}"]`);
+            if (matchingLink) {
+                activateTab(matchingLink);
+            }
+        }
+    });
+</script>
+{% endblock %}

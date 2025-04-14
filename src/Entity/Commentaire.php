@@ -24,6 +24,7 @@ class Commentaire
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
+    #[Assert\Type("string",message: 'Le message doit être une chaîne de caractères')]
     private ?string $message = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaires')]

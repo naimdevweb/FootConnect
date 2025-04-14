@@ -62,19 +62,28 @@ class PhotoService
     /**
      * Récupère les statuts entre l'utilisateur courant et les propriétaires des photos
      */
-    public function getUserStatuts(array $photos, ?User $currentUser): array
+    public function getUserStatuts(array $photos, $currentUser): array
     {
-        if (!$currentUser) {
-            return [];
-        }
-
         $userStatuts = [];
+
         foreach ($photos as $photo) {
-            $photoUserId = $photo->getUser()->getId();
-            $userStatuts[$photoUserId] = $this->statutRepository->findOneBy([
-                'user' => $currentUser,
-                'otherUser' => $photo->getUser()
-            ]);
+            $isLiked = false;
+            $isFavorite = false;
+
+            if ($currentUser) {
+                $isLiked = $photo->getLikes()->exists(function ($key, $like) use ($currentUser) {
+                    return $like->getUser() === $currentUser;
+                });
+
+                $isFavorite = $currentUser->getFavoritePosts()->exists(function ($key, $favoritePost) use ($photo) {
+                    return $favoritePost->getPhoto() === $photo;
+                });
+            }
+
+            $userStatuts[$photo->getId()] = [
+                'isLiked' => $isLiked,
+                'isFavorite' => $isFavorite,
+            ];
         }
 
         return $userStatuts;

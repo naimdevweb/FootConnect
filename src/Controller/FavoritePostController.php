@@ -19,12 +19,16 @@ class FavoritePostController extends AbstractController
         private readonly FavoritePostRepository $favoritePostRepository
     ) {}
 
-    #[Route('/toggle-favorite/{id}', name: 'app_toggle_favorite')]
+
+#[Route('/toggle-favorite/{id}', name: 'app_toggle_favorite', methods: ['POST','GET'])]
 public function toggleFavorite(Photo $photo, Request $request): Response
 {
     try {
         $currentUser = $this->getUser();
         if (!$currentUser) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse(['error' => 'Vous devez être connecté pour enregistrer.'], Response::HTTP_UNAUTHORIZED);
+            }
             return $this->redirectToRoute('app_login');
         }
 
@@ -33,6 +37,8 @@ public function toggleFavorite(Photo $photo, Request $request): Response
             'user' => $currentUser,
             'photo' => $photo
         ]);
+
+        $isFavorited = false;
 
         if ($existingFavorite) {
             // Retirer des favoris
@@ -43,21 +49,33 @@ public function toggleFavorite(Photo $photo, Request $request): Response
             $favoritePost->setUser($currentUser);
             $favoritePost->setPhoto($photo);
             $favoritePost->setCreatedAt(new \DateTimeImmutable());
-            
+
             $this->entityManager->persist($favoritePost);
+            $isFavorited = true;
         }
 
         $this->entityManager->flush();
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'success' => true,
+                'isFavorited' => $isFavorited
+            ]);
+        }
         
-        // Rediriger vers la page d'où provient la requête
-        $referer = $request->headers->get('referer');
-        
-        return $this->redirect($referer ?: $this->generateUrl('app_saved_posts'));
-        
+        // Si ce n'est pas AJAX, rediriger vers la page précédente
+        return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('app_homepage'));
     } catch (\Exception $e) {
-        // En cas d'erreur, rediriger vers la page des favoris avec un message flash
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Une erreur est survenue lors de la modification des favoris.'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+        
+        // Gestion d'erreur pour les requêtes non-AJAX
         $this->addFlash('error', 'Une erreur est survenue lors de la modification des favoris.');
-        return $this->redirectToRoute('app_saved_posts');
+        return $this->redirect($request->headers->get('referer') ?? $this->generateUrl('app_homepage'));
     }
 }
 

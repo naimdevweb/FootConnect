@@ -12,44 +12,41 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class LikeController extends AbstractController
 {
-    #[Route('/like/{id}', name: 'app_like', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager, int $id): Response
+    #[Route('/like/{id}', name: 'app_like', methods: ['POST'])]
+    public function toggleLike(EntityManagerInterface $entityManager, int $id): Response
     {
         try {
             $user = $this->getUser();
 
             if (!$user) {
-                $this->addFlash('error', 'Vous devez être connecté pour liker une photo');
-                return $this->redirectToRoute('app_login');
+                return $this->json(['error' => 'Vous devez être connecté pour liker une photo'], Response::HTTP_UNAUTHORIZED);
             }
 
             $photo = $entityManager->getRepository(Photo::class)->find($id);
-            
+
             if (!$photo) {
-                $this->addFlash('error', 'Photo non trouvée');
-                return $this->redirectToRoute('app_home');
+                return $this->json(['error' => 'Photo non trouvée'], Response::HTTP_NOT_FOUND);
             }
-            
-            // Vérifier si l'utilisateur a déjà liké cette photo
+
             $existingLike = $entityManager->getRepository(Like::class)->findOneBy([
                 'user' => $user,
                 'photo' => $photo
             ]);
-            
-            if (!$existingLike) {
+
+            if ($existingLike) {
+                $entityManager->remove($existingLike);
+                $entityManager->flush();
+                return $this->json(['message' => 'Like retiré', 'likesCount' => count($photo->getLikes())]);
+            } else {
                 $like = new Like();
                 $like->setUser($user);
                 $like->setPhoto($photo);
                 $entityManager->persist($like);
                 $entityManager->flush();
+                return $this->json(['message' => 'Like ajouté', 'likesCount' => count($photo->getLikes())]);
             }
-            
-// Rediriger vers la page précédente ou la page d'accueil
-            return $this->redirectToRoute('app_home');
-            
         } catch (\Exception $e) {
-            $this->addFlash('error', 'Une erreur est survenue: ' . $e->getMessage());
-            return $this->redirectToRoute('app_home');
+            return $this->json(['error' => 'Une erreur est survenue: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
