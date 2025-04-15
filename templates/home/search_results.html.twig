@@ -1,81 +1,121 @@
 {# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\home\search_results.html.twig #}
+
 {% if error is defined and error %}
-    <div class="p-4 text-center text-gray-500">
-        Une erreur est survenue lors de la recherche.
-        {% if app.environment == 'dev' and errorMessage is defined %}
-            <div class="mt-2 text-xs text-red-500">{{ errorMessage }}</div>
-        {% endif %}
-    </div>
+	<div class="p-6 text-center">
+		<svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewbox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+		</svg>
+		<h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">Une erreur est survenue</h3>
+		{% if app.environment == 'dev' and errorMessage is defined %}
+			<p class="mt-1 text-xs text-red-500 dark:text-red-400">{{ errorMessage }}</p>
+		{% endif %}
+	</div>
 {% elseif users is empty and query|length > 1 %}
-    <div class="p-4 text-center text-gray-500">
-        Aucun utilisateur trouvé pour "{{ query }}"
-    </div>
+	<div class="p-6 text-center">
+		<svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewbox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+		</svg>
+		<h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">Aucun résultat</h3>
+		<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Aucun utilisateur trouvé pour "{{ query }}"</p>
+	</div>
 {% elseif query|length < 2 and query|length > 0 %}
-    <div class="p-4 text-center text-gray-500">
-        Veuillez saisir au moins 2 caractères
-        {% if app.environment == 'dev' and debug is defined %}
-            <div class="mt-1 text-xs text-blue-500">{{ debug }}</div>
-        {% endif %}
-    </div>
+	<div class="p-6 text-center">
+		<svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewbox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+		</svg>
+		<h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">Saisie trop courte</h3>
+		<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Veuillez saisir au moins 2 caractères</p>
+	</div>
 {% elseif users is not empty %}
-    {# Compteur pour les utilisateurs réguliers #}
-    {% set regularUsersCount = 0 %}
-    
-    <ul class="divide-y divide-gray-200">
-        {% for user in users %}
-            {# Vérifier si l'utilisateur n'est ni admin ni modérateur #}
-            {% set isAdmin = false %}
-            {% set isModerator = false %}
-            
-            {% if user.roles is defined %}
-                {% for role in user.roles %}
-                    {% if role == 'ROLE_ADMIN' %}
-                        {% set isAdmin = true %}
-                    {% endif %}
-                    {% if role == 'ROLE_MODERATOR' or role == 'ROLE_MODERATEUR' %}
-                        {% set isModerator = true %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            
-            {# Afficher uniquement les utilisateurs réguliers #}
-            {% if not isAdmin and not isModerator %}
-                {% set regularUsersCount = regularUsersCount + 1 %}
-                <li>
-                    <a href="{{ path('app_profil_user', {id: user.id}) }}" class="block px-4 py-3 hover:bg-gray-50 transition-colors">
-                        <div class="flex items-center">
-                            {% if user.avatar is defined and user.avatar %}
-                                <img src="{{ asset('uploads/avatars/' ~ user.avatar) }}" alt="{{ user.pseudo }}" class="w-10 h-10 rounded-full object-cover">
-                            {% else %}
-                                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                                    {{ user.pseudo|first|upper }}
-                                </div>
-                            {% endif %}
-                            <div class="ml-3">
-                                <p class="text-sm font-medium text-gray-900">{{ user.pseudo }}</p>
-                                <p class="text-xs text-gray-500">
-                                    {{ user.pseudo }}
-                                </p>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-    
-    {# Message si aucun utilisateur régulier n'est trouvé après filtrage #}
-    {% if regularUsersCount == 0 %}
-        <div class="p-4 text-center text-gray-500">
-            Aucun utilisateur trouvé pour "{{ query }}"
-        </div>
-    {% else %}
-        <div class="px-4 py-2 text-xs text-gray-500 bg-gray-50 rounded-b-lg">
-            {{ regularUsersCount }} utilisateur{% if regularUsersCount > 1 %}s{% endif %} trouvé{% if regularUsersCount > 1 %}s{% endif %}
-        </div>
-    {% endif %}
+	{# Compteur pour les utilisateurs réguliers #}
+	{% set regularUsersCount = 0 %}
+
+	<ul class="divide-y divide-gray-200 dark:divide-gray-700 max-h-80 overflow-y-auto">
+		{% for user in users %}
+			{# Vérifier si l'utilisateur n'est ni admin ni modérateur #}
+			{% set isAdmin = false %}
+			{% set isModerator = false %}
+
+			{% if user.roles is defined %}
+				{% for role in user.roles %}
+					{% if role == 'ROLE_ADMIN' %}
+						{% set isAdmin = true %}
+					{% endif %}
+					{% if role == 'ROLE_MODERATOR' or role == 'ROLE_MODERATEUR' %}
+						{% set isModerator = true %}
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+
+			{# Afficher uniquement les utilisateurs réguliers #}
+			{% if not isAdmin and not isModerator %}
+				{% set regularUsersCount = regularUsersCount + 1 %}
+				<li>
+					<a href="{{ path('app_profil_user', {id: user.id}) }}" class="block px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+						<div class="flex items-center">
+							<div class="flex-shrink-0">
+								<div class="relative">
+									{% if user.profilePicture is defined and user.profilePicture %}
+										<img src="{{ asset('uploads/profile_pictures/' ~ user.profilePicture) }}" alt="Photo de {{ user.pseudo }}" class="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-600">
+									{% else %}
+										<div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 flex items-center justify-center text-white font-semibold shadow-sm">
+											{{ user.pseudo|slice(0,1)|upper }}
+										</div>
+									{% endif %}
+
+									{% if user.isOnline is defined and user.isOnline %}
+										<span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-400 ring-2 ring-white dark:ring-gray-800"></span>
+									{% endif %}
+								</div>
+							</div>
+							<div class="ml-3 flex-1">
+								<div class="flex items-center justify-between">
+									<p class="text-base font-semibold text-gray-900 dark:text-gray-100 truncate">
+										{{ user.pseudo }}
+									</p>
+									{% if user.followers is defined %}
+										<p class="text-xs text-gray-500 dark:text-gray-400">
+											{{ user.followers|length }}
+											abonné{{ user.followers|length > 1 ? 's' : '' }}
+										</p>
+									{% endif %}
+								</div>
+								{% if user.bio is defined and user.bio %}
+									<p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-1">
+										{{ user.bio|slice(0, 50) }}
+										{% if user.bio|length > 50 %}...
+										{% endif %}
+									</p>
+								{% endif %}
+							</div>
+						</div>
+					</a>
+				</li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+
+	{# Message si aucun utilisateur régulier n'est trouvé après filtrage #}
+	{% if regularUsersCount == 0 %}
+		<div class="p-6 text-center">
+			<svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewbox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+			</svg>
+			<h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">Aucun résultat</h3>
+			<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Aucun utilisateur trouvé pour "{{ query }}"</p>
+		</div>
+	{% else %}
+		<div class="px-4 py-2 text-xs bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-b-lg">
+			{{ regularUsersCount }}
+			utilisateur{{ regularUsersCount > 1 ? 's' : '' }}
+			trouvé{{ regularUsersCount > 1 ? 's' : '' }}
+		</div>
+	{% endif %}
 {% else %}
-    <div class="p-4 text-center text-gray-400 text-sm">
-        Commencez à taper pour rechercher des utilisateurs
-    </div>
+	<div class="p-6 text-center">
+		<svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewbox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+		</svg>
+		<p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Commencez à taper pour rechercher des utilisateurs</p>
+	</div>
 {% endif %}
