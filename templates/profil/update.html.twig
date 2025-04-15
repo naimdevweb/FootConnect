@@ -1,3 +1,4 @@
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\profil\update.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Modifier votre profil{% endblock %}
@@ -41,6 +42,31 @@
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
         }
+
+        .image-upload-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-upload-label {
+            cursor: pointer;
+            display: block;
+        }
+
+        .image-upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Animation de prévisualisation */
+        .preview-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
     </style>
 {% endblock %}
 
@@ -69,6 +95,9 @@
 {% endblock %}
 
 {% block body %}
+<pre>
+    {{ dump(form) }}
+</pre>
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
     <div class="max-w-4xl mx-auto">
         {# En-tête #}
@@ -81,13 +110,38 @@
             </p>
         </div>
 
+        {# Messages flash #}
+        {% for message in app.flashes('success') %}
+            <div class="mb-6 bg-green-100 dark:bg-green-900/30 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg animate-fade-in transition-colors duration-200 shadow-md">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2 text-green-500 dark:text-green-400"></i>
+                    <span>{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="mb-6 bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg animate-fade-in transition-colors duration-200 shadow-md">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2 text-red-500 dark:text-red-400"></i>
+                    <span>{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
         {# Carte principale #}
         <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl">
             {# Aperçu du profil #}
             <div class="bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-700 dark:to-blue-600 p-6 text-white transition-colors duration-200">
                 <div class="flex items-center space-x-4">
-                    <div class="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-2xl font-bold">
-                        {{ user.pseudo|slice(0, 1)|upper }}
+                    <div id="profile-preview" class="h-16 w-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+                        {% if user.profilePicture is defined and user.profilePicture %}
+                            <img src="{{ asset('uploads/profile_pictures/' ~ user.profilePicture) }}" 
+                                alt="Photo de profil" 
+                                class="w-full h-full object-cover" />
+                        {% else %}
+                            {{ user.pseudo|slice(0, 1)|upper }}
+                        {% endif %}
                     </div>
                     <div>
                         <h2 class="text-xl font-bold">{{ user.pseudo }}</h2>
@@ -97,10 +151,56 @@
             </div>
 
             {# Formulaire #}
-            <div class="p-6">
-                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
-                    {# Section informations personnelles #}
-                    <div class="space-y-6">
+            {# Remplacer la section du formulaire de photo de profil #}
+<div class="p-6">
+    {{ form_start(form, {'attr': {'class': 'space-y-6', 'enctype': 'multipart/form-data', 'id': 'profile-form'}}) }}
+        {# Section Photo de profil #}
+        <div class="space-y-6">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-3 mb-6 transition-colors duration-200">
+                    Photo de profil
+                </h3>
+                
+                <div class="space-y-4">
+                    <div class="flex flex-col items-center">
+                        <div class="mb-4 relative w-32 h-32 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 border-4 border-white dark:border-gray-800 shadow-lg">
+                            <div id="preview-container" class="w-full h-full">
+                                {% if user.profilePicture is defined and user.profilePicture %}
+                                    <img id="current-profile-image" src="{{ asset('uploads/profile_pictures/' ~ user.profilePicture) }}" 
+                                        alt="Photo de profil actuelle" 
+                                        class="w-full h-full object-cover" />
+                                {% else %}
+                                    <div id="profile-initials" class="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-500 dark:text-blue-400 text-4xl font-bold">
+                                        {{ user.pseudo|slice(0, 1)|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="image-upload-container">
+                            <label for="profile_picture" class="image-upload-label px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-lg transition-colors duration-200 flex items-center">
+                                <i class="material-icons text-sm mr-2">photo_camera</i>
+                                Choisir une image
+                            </label>
+                            <input type="file" 
+                                id="profile_picture" 
+                                name="profilePicture" 
+                                accept="image/png, image/jpeg, image/jpg" 
+                                class="image-upload-input"
+                                data-preview="true" />
+                        </div>
+                        
+                        <p class="mt-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+                            Formats acceptés : JPG, PNG. Taille maximale : 2Mo
+                        </p>
+                        <div id="selected-file-name" class="mt-2 text-sm text-blue-600 dark:text-blue-400"></div>
+                    </div>
+                </div>
+            </div>
+            
+          
+                    
+                        {# Section informations personnelles #}
                         <div>
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-3 mb-6 transition-colors duration-200">
                                 Informations personnelles
@@ -234,4 +334,72 @@
         </a>
     </div>
 </nav>
+
+<script>
+/**
+ * Gestion de l'aperçu de l'image de profil
+ * Permet de prévisualiser l'image sélectionnée avant l'envoi du formulaire
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Sélection des éléments du DOM
+    const fileInput = document.querySelector('input[type="file"][data-preview="true"]');
+    const fileNameDisplay = document.getElementById('selected-file-name');
+    const previewContainer = document.getElementById('preview-container');
+    const profilePreview = document.getElementById('profile-preview');
+    const currentImage = document.getElementById('current-profile-image');
+    const profileInitials = document.getElementById('profile-initials');
+    
+    if (fileInput && fileNameDisplay) {
+        // Écouteur d'événement pour la sélection de fichier
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                
+                // Afficher le nom du fichier
+                fileNameDisplay.textContent = 'Fichier sélectionné : ' + file.name;
+                
+                // Créer un aperçu de l'image
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Créer un nouvel élément img pour la prévisualisation
+                    const previewImage = document.createElement('img');
+                    previewImage.src = e.target.result;
+                    previewImage.alt = 'Aperçu photo de profil';
+                    previewImage.className = 'w-full h-full object-cover preview-fade-in';
+                    
+                    // Vider le conteneur de prévisualisation
+                    while (previewContainer.firstChild) {
+                        previewContainer.removeChild(previewContainer.firstChild);
+                    }
+                    
+                    // Ajouter la nouvelle image
+                    previewContainer.appendChild(previewImage);
+                    
+                    // Mettre à jour l'aperçu en haut également
+                    if (profilePreview) {
+                        const profilePreviewImage = document.createElement('img');
+                        profilePreviewImage.src = e.target.result;
+                        profilePreviewImage.alt = 'Photo de profil';
+                        profilePreviewImage.className = 'w-full h-full object-cover';
+                        
+                        // Vider le conteneur de prévisualisation
+                        while (profilePreview.firstChild) {
+                            profilePreview.removeChild(profilePreview.firstChild);
+                        }
+                        
+                        // Ajouter la nouvelle image
+                        profilePreview.appendChild(profilePreviewImage);
+                    }
+                };
+                
+                // Lire le fichier en tant que URL de données
+                reader.readAsDataURL(file);
+            } else {
+                fileNameDisplay.textContent = '';
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

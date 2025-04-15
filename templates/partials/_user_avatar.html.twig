@@ -1,0 +1,9 @@
+{% if user and user.profilePicture is defined and user.profilePicture %}
+    <img src="{{ asset('uploads/profile_pictures/' ~ user.profilePicture) }}" 
+         alt="Photo de profil de {{ user.pseudo }}" 
+         class="{{ class|default('w-full h-full object-cover') }}">
+{% else %}
+    <div class="{{ initialsClass|default('w-full h-full flex items-center justify-center') }}">
+        {{ user ? user.pseudo|slice(0,1)|upper : '?' }}
+    </div>
+{% endif %}

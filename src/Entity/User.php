@@ -32,6 +32,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(max: 180, maxMessage: 'L\'adresse email ne peut pas dépasser {{ limit }} caractères')]
     private ?string $email = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $profilePicture = null;
+
+
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $resetToken = null;
     
@@ -407,4 +411,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return new \DateTime() > $expirationDate;
     }
+
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(?string $profilePicture): self
+    {
+        $this->profilePicture = $profilePicture;
+        
+        return $this;
+    }
+
 }

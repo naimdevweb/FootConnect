@@ -1,0 +1,8 @@
+{# filepath: templates/partials/_profile_picture.html.twig #}
+{% if user.profilePicture %}
+    <img src="{{ asset('uploads/profile_pictures/' ~ user.profilePicture) }}" alt="Photo de profil" class="{{ class|default('w-10 h-10 rounded-full object-cover') }}" />
+{% else %}
+    <div class="{{ class|default('w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center') }}">
+        <span class="text-gray-500 text-xs">{{ user.pseudo|slice(0, 2)|upper }}</span>
+    </div>
+{% endif %}
