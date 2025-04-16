@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Photo;
 use App\Form\PhotoFormType;
+use App\Form\PostType;
 use App\Repository\PhotoRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,17 +13,44 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Psr\Log\LoggerInterface;
 
 class PhotoController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
+    private LoggerInterface $logger;
+    private ?string $uploadDirectory = null;
     
     /**
-     * Constructeur avec injection de l'EntityManager
+     * Constructeur avec injection de l'EntityManager et du Logger
      */
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
     {
         $this->entityManager = $entityManager;
+        $this->logger = $logger;
+    }
+
+    /**
+     * Initialise et retourne le répertoire d'upload des photos
+     */
+    private function getUploadDirectory(): string
+    {
+        if ($this->uploadDirectory === null) {
+            $this->uploadDirectory = $this->getParameter('kernel.project_dir') . '/public/uploads/photos';
+            
+            // Création du répertoire s'il n'existe pas
+            if (!is_dir($this->uploadDirectory)) {
+                $this->logger->info('Création du répertoire : ' . $this->uploadDirectory);
+                mkdir($this->uploadDirectory, 0777, true);
+            }
+            
+            // Vérification des permissions
+            if (!is_writable($this->uploadDirectory)) {
+                chmod($this->uploadDirectory, 0777);
+            }
+        }
+        
+        return $this->uploadDirectory;
     }
 
     /**
@@ -32,10 +60,8 @@ class PhotoController extends AbstractController
     public function index(PhotoRepository $photoRepository): Response
     {
         $user = $this->getUser();
-        
-        if (!$user) {
-            $this->addFlash('error', 'Vous devez être connecté pour accéder à cette page.');
-            return $this->redirectToRoute('app_login');
+        if (!$user instanceof \App\Entity\User) {
+            throw $this->createAccessDeniedException('Utilisateur non valide.');
         }
         
         $photos = $photoRepository->findBy(['user' => $user], ['createdAt' => 'DESC']);
@@ -48,8 +74,9 @@ class PhotoController extends AbstractController
     /**
      * Création d'une nouvelle photo
      */
-    #[Route('/profil/photo/new', name: 'app_profil_photo_new')]
-    #[Route('/photo/new', name: 'app_photo_new')]
+    // #[Route('/profil/photo/new', name: 'app_profil_photo_new')]
+    // #[Route('/photo/new', name: 'app_photo_new')]
+    #[Route('/post/create', name: 'app_post_create')]
     public function new(Request $request, SluggerInterface $slugger): Response
     {
         $user = $this->getUser();
@@ -68,33 +95,73 @@ class PhotoController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                // Récupération du fichier image
                 $photoFile = $form->get('photoFile')->getData();
                 
                 if ($photoFile) {
+                    $this->logger->info('Fichier photo reçu', [
+                        'file_name' => $photoFile->getClientOriginalName(),
+                        'file_size' => $photoFile->getSize(),
+                        'mime_type' => $photoFile->getMimeType()
+                    ]);
+                    
+                    // Traitement du nom de fichier sécurisé
                     $originalFilename = pathinfo($photoFile->getClientOriginalName(), PATHINFO_FILENAME);
                     $safeFilename = $slugger->slug($originalFilename);
                     $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
                     
-                    $photoFile->move(
-                        $this->getParameter('photos_directory'),
-                        $newFilename
-                    );
+                    // Obtenir le répertoire d'upload
+                    $uploadDir = $this->getUploadDirectory();
                     
-                    $photo->setPhotoUrl($newFilename);
+                    // Déplacer le fichier
+                    $this->logger->info('Tentative de déplacement du fichier vers : ' . $uploadDir . '/' . $newFilename);
+                    $photoFile->move($uploadDir, $newFilename);
                     
-                    $this->entityManager->persist($photo);
-                    $this->entityManager->flush();
-                    
-                    $this->addFlash('success', 'Votre photo a été ajoutée avec succès!');
-                    return $this->redirectToRoute('app_profil');
+                    // Vérification de la création du fichier
+                    if (file_exists($uploadDir . '/' . $newFilename)) {
+                        $this->logger->info('Fichier créé avec succès');
+                        
+                        // Mettre à jour l'entité avec le nom du fichier
+                        $photo->setPhotoUrl($newFilename);
+                        
+                        // Enregistrement en base de données
+                        $this->entityManager->persist($photo);
+                        $this->entityManager->flush();
+                        
+                        $this->addFlash('success', 'Votre publication a été créée avec succès !');
+                        return $this->redirectToRoute('app_home');
+                    } else {
+                        throw new FileException('Le fichier n\'a pas été correctement enregistré');
+                    }
+                } else {
+                    $this->addFlash('error', 'Veuillez sélectionner une image.');
                 }
             } catch (FileException $e) {
-                $this->addFlash('error', 'Un problème est survenu lors du téléchargement de votre photo.');
+                $this->logger->error('Erreur lors du téléchargement du fichier: ' . $e->getMessage(), [
+                    'exception' => $e->getTraceAsString()
+                ]);
+                $this->addFlash('error', 'Un problème est survenu lors du téléchargement de votre photo: ' . $e->getMessage());
+            } catch (\Exception $e) {
+                $this->logger->error('Erreur inattendue: ' . $e->getMessage(), [
+                    'exception' => $e->getTraceAsString()
+                ]);
+                $this->addFlash('error', 'Une erreur inattendue est survenue: ' . $e->getMessage());
             }
         }
         
+        // Déterminer quel template utiliser en fonction de la route
+        $routeName = $request->attributes->get('_route');
+        if ($routeName === 'app_post_create') {
+            return $this->render('photo/create_post.html.twig', [
+                'form' => $form->createView(),
+                'user' => $user
+            ]);
+        }
+        
+        // Template par défaut
         return $this->render('photo/new.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'user' => $user
         ]);
     }
 
@@ -123,17 +190,17 @@ class PhotoController extends AbstractController
                     $safeFilename = $slugger->slug($originalFilename);
                     $newFilename = $safeFilename . '-' . uniqid() . '.' . $photoFile->guessExtension();
 
-                    // Déplacer le fichier
-                    $photoFile->move(
-                        $this->getParameter('photos_directory'),
-                        $newFilename
-                    );
+                    // Obtenir le répertoire d'upload
+                    $uploadDir = $this->getUploadDirectory();
 
                     // Supprimer l'ancienne photo si besoin
-                    $oldPhotoPath = $this->getParameter('photos_directory') . '/' . $photo->getPhotoUrl();
+                    $oldPhotoPath = $uploadDir . '/' . $photo->getPhotoUrl();
                     if (file_exists($oldPhotoPath) && is_file($oldPhotoPath)) {
                         unlink($oldPhotoPath);
                     }
+
+                    // Déplacer le fichier vers le bon répertoire
+                    $photoFile->move($uploadDir, $newFilename);
 
                     $photo->setPhotoUrl($newFilename);
                 }
@@ -144,7 +211,15 @@ class PhotoController extends AbstractController
                 $this->addFlash('success', 'Photo modifiée avec succès.');
                 return $this->redirectToRoute('app_profil');
             } catch (FileException $e) {
-                $this->addFlash('error', 'Un problème est survenu lors de la modification de votre photo.');
+                $this->logger->error('Erreur lors de la modification de la photo: ' . $e->getMessage(), [
+                    'exception' => $e->getTraceAsString()
+                ]);
+                $this->addFlash('error', 'Un problème est survenu lors de la modification de votre photo: ' . $e->getMessage());
+            } catch (\Exception $e) {
+                $this->logger->error('Erreur inattendue: ' . $e->getMessage(), [
+                    'exception' => $e->getTraceAsString()
+                ]);
+                $this->addFlash('error', 'Une erreur inattendue est survenue: ' . $e->getMessage());
             }
         }
 
@@ -169,7 +244,9 @@ class PhotoController extends AbstractController
 
         try {
             // Supprimer le fichier physique
-            $photoPath = $this->getParameter('photos_directory') . '/' . $photo->getPhotoUrl();
+            $uploadDir = $this->getUploadDirectory();
+            $photoPath = $uploadDir . '/' . $photo->getPhotoUrl();
+            
             if (file_exists($photoPath) && is_file($photoPath)) {
                 unlink($photoPath);
             }
@@ -179,7 +256,10 @@ class PhotoController extends AbstractController
 
             $this->addFlash('success', 'Photo supprimée avec succès.');
         } catch (\Exception $e) {
-            $this->addFlash('error', 'Un problème est survenu lors de la suppression de la photo.');
+            $this->logger->error('Erreur lors de la suppression de la photo: ' . $e->getMessage(), [
+                'exception' => $e->getTraceAsString()
+            ]);
+            $this->addFlash('error', 'Un problème est survenu lors de la suppression de la photo: ' . $e->getMessage());
         }
 
         return $this->redirectToRoute('app_profil');

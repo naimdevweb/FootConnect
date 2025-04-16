@@ -116,7 +116,7 @@
                 <aside class="hidden md:block w-64 space-y-6">
                     <div
                         class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-5 sticky top-20 transition-colors duration-200">
-                        <!-- Profil utilisateur si connecté -->
+                       
                      <!-- Profil utilisateur si connecté -->
 {% if app.user %}
     <div class="flex items-center space-x-3 pb-4 border-b border-gray-100 dark:border-gray-700">
@@ -137,7 +137,7 @@
                         <!-- Navigation principale -->
                         <nav
                             class="mt-4 space-y-2">
-                            <!-- Accueil - Lien existant conservé -->
+                            
                             <a href="{{ path('app_home') }}" class="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 rounded-xl transition-all duration-200 hover:shadow-sm">
                                 <i class="fas fa-home text-lg"></i>
                                 <span class="font-medium">Accueil</span>
@@ -170,7 +170,7 @@
                         </a>
 
                         <!-- Bouton de création de publication -->
-                        <a href="{{ path('app_profil') }}" class="mt-6 flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-xl py-3 px-4 font-medium shadow-sm transition-colors">
+                        <a href="{{ path('app_post_create') }}" class="mt-6 flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-xl py-3 px-4 font-medium shadow-sm transition-colors">
                             <i class="fas fa-plus-circle"></i>
                             <span>Nouvelle publication</span>
                         </a>

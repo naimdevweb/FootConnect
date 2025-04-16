@@ -18,9 +18,8 @@ class Photo
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    
     #[Assert\Length(max: 255)]
-    #[Assert\Url]
     private ?string $photoUrl = null;
 
     #[ORM\Column(length: 255)]

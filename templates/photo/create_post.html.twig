@@ -1,0 +1,375 @@
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\photo\create_post.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle publication{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .delay-100 {
+            animation-delay: 0.1s;
+            opacity: 0;
+        }
+
+        /* Style pour la zone d'upload améliorée */
+        .image-upload-container {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px dashed #e2e8f0;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .dark .image-upload-container {
+            border-color: #4b5563;
+        }
+
+        .image-upload-container:hover {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 250px;
+            background-color: rgba(243, 244, 246, 1);
+            border-radius: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .dark .image-preview {
+            background-color: rgba(55, 65, 81, 1);
+        }
+
+        .image-preview-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 2rem;
+        }
+
+        .preview-image-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Style important pour rendre l'input réellement clickable */
+        .image-upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 1;
+            font-size: 100px; /* Assure que le bouton est grand sur tous les appareils */
+        }
+
+        /* Styles pour l'animation */
+        .preview-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+{% endblock %}
+
+{% block page_header %}
+    <div class="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-200">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <a href="{{ path('app_profil') }}" class="p-2 -ml-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <a href="{{ path('app_profil') }}" class="text-gray-600 dark:text-gray-400 font-semibold text-lg hover:text-gray-800 dark:hover:text-gray-200 transition-colors">
+                        Profil
+                    </a>
+                </div>
+                <h1 class="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center">
+                    <div class="w-8 h-8 bg-blue-600 dark:bg-blue-700 rounded-full flex items-center justify-center mr-2 shadow-md hover:shadow-lg transition-all duration-300">
+                        <i class="material-icons text-white text-sm">add_photo_alternate</i>
+                    </div>
+                    Nouvelle publication
+                </h1>
+                <div></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
+    <div class="max-w-3xl mx-auto">
+        {# En-tête #}
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-gray-100 animate-fade-in transition-colors duration-200">
+                Créer une publication
+            </h1>
+            <p class="mt-3 text-lg text-gray-600 dark:text-gray-400 animate-fade-in delay-100 transition-colors duration-200">
+                Partagez un moment avec votre communauté
+            </p>
+        </div>
+
+        {# Formulaire de création de post #}
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl overflow-hidden transition-colors duration-200">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-700 dark:to-blue-600 p-6 text-white transition-colors duration-200">
+                <div class="flex items-center space-x-4">
+                    <div class="h-12 w-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+                        {% if user.profilePicture is defined and user.profilePicture %}
+                            <img src="{{ asset('uploads/profile_pictures/' ~ user.profilePicture) }}" 
+                                alt="Photo de profil" 
+                                class="w-full h-full object-cover" />
+                        {% else %}
+                            <div class="w-full h-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-500 dark:text-blue-400 text-lg font-bold">
+                                {{ user.pseudo|slice(0, 1)|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold">{{ user.pseudo }}</h2>
+                        <p class="text-sm text-white/80">Publication visible par tous vos abonnés</p>
+                    </div>
+                </div>
+            </div>
+
+            {# Formulaire #}
+            <div class="p-6">
+                {{ form_start(form, {'attr': {'class': 'space-y-6', 'enctype': 'multipart/form-data', 'id': 'post-form'}}) }}
+                    
+                    {# Section image - Zone de sélection améliorée #}
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Image</label>
+                        
+                        <div class="image-upload-container mb-4">
+                            <div id="image-preview" class="image-preview">
+                                <div id="preview-placeholder" class="image-preview-content">
+                                    <div class="text-gray-400 dark:text-gray-500 mb-4">
+                                        <i class="material-icons text-5xl">add_photo_alternate</i>
+                                    </div>
+                                    <p class="text-center text-gray-500 dark:text-gray-400">
+                                        <strong>Cliquez pour sélectionner une image</strong>
+                                    </p>
+                                    <p class="text-center text-sm text-gray-400 dark:text-gray-500 mt-2">
+                                        Formats acceptés : JPG, PNG (max 5Mo)
+                                    </p>
+                                </div>
+                                
+                                <div id="preview-image-container" class="preview-image-container hidden">
+                                    <img id="preview-image" src="#" alt="Aperçu" class="w-full h-full object-contain">
+                                </div>
+                            </div>
+                            
+                            {# Input file - explicitement mis au-dessus du contenu #}
+                            {{ form_widget(form.photoFile, {'attr': {
+                                'class': 'image-upload-input',
+                                'accept': 'image/png, image/jpeg, image/jpg',
+                                'data-preview-target': 'preview-image',
+                                'data-placeholder': 'preview-placeholder',
+                                'data-container': 'preview-image-container'
+                            }}) }}
+                        </div>
+                        
+                        <div id="selected-file-info" class="hidden bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 p-3 rounded-md items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <i class="material-icons text-blue-500 dark:text-blue-400 mr-2">check_circle</i>
+                                <div>
+                                    <p class="font-medium" id="selected-file-name">Image sélectionnée</p>
+                                    <p class="text-xs text-blue-500 dark:text-blue-300" id="selected-file-size"></p>
+                                </div>
+                            </div>
+                            <button type="button" id="change-image" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                Changer
+                            </button>
+                        </div>
+                        
+                        {{ form_errors(form.photoFile, {'attr': {'class': 'text-red-600 dark:text-red-400 text-sm mt-2 transition-colors duration-200'}}) }}
+                    </div>
+                    
+                    {# Section description #}
+                    <div>
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'}}) }}
+                        <div class="mt-1">
+                            {{ form_widget(form.description, {'attr': {
+                                'class': 'w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200',
+                                'placeholder': 'Décrivez votre photo...',
+                                'rows': 4
+                            }}) }}
+                        </div>
+                        <div class="mt-1 flex justify-end">
+                            <span id="char-count" class="text-xs text-gray-500 dark:text-gray-400">0/500 caractères</span>
+                        </div>
+                        {{ form_errors(form.description, {'attr': {'class': 'text-red-600 dark:text-red-400 text-sm mt-2 transition-colors duration-200'}}) }}
+                    </div>
+                    
+                    {# Boutons d'action #}
+                    <div class="pt-6 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 dark:border-gray-700 transition-colors duration-200">
+                        <a href="{{ path('app_profil') }}" class="w-full sm:w-auto mb-3 sm:mb-0 inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 transition-colors duration-200">
+                            <i class="material-icons text-sm mr-2">arrow_back</i>
+                            Annuler
+                        </a>
+                        <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 dark:from-blue-700 dark:to-blue-600 text-white font-semibold hover:from-blue-700 hover:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-offset-2 transition-colors duration-200">
+                            <i class="material-icons text-sm mr-2">cloud_upload</i>
+                            Publier
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Navigation mobile -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg z-10 transition-colors duration-200">
+    <div class="flex justify-around items-center py-2">
+        <a href="{{ path('app_home') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-1">Accueil</span>
+        </a>
+        <a href="{{ path('app_discover') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2">
+            <i class="fas fa-compass text-xl"></i>
+            <span class="text-xs mt-1">Explorer</span>
+        </a>
+        <div class="relative">
+            <div class="flex items-center justify-center p-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white rounded-full shadow-md -mt-5 relative z-10 transition-colors duration-200">
+                <i class="fas fa-plus"></i>
+            </div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white dark:bg-gray-800 rounded-full -z-10 transition-colors duration-200"></div>
+        </div>
+        <a href="#" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2">
+            <i class="fas fa-bell text-xl"></i>
+            <span class="text-xs mt-1">Alertes</span>
+        </a>
+        <a href="{{ path('app_profil') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 p-2">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-1">Profil</span>
+        </a>
+    </div>
+</nav>
+
+<script>
+/**
+ * Gestion de l'aperçu d'image et du compteur de caractères
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Ciblage explicite des éléments DOM pour éviter les erreurs
+    const fileInput = document.getElementById('{{ form.photoFile.vars.id }}');
+    const previewImage = document.getElementById('preview-image');
+    const previewPlaceholder = document.getElementById('preview-placeholder');
+    const previewContainer = document.getElementById('preview-image-container');
+    const fileInfoContainer = document.getElementById('selected-file-info');
+    const fileNameElement = document.getElementById('selected-file-name');
+    const fileSizeElement = document.getElementById('selected-file-size');
+    const changeImageButton = document.getElementById('change-image');
+    
+    console.log("Initialisation du sélecteur d'images:", {
+        fileInputExists: !!fileInput,
+        previewImageExists: !!previewImage, 
+        previewContainerExists: !!previewContainer
+    });
+    
+    // Comptage de caractères
+    const descriptionTextarea = document.getElementById('{{ form.description.vars.id }}');
+    const charCount = document.getElementById('char-count');
+    const maxChars = 500;
+    
+    // Initialiser le compteur
+    if (descriptionTextarea && charCount) {
+        updateCharCount();
+        
+        // Mise à jour du compteur lors de la saisie
+        descriptionTextarea.addEventListener('input', updateCharCount);
+        
+        function updateCharCount() {
+            const currentLength = descriptionTextarea.value.length;
+            charCount.textContent = `${currentLength}/${maxChars} caractères`;
+            
+            // Changer la couleur si on approche de la limite
+            if (currentLength > maxChars * 0.9) {
+                charCount.classList.add('text-amber-500', 'dark:text-amber-400');
+            } else {
+                charCount.classList.remove('text-amber-500', 'dark:text-amber-400');
+            }
+        }
+    }
+    
+    // Prévisualisation de l'image
+    if (fileInput && previewImage && previewPlaceholder && previewContainer) {
+        // Rendre la zone entière cliquable
+        document.querySelector('.image-upload-container').addEventListener('click', function(e) {
+            if (e.target !== fileInput) {
+                fileInput.click();
+            }
+        });
+        
+        fileInput.addEventListener('change', function() {
+            console.log("Fichier sélectionné:", this.files);
+            
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                const reader = new FileReader();
+                
+                // Afficher les informations du fichier
+                fileNameElement.textContent = file.name;
+                fileSizeElement.textContent = formatFileSize(file.size);
+                fileInfoContainer.classList.remove('hidden');
+                fileInfoContainer.style.display = "flex"; // Ajout pour s'assurer que le conteneur est visible
+                
+                reader.onload = function(e) {
+                    console.log("Image chargée avec succès");
+                    
+                    // Afficher l'aperçu
+                    previewImage.src = e.target.result;
+                    previewPlaceholder.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                    previewContainer.classList.add('preview-fade-in');
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Gérer le bouton "Changer"
+        if (changeImageButton) {
+            changeImageButton.addEventListener('click', function(e) {
+                e.stopPropagation(); // Empêcher la propagation pour éviter les conflits
+                fileInput.click();
+            });
+        }
+        
+        // Fonction utilitaire pour formater la taille du fichier
+        function formatFileSize(bytes) {
+            if (bytes < 1024) {
+                return bytes + ' octets';
+            } else if (bytes < 1048576) {
+                return (bytes / 1024).toFixed(1) + ' Ko';
+            } else {
+                return (bytes / 1048576).toFixed(1) + ' Mo';
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
