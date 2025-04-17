@@ -150,12 +150,12 @@
 
 						<!-- Publications des personnes suivies -->
 						<a href="{{ path('app_home', {'type': 'following'}) }}" class="flex items-center space-x-3 p-3
-								                                    {% if filterType == 'following' %}
-								                                     bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300
-								                                     {% else %}
-								                                     text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700
-								                                    {% endif %}
-								                                     rounded-xl transition-all duration-200 hover:shadow-sm">
+																                                    {% if filterType == 'following' %}
+																                                     bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300
+																                                     {% else %}
+																                                     text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700
+																                                    {% endif %}
+																                                     rounded-xl transition-all duration-200 hover:shadow-sm">
 							<i class="fas fa-user-friends text-lg"></i>
 							<span>Abonnements</span>
 						</a>
@@ -283,7 +283,7 @@
 
 										<!-- Bouton enregistrer -->
 										{% if app.user and app.user != photo.user %}
-											<button class="favorite-toggle flex items-center space-x-2 {{ photo.isFavoritedByUser ? 'text-yellow-600 dark:text-yellow-500' : 'text-gray-600 dark:text-gray-400' }} hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors" data-photo-id="{{ photo.id }}">
+											<button class="favorite-toggle flex items-center space-x-2  hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors" data-photo-id="{{ photo.id }}">
 												<i class="fas fa-bookmark text-xl {{ photo.isFavoritedByUser ? 'text-yellow-600 dark:text-yellow-500' : '' }}"></i>
 											</button>
 										{% endif %}
@@ -416,247 +416,261 @@
 
 <script>
 	document.addEventListener('DOMContentLoaded', function () {
-	    // Fonction pour gérer les likes
-	    function handleLikes() {
-	        document.querySelectorAll('.like-button').forEach(button => {
-	            button.addEventListener('click', async function () {
-	                const photoId = this.dataset.photoId;
-	                const isLiked = this.classList.contains('text-pink-600');
-	
-	                try {
-	                    const response = await fetch(`/like/${photoId}`, {
-	                        method: 'POST',
-	                        headers: {
-	                            'X-Requested-With': 'XMLHttpRequest',
-	                        },
-	                    });
-	
-	                    if (response.ok) {
-	                        const count = this.querySelector('.like-count');
-	                        const currentCount = parseInt(count.textContent);
-	
-	                        if (!isLiked) {
-	                            this.classList.remove('text-gray-600', 'dark:text-gray-400');
-	                            this.classList.add('text-pink-600', 'dark:text-pink-500');
-	                            count.textContent = currentCount + 1;
-	                        } else {
-	                            this.classList.remove('text-pink-600', 'dark:text-pink-500');
-	                            this.classList.add('text-gray-600', 'dark:text-gray-400');
-	                            count.textContent = currentCount - 1;
-	                        }
-	                    } else {
-	                        console.error('Erreur lors du like:', response.statusText);
-	                    }
-	                } catch (error) {
-	                    console.error('Erreur lors du like:', error);
-	                }
-	            });
-	        });
-	    }
-	
-	    // Fonction pour gérer les commentaires
-	    function handleComments() {
-	        document.querySelectorAll('.comment-toggle').forEach(button => {
-	            button.addEventListener('click', function () {
-	                const targetId = this.dataset.target;
-	                const commentSection = document.getElementById(targetId);
-	
-	                if (commentSection.classList.contains('hidden')) {
-	                    // Fermer toutes les autres sections de commentaires
-	                    document.querySelectorAll('.comment-section').forEach(section => {
-	                        if (section.id !== targetId && !section.classList.contains('hidden')) {
-	                            section.classList.add('hidden');
-	                        }
-	                    });
-	
-	                    // Ouvrir cette section
-	                    commentSection.classList.remove('hidden');
-	                    setTimeout(() => {
-	                        commentSection.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-	                        const input = commentSection.querySelector('input, textarea');
-	                        if (input) 
-	                            input.focus();
-	                    }, 100);
-	                } else {
-	                    commentSection.classList.add('hidden');
-	                }
-	            });
-	        });
-	
-	        // Traitement des soumissions de commentaires
-	        document.querySelectorAll('.comment-form').forEach(form => {
-	            form.addEventListener('submit', async function (event) {
-	                event.preventDefault();
-	
-	                const photoId = this.dataset.photoId;
-	                const formData = new FormData(this);
-	                formData.append('photo_id', photoId);
-	                const commentSection = document.getElementById(`comments-${photoId}`);
-	                const commentList = commentSection.querySelector('.space-y-3');
-	                const messageInput = this.querySelector('[name="commentaire[message]"]');
-	                const message = messageInput.value.trim();
-	
-	                if (!message) {
-	                    messageInput.classList.add('ring-2', 'ring-red-500');
-	                    setTimeout(() => messageInput.classList.remove('ring-2', 'ring-red-500'), 2000);
-	                    return;
-	                }
-	
-	                const submitButton = this.querySelector('button[type="submit"]');
-	                const originalContent = submitButton.innerHTML;
-	                submitButton.disabled = true;
-	                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-	
-	                try {
-	                    const response = await fetch(this.action, {
-	                        method: 'POST',
-	                        body: formData,
-	                        headers: {
-	                            'X-Requested-With': 'XMLHttpRequest'
-	                        }
-	                    });
-	
-	                    if (response.ok) {
-	                        // Variables pour afficher l'avatar de l'utilisateur
-	                        const userAvatar = document.querySelector('.w-8.h-8.rounded-full.bg-blue-100');
-	                        const userName = '{{ app.user ? app.user.pseudo : "Utilisateur" }}';
-	                        const userPicture = '{{ app.user and app.user.profilePicture ? asset("uploads/profile_pictures/" ~ app.user.profilePicture) : "" }}';
-	                        const userInitial = userAvatar.textContent.trim();
-	                        const currentTime = new Date().toLocaleTimeString([], {
-	                            hour: '2-digit',
-	                            minute: '2-digit'
-	                        });
-	
-	                        const commentElement = document.createElement('article');
-	                        commentElement.id = `comment-temp-${Date.now()}`;
-	                        commentElement.className = 'flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200';
-	                        commentElement.style.opacity = '0';
-	                        commentElement.style.transform = 'translateY(10px)';
-	
-	                        commentElement.innerHTML = `
-	                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 overflow-hidden">
-	                                ${userPicture ? `<img src="${userPicture}" alt="Photo de profil" class="w-full h-full object-cover">` : userInitial}
-	                            </div>
-	                            <div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
-	                                <header class="flex justify-between items-start mb-1">
-	                                    <span class="font-medium text-xs text-gray-700 dark:text-gray-300">${userName}</span>
-	                                    <span class="text-xs text-gray-400">${currentTime}</span>
-	                                </header>
-	                                <p class="text-sm text-gray-800 dark:text-gray-200 break-words">${message}</p>
-	                            </div>
-	                        `;
-	
-	                        const noComments = commentList.querySelector('.text-center');
-	                        if (noComments) {
-	                            noComments.remove();
-	                        }
-	
-	                        commentList.appendChild(commentElement);
-	
-	                        setTimeout(() => {
-	                            commentElement.style.transition = 'all 0.3s ease-out';
-	                            commentElement.style.opacity = '1';
-	                            commentElement.style.transform = 'translateY(0)';
-	                        }, 10);
-	
-	                        const commentCounter = document.querySelector(`[data-target="comments-${photoId}"] span`);
-	                        if (commentCounter) {
-	                            const currentCount = parseInt(commentCounter.textContent);
-	                            commentCounter.textContent = currentCount + 1;
-	                        }
-	
-	                        this.reset();
-	                    } else {
-	                        console.error('Erreur lors de l\'ajout du commentaire:', response.statusText);
-	                    }
-	                } catch (error) {
-	                    console.error('Erreur lors de l\'ajout du commentaire:', error);
-	                } finally {
-	                    submitButton.disabled = false;
-	                    submitButton.innerHTML = originalContent;
-	                }
-	            });
-	        });
-	    }
-	     
-	    // Gestion des boutons favoris
-	    function handleFavorites() {
-	        document.querySelectorAll('.favorite-toggle').forEach(button => {
-	            button.addEventListener('click', async function() {
-	                const photoId = this.dataset.photoId;
-	                const isFavorite = this.dataset.isFavorite === 'true';
-	                const icon = this.querySelector('i.fa-bookmark');
-	                
-	                try {
-	                    const response = await fetch(`/toggle-favorite/${photoId}`);
-	                    if (response.ok) {
-	                        const data = await response.json();
-	                        
-	                        if (data.success) {
-	                            // Mettre à jour l'apparence du bouton
-	                            if (data.isFavorite) {
-	                                icon.classList.add('text-yellow-600', 'dark:text-yellow-500');
-	                                this.dataset.isFavorite = 'true';
-	                            } else {
-	                                icon.classList.remove('text-yellow-600', 'dark:text-yellow-500');
-	                                this.dataset.isFavorite = 'false';
-	                            }
-	                        }
-	                    } else {
-	                        console.error('Erreur lors de la mise à jour des favoris');
-	                    }
-	                } catch (error) {
-	                    console.error('Erreur:', error);
-	                }
-	            });
-	        });
-	    }
-	
-	    // Initialisation des fonctionnalités
-	    handleLikes();
-	    handleComments();
-	    handleFavorites();
-	});
-	
-	document.addEventListener('DOMContentLoaded', function () { // Mode sombre toggle avec logging pour déboguer
-	console.log("Initialisation du mode sombre dans settings...");
-	const darkModeToggle = document.getElementById('darkModeToggle');
-	
-	if (darkModeToggle) {
-	    console.log("Toggle trouvé :", darkModeToggle);
-	
-	    // Initialiser l'état du toggle
-	    darkModeToggle.checked = document.documentElement.classList.contains('dark');
-	    console.log("État initial du toggle :", darkModeToggle.checked);
-	
-	    // Ajouter l'écouteur d'événement avec approche différente
-	    darkModeToggle.addEventListener('click', function () {
-	        console.log("Toggle cliqué, nouvel état :", this.checked);
-	
-	        if (this.checked) {
-	            document.documentElement.classList.add('dark');
-	            localStorage.setItem('darkMode', 'true');
+		    // Fonction pour gérer les likes
+		    function handleLikes() {
+		        document.querySelectorAll('.like-button').forEach(button => {
+		            button.addEventListener('click', async function () {
+		                const photoId = this.dataset.photoId;
+		                const isLiked = this.classList.contains('text-pink-600');
+		
+		                try {
+		                    const response = await fetch(`/like/${photoId}`, {
+		                        method: 'POST',
+		                        headers: {
+		                            'X-Requested-With': 'XMLHttpRequest',
+		                        },
+		                    });
+		
+		                    if (response.ok) {
+		                        const count = this.querySelector('.like-count');
+		                        const currentCount = parseInt(count.textContent);
+		
+		                        if (!isLiked) {
+		                            this.classList.remove('text-gray-600', 'dark:text-gray-400');
+		                            this.classList.add('text-pink-600', 'dark:text-pink-500');
+		                            count.textContent = currentCount + 1;
+		                        } else {
+		                            this.classList.remove('text-pink-600', 'dark:text-pink-500');
+		                            this.classList.add('text-gray-600', 'dark:text-gray-400');
+		                            count.textContent = currentCount - 1;
+		                        }
+		                    } else {
+		                        console.error('Erreur lors du like:', response.statusText);
+		                    }
+		                } catch (error) {
+		                    console.error('Erreur lors du like:', error);
+		                }
+		            });
+		        });
+		    }
+		
+		    // Fonction pour gérer les commentaires
+		    function handleComments() {
+		        document.querySelectorAll('.comment-toggle').forEach(button => {
+		            button.addEventListener('click', function () {
+		                const targetId = this.dataset.target;
+		                const commentSection = document.getElementById(targetId);
+		
+		                if (commentSection.classList.contains('hidden')) {
+		                    // Fermer toutes les autres sections de commentaires
+		                    document.querySelectorAll('.comment-section').forEach(section => {
+		                        if (section.id !== targetId && !section.classList.contains('hidden')) {
+		                            section.classList.add('hidden');
+		                        }
+		                    });
+		
+		                    // Ouvrir cette section
+		                    commentSection.classList.remove('hidden');
+		                    setTimeout(() => {
+		                        commentSection.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+		                        const input = commentSection.querySelector('input, textarea');
+		                        if (input) 
+		                            input.focus();
+		                    }, 100);
+		                } else {
+		                    commentSection.classList.add('hidden');
+		                }
+		            });
+		        });
+		
+		        // Traitement des soumissions de commentaires
+		        document.querySelectorAll('.comment-form').forEach(form => {
+		            form.addEventListener('submit', async function (event) {
+		                event.preventDefault();
+		
+		                const photoId = this.dataset.photoId;
+		                const formData = new FormData(this);
+		                formData.append('photo_id', photoId);
+		                const commentSection = document.getElementById(`comments-${photoId}`);
+		                const commentList = commentSection.querySelector('.space-y-3');
+		                const messageInput = this.querySelector('[name="commentaire[message]"]');
+		                const message = messageInput.value.trim();
+		
+		                if (!message) {
+		                    messageInput.classList.add('ring-2', 'ring-red-500');
+		                    setTimeout(() => messageInput.classList.remove('ring-2', 'ring-red-500'), 2000);
+		                    return;
+		                }
+		
+		                const submitButton = this.querySelector('button[type="submit"]');
+		                const originalContent = submitButton.innerHTML;
+		                submitButton.disabled = true;
+		                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+		
+		                try {
+		                    const response = await fetch(this.action, {
+		                        method: 'POST',
+		                        body: formData,
+		                        headers: {
+		                            'X-Requested-With': 'XMLHttpRequest'
+		                        }
+		                    });
+		
+		                    if (response.ok) {
+		                        // Variables pour afficher l'avatar de l'utilisateur
+		                        const userAvatar = document.querySelector('.w-8.h-8.rounded-full.bg-blue-100');
+		                        const userName = '{{ app.user ? app.user.pseudo : "Utilisateur" }}';
+		                        const userPicture = '{{ app.user and app.user.profilePicture ? asset("uploads/profile_pictures/" ~ app.user.profilePicture) : "" }}';
+		                        const userInitial = userAvatar.textContent.trim();
+		                        const currentTime = new Date().toLocaleTimeString([], {
+		                            hour: '2-digit',
+		                            minute: '2-digit'
+		                        });
+		
+		                        const commentElement = document.createElement('article');
+		                        commentElement.id = `comment-temp-${Date.now()}`;
+		                        commentElement.className = 'flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200';
+		                        commentElement.style.opacity = '0';
+		                        commentElement.style.transform = 'translateY(10px)';
+		
+		                        commentElement.innerHTML = `
+		                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 overflow-hidden">
+		                                ${userPicture ? `<img src="${userPicture}" alt="Photo de profil" class="w-full h-full object-cover">` : userInitial}
+		                            </div>
+		                            <div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
+		                                <header class="flex justify-between items-start mb-1">
+		                                    <span class="font-medium text-xs text-gray-700 dark:text-gray-300">${userName}</span>
+		                                    <span class="text-xs text-gray-400">${currentTime}</span>
+		                                </header>
+		                                <p class="text-sm text-gray-800 dark:text-gray-200 break-words">${message}</p>
+		                            </div>
+		                        `;
+		
+		                        const noComments = commentList.querySelector('.text-center');
+		                        if (noComments) {
+		                            noComments.remove();
+		                        }
+		
+		                        commentList.appendChild(commentElement);
+		
+		                        setTimeout(() => {
+		                            commentElement.style.transition = 'all 0.3s ease-out';
+		                            commentElement.style.opacity = '1';
+		                            commentElement.style.transform = 'translateY(0)';
+		                        }, 10);
+		
+		                        const commentCounter = document.querySelector(`[data-target="comments-${photoId}"] span`);
+		                        if (commentCounter) {
+		                            const currentCount = parseInt(commentCounter.textContent);
+		                            commentCounter.textContent = currentCount + 1;
+		                        }
+		
+		                        this.reset();
+		                    } else {
+		                        console.error('Erreur lors de l\'ajout du commentaire:', response.statusText);
+		                    }
+		                } catch (error) {
+		                    console.error('Erreur lors de l\'ajout du commentaire:', error);
+		                } finally {
+		                    submitButton.disabled = false;
+		                    submitButton.innerHTML = originalContent;
+		                }
+		            });
+		        });
+		    }
+		     
+		    // Gestion des boutons favoris
+		    function handleFavorites() {
+	    document.querySelectorAll('.favorite-toggle').forEach(button => {
+	        // S'assurer que le bouton a les bons attributs initiaux
+	        const icon = button.querySelector('i.fa-bookmark');
+	        if (icon.classList.contains('text-yellow-600')) {
+	            button.setAttribute('data-is-favorite', 'true');
 	        } else {
-	            document.documentElement.classList.remove('dark');
-	            localStorage.setItem('darkMode', 'false');
+	            button.setAttribute('data-is-favorite', 'false');
 	        }
+	        
+	        button.addEventListener('click', function() {
+	            // Récupérer l'ID de la photo et l'état actuel
+	            const photoId = this.dataset.photoId;
+	            const icon = this.querySelector('i.fa-bookmark');
+	            const isFavorite = button.getAttribute('data-is-favorite') === 'true';
+	            
+	            // Changer immédiatement l'apparence visuelle
+	            if (isFavorite) {
+	                // Si c'est déjà un favori, on l'enlève
+	                icon.classList.remove('text-yellow-600', 'dark:text-yellow-500');
+	                button.setAttribute('data-is-favorite', 'false');
+                    console.log("on enleve");
+                    
+	            } else {
+	                // Sinon, on l'ajoute aux favoris
+	                icon.classList.add('text-yellow-600', 'dark:text-yellow-500');
+	                button.setAttribute('data-is-favorite', 'true');
+                                        console.log("on remet");
+
 	
-	        // Émission d'un événement personnalisé pour signaler le changement
-	        document.dispatchEvent(new CustomEvent('darkModeChanged', {
-	            detail: {
-	                darkMode: this.checked
 	            }
-	        }));
+	            
+	            // Ajouter une animation visuelle
+	            icon.classList.add('like-animation');
+	            setTimeout(() => {
+	                icon.classList.remove('like-animation');
+	            }, 450);
+	            
+	            // Envoyer la mise à jour au serveur en arrière-plan
+	            fetch(`/toggle-favorite/${photoId}`)
+	                .catch(error => {
+	                    console.error('Erreur lors de la mise à jour des favoris:', error);
+	                });
+	        });
 	    });
-	
-	    // Sync avec les changements externes (au cas où)
-	    document.addEventListener('darkModeChanged', function (e) {
-	        darkModeToggle.checked = e.detail.darkMode;
-	    });
-	} else {
-	    console.error("Toggle de mode sombre non trouvé!");
 	}
-	});
-	
-	    </script>
-	{% endblock %}
+		    // Initialisation des fonctionnalités
+		    handleLikes();
+		    handleComments();
+		    handleFavorites();
+		});
+		
+		document.addEventListener('DOMContentLoaded', function () { // Mode sombre toggle avec logging pour déboguer
+		console.log("Initialisation du mode sombre dans settings...");
+		const darkModeToggle = document.getElementById('darkModeToggle');
+		
+		if (darkModeToggle) {
+		    console.log("Toggle trouvé :", darkModeToggle);
+		
+		    // Initialiser l'état du toggle
+		    darkModeToggle.checked = document.documentElement.classList.contains('dark');
+		    console.log("État initial du toggle :", darkModeToggle.checked);
+		
+		    // Ajouter l'écouteur d'événement avec approche différente
+		    darkModeToggle.addEventListener('click', function () {
+		        console.log("Toggle cliqué, nouvel état :", this.checked);
+		
+		        if (this.checked) {
+		            document.documentElement.classList.add('dark');
+		            localStorage.setItem('darkMode', 'true');
+		        } else {
+		            document.documentElement.classList.remove('dark');
+		            localStorage.setItem('darkMode', 'false');
+		        }
+		
+		        // Émission d'un événement personnalisé pour signaler le changement
+		        document.dispatchEvent(new CustomEvent('darkModeChanged', {
+		            detail: {
+		                darkMode: this.checked
+		            }
+		        }));
+		    });
+		
+		    // Sync avec les changements externes (au cas où)
+		    document.addEventListener('darkModeChanged', function (e) {
+		        darkModeToggle.checked = e.detail.darkMode;
+		    });
+		} else {
+		    console.error("Toggle de mode sombre non trouvé!");
+		}
+		});
+		
+		    </script>
+		{% endblock %}
