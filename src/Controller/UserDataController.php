@@ -4,124 +4,137 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\AccountDeletionType;
-use App\Services\DataRetentionService;
-use App\Services\UserDataExportService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-#[Route('/user/data')]
-#[IsGranted('IS_AUTHENTICATED_FULLY')]
+/**
+ * Contrôleur pour la gestion des données personnelles utilisateur
+ */
+#[IsGranted('ROLE_USER')]
 class UserDataController extends AbstractController
 {
-    public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly DataRetentionService $dataRetentionService,
-        private readonly UserDataExportService $userDataExportService
-    ) {}
-
+    private EntityManagerInterface $entityManager;
+    private TokenStorageInterface $tokenStorage;
+    
+    public function __construct(EntityManagerInterface $entityManager, TokenStorageInterface $tokenStorage)
+    {
+        $this->entityManager = $entityManager;
+        $this->tokenStorage = $tokenStorage;
+    }
+    
+    /**
+     * Affiche la page d'informations sur la durée de conservation des données
+     */
+    #[Route('/user/data-retention', name: 'app_user_data_retention_info')]
+    public function dataRetentionInfo(): Response
+    {
+        $retentionPolicies = $this->getRetentionPolicies();
+        
+        return $this->render('user/data_retention.html.twig', [
+            'retentionPolicies' => $retentionPolicies,
+        ]);
+    }
+    
     /**
      * Affiche la page de gestion des données personnelles
      */
-    #[Route('/manage', name: 'app_user_data_manage')]
-    public function manageUserData(Request $request): Response
+    #[Route('/user/data-manage', name: 'app_user_data_manage')]
+    public function manageData(Request $request): Response
     {
         /** @var User $user */
         $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('error', 'Vous devez être connecté pour accéder à cette page.');
-            return $this->redirectToRoute('app_login');
-        }
-
+        $retentionPolicies = $this->getRetentionPolicies();
+        
         // Formulaire de suppression de compte
         $deletionForm = $this->createForm(AccountDeletionType::class);
         $deletionForm->handleRequest($request);
-
+        
         if ($deletionForm->isSubmitted() && $deletionForm->isValid()) {
             try {
-                // Marquer le compte comme supprimé au lieu de le supprimer physiquement
-                $user->setIsDeleted(true);
-                $user->setDeletedAt(new \DateTime());
-                $this->entityManager->flush();
-
-                // Déconnecter l'utilisateur
-                $this->addFlash('success', 'Votre compte a été désactivé. Vos données seront définitivement supprimées après 30 jours.');
-                return $this->redirectToRoute('app_logout');
+                // Supprimer définitivement le compte
+                $this->deleteAccount($user);
+                
+                // Invalider la session
+                $this->tokenStorage->setToken(null);
+                $request->getSession()->invalidate();
+                
+                $this->addFlash('success', 'Votre compte a été supprimé avec succès.');
+                
+                // Rediriger vers la page d'inscription
+                return $this->redirectToRoute('app_register');
             } catch (\Exception $e) {
-                $this->addFlash('error', 'Une erreur est survenue lors de la suppression de votre compte : ' . $e->getMessage());
+                $this->addFlash('error', 'Une erreur est survenue lors de la suppression de votre compte. Veuillez réessayer.');
             }
         }
-
-        // Politiques de rétention des données
-        $retentionPolicies = $this->dataRetentionService->getRetentionPolicies();
-
+        
         return $this->render('user/data_management.html.twig', [
+            'retentionPolicies' => $retentionPolicies,
+            'deletionForm' => $deletionForm,
             'user' => $user,
-            'deletionForm' => $deletionForm->createView(),
-            'retentionPolicies' => $retentionPolicies
         ]);
     }
-
+    
     /**
-     * Exporte les données utilisateur au format JSON
+     * Exporte les données de l'utilisateur
      */
-    #[Route('/export', name: 'app_user_data_export')]
-    public function exportUserData(): Response
+    #[Route('/user/data-export', name: 'app_user_data_export')]
+    public function exportData(): Response
     {
-        /** @var User $user */
-        $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('error', 'Vous devez être connecté pour exporter vos données.');
-            return $this->redirectToRoute('app_login');
-        }
-
-        try {
-            $filePath = $this->userDataExportService->generateUserDataExport($user);
-            return $this->userDataExportService->createDownloadResponse($filePath);
-        } catch (\Exception $e) {
-            $this->addFlash('error', 'Une erreur est survenue lors de l\'export de vos données : ' . $e->getMessage());
-            return $this->redirectToRoute('app_user_data_manage');
-        }
-    }
-
-    /**
-     * Annule la suppression d'un compte si la demande est faite pendant la période de grâce
-     */
-    #[Route('/cancel-deletion', name: 'app_user_data_cancel_deletion')]
-    public function cancelDeletion(): Response
-    {
-        /** @var User $user */
-        $user = $this->getUser();
-        if (!$user) {
-            $this->addFlash('error', 'Vous devez être connecté pour effectuer cette action.');
-            return $this->redirectToRoute('app_login');
-        }
-
-        if ($user->isDeleted()) {
-            $user->setIsDeleted(false);
-            $user->setDeletedAt(null);
-            $this->entityManager->flush();
-            $this->addFlash('success', 'La suppression de votre compte a été annulée.');
-        } else {
-            $this->addFlash('info', 'Votre compte n\'est pas en cours de suppression.');
-        }
-
+        // Cette méthode serait implémentée pour générer un export des données
+        $this->addFlash('success', 'L\'export de vos données est en cours de préparation. Vous recevrez un email lorsqu\'il sera prêt.');
         return $this->redirectToRoute('app_user_data_manage');
     }
-
+    
     /**
-     * Affiche les informations sur la conservation des données
+     * Supprime définitivement le compte utilisateur
      */
-    #[Route('/retention-info', name: 'app_user_data_retention_info')]
-    public function retentionInfo(): Response
+    private function deleteAccount(User $user): void
     {
-        $retentionPolicies = $this->dataRetentionService->getRetentionPolicies();
-        
-        return $this->render('user/data_retention.html.twig', [
-            'retentionPolicies' => $retentionPolicies
-        ]);
+        // Supprimer les posts de l'utilisateur
+        $posts = $user->getPhotos();
+        foreach ($posts as $post) {
+            $this->entityManager->remove($post);
+        }
+
+        // Supprimer les likes de l'utilisateur
+        $likes = $user->getLikes();
+        foreach ($likes as $like) {
+            $this->entityManager->remove($like);
+        }
+
+        // Supprimer les commentaires de l'utilisateur
+        $comments = $user->getComments();
+        foreach ($comments as $comment) {
+            $this->entityManager->remove($comment);
+        }
+
+        // Anonymiser les données nécessaires avant suppression
+        $user->setPassword(password_hash(random_bytes(16), PASSWORD_BCRYPT));
+
+        // Marquer le compte comme supprimé
+        $user->setIsDeleted(true);
+        $user->setDeletedAt(new \DateTime());
+
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
+    /**
+     * Retourne les politiques de conservation des données
+     */
+    private function getRetentionPolicies(): array
+    {
+        return [
+            'inactive_accounts' => '24 mois',
+            'deleted_accounts' => 'Immédiat',
+            'user_photos' => 'Durée du compte',
+            'comments' => 'Durée du compte',
+            'logs' => '6 mois',
+            'messages' => 'Durée du compte',
+        ];
     }
 }

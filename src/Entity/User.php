@@ -43,6 +43,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $resetTokenCreatedAt = null;
 
     /**
+     * @var bool|null
+     */
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private ?bool $isDeleted = false;
+
+    /**
+     * @var \DateTime|null
+     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $deletedAt = null;
+
+
+    /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
@@ -65,6 +78,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $bannedAt = null;
 
+
+
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Veuillez fournir un pseudo')]
     #[Assert\Length(
@@ -78,47 +93,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         message: 'Le pseudo ne peut contenir que des lettres, chiffres, points, tirets et underscores'
     )]
     private ?string $pseudo = null;
-
     /**
      * @var Collection<int, Photo>
      */
-    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Photo::class, mappedBy: 'user', cascade: ['remove'], orphanRemoval: true)]
     private Collection $photos;
 
     /**
      * @var Collection<int, Commentaire>
      */
-    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'user', cascade: ['remove'], orphanRemoval: true)]
     private Collection $commentaires;
 
     /**
      * @var Collection<int, Like>
      */
-    #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'user', cascade: ['remove'], orphanRemoval: true)]
     private Collection $likes;
 
     /**
      * @var Collection<int, FavoritePost>
      */
-    #[ORM\OneToMany(targetEntity: FavoritePost::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: FavoritePost::class, mappedBy: 'user', cascade: ['remove'], orphanRemoval: true)]
     private Collection $favoritePosts;
 
     /**
      * @var Collection<int, Statut>
      */
-    #[ORM\OneToMany(targetEntity: Statut::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Statut::class, mappedBy: 'user', cascade: ['remove'], orphanRemoval: true)]
     private Collection $statuts;
 
     /**
      * @var Collection<int, Statut>
      */
-    #[ORM\OneToMany(targetEntity: Statut::class, mappedBy: 'otherUser')]
+    #[ORM\OneToMany(targetEntity: Statut::class, mappedBy: 'otherUser', cascade: ['remove'], orphanRemoval: true)]
     private Collection $otherUser;
 
     /**
      * @var Collection<int, LikeCommentaire>
      */
-    #[ORM\OneToMany(targetEntity: LikeCommentaire::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: LikeCommentaire::class, mappedBy: 'user', cascade: ['remove'], orphanRemoval: true)]
     private Collection $likeCommentaires;
 
     #[ORM\Column]
@@ -127,15 +141,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Conversation>
      */
-    #[ORM\ManyToMany(targetEntity: Conversation::class, mappedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Conversation::class, mappedBy: 'users', cascade: ['remove'])]
     private Collection $conversations;
 
     /**
      * @var Collection<int, Message>
      */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author', cascade: ['remove'], orphanRemoval: true)]
     private Collection $messages;
     
+  
+
     public function __toString(): string
     {
         return $this->pseudo ?? $this->email ?? '';
@@ -153,6 +169,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->conversations = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->receivedWarnings = new ArrayCollection();
+    }
+
+   
+     /**
+     * Set the deletedAt property.
+     */
+    public function setDeletedAt(?\DateTime $deletedAt): void
+    {
+        $this->deletedAt = $deletedAt;
+    }
+
+    /**
+     * Get the deletedAt property.
+     */
+    public function getDeletedAt(): ?\DateTime
+    {
+        return $this->deletedAt;
+    }
+
+    
+
+       /**
+     * Get the value of isDeleted
+     */
+    public function isDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    /**
+     * Set the value of isDeleted
+     */
+    public function setIsDeleted(?bool $isDeleted): self
+    {
+        $this->isDeleted = $isDeleted;
+
+        return $this;
     }
 
     public function getId(): ?int
@@ -423,5 +476,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         
         return $this;
     }
+
+     /**
+     * Get the likes associated with the user.
+     *
+     * @return Collection|Like[]
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+       /**
+     * Get the comments associated with the user.
+     *
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->commentaires;
+    }
+
+
 
 }

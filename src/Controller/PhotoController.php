@@ -74,8 +74,7 @@ class PhotoController extends AbstractController
     /**
      * Création d'une nouvelle photo
      */
-    // #[Route('/profil/photo/new', name: 'app_profil_photo_new')]
-    // #[Route('/photo/new', name: 'app_photo_new')]
+   
     #[Route('/post/create', name: 'app_post_create')]
     public function new(Request $request, SluggerInterface $slugger): Response
     {

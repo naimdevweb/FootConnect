@@ -6,6 +6,7 @@
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
     profile_pictures_directory: '%kernel.project_dir%/public/uploads/profile_pictures'
+    mercure.hub_url: 'https://localhost:3000/.well-known/mercure'
 
 
 services:

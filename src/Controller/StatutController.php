@@ -2,111 +2,107 @@
 
 namespace App\Controller;
 
-use App\Entity\Commentaire;
 use App\Entity\Statut;
 use App\Entity\User;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class StatutController extends AbstractController
 {
-    #[Route('/statut/{id}/{suivi}', name: 'app_statut', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager, int $id, string $suivi): Response
+    private LoggerInterface $logger;
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(LoggerInterface $logger, EntityManagerInterface $entityManager)
     {
-        try {
-            $user = $this->getUser();
-            $otherUser = $entityManager->getRepository(User::class)->find($id);
-            
-            if (!$otherUser) {
-                $this->addFlash('error', 'Utilisateur introuvable.');
-                return $this->redirectToRoute('app_profil');
-            }
-            
-            if ($suivi == 'suivre') {
-                // Regarder si un statut existe déjà
-                $statut = $entityManager->getRepository(Statut::class)->findOneBy([
-                    'user' => $user,
-                    'otherUser' => $otherUser
-                ]);
-                
-                if ($statut) {
-                    // Regarder si l'utilisateur est bloqué 
-                    if ($statut->IsBlocked() == 1) {
-                        $this->addFlash('error', 'Vous devez d\'abord débloquer cet utilisateur pour pouvoir le suivre.');
-                        return $this->redirectToRoute('app_profil_user', ['id' => $id]);
-                    } else {
-                        $isFollowing = $statut->IsFollowing();
+        $this->logger = $logger;
+        $this->entityManager = $entityManager;
+    }
 
-                        if ($isFollowing == 1) {
-                            $statut->setIsFollowing(0);
-                            $this->addFlash('success', 'Vous ne suivez plus cet utilisateur.');
-                        } else {
-                            $statut->setIsFollowing(1);
-                            $this->addFlash('success', 'Vous suivez maintenant cet utilisateur.');
-                        }
-                    }
-                } else {
-                    $statut = new Statut();
-                    $statut->setUser($user);
-                    $statut->setOtherUser($otherUser);
-                    $statut->setIsFollowing(1);
-                    $statut->setIsBlocked(0);
-                    $this->addFlash('success', 'Vous suivez maintenant cet utilisateur.');
-                }
-                
-                $entityManager->persist($statut);
-                $entityManager->flush();
-                
-            } elseif ($suivi == 'bloquer') {
-                $statut = $entityManager->getRepository(Statut::class)->findOneBy([
-                    'user' => $user,
-                    'otherUser' => $otherUser
-                ]);
-
-                if ($statut) {
-                    $statut->setIsBlocked(1);
-                    $statut->setIsFollowing(0);
-                } else {
-                    $statut = new Statut();
-                    $statut->setUser($user);
-                    $statut->setOtherUser($otherUser);
-                    $statut->setIsFollowing(0);
-                    $statut->setIsBlocked(1);
-                }
-
-                $entityManager->persist($statut);
-                $entityManager->flush();
-                $this->addFlash('success', 'Utilisateur bloqué avec succès.');
-            } elseif ($suivi == 'debloquer') {
-                // Gestion du déblocage d'utilisateur
-                $statut = $entityManager->getRepository(Statut::class)->findOneBy([
-                    'user' => $user,
-                    'otherUser' => $otherUser
-                ]);
-                
-                if ($statut) {
-                    // Mettre à jour le statut pour débloquer l'utilisateur
-                    $statut->setIsBlocked(0);
-                    $entityManager->persist($statut);
-                    $entityManager->flush();
-
-                      /** @var User $user */
-                    
-                    $this->addFlash('success', 'Utilisateur débloqué avec succès.');
-                    return $this->redirectToRoute('app_blocked_users', ['id' => $user->getId()]);
-                } else {
-                    $this->addFlash('error', 'Aucun statut trouvé pour cet utilisateur.');
-                }
-            }
-
-            return $this->redirectToRoute('app_profil_user', ['id' => $id]);
-        } catch (\Exception $e) {
-            // Gestion des erreurs
-            $this->addFlash('error', 'Une erreur est survenue: ' . $e->getMessage());
+    /**
+     * Gère le suivi, le blocage et le déblocage des utilisateurs
+     *
+     * @param string $pseudo Pseudo de l'utilisateur concerné
+     * @param string $action Action à effectuer (follow, unfollow, block, unblock)
+     * @return Response Réponse HTTP
+     */
+    #[Route('/statut/{pseudo}/{action}', name: 'app_statut', methods: ['GET', 'POST'])]
+    public function handleUserStatus(string $pseudo, string $action): Response
+    {
+        /** @var User|null $currentUser */
+        $currentUser = $this->getUser();
+        
+        if (!$currentUser) {
+            $this->addFlash('error', 'Vous devez être connecté pour effectuer cette action.');
+            return $this->redirectToRoute('app_login');
+        }
+        
+        // Rechercher l'autre utilisateur par son pseudo
+        $otherUser = $this->entityManager->getRepository(User::class)->findOneBy(['pseudo' => $pseudo]);
+        
+        if (!$otherUser) {
+            $this->addFlash('error', 'Utilisateur introuvable.');
             return $this->redirectToRoute('app_profil');
         }
+        
+        // Récupérer le statut existant ou créer un nouveau
+        $statut = $this->entityManager->getRepository(Statut::class)->findOneBy([
+            'user' => $currentUser,
+            'otherUser' => $otherUser
+        ]);
+        
+        if (!$statut) {
+            $statut = new Statut();
+            $statut->setUser($currentUser);
+            $statut->setOtherUser($otherUser);
+            $statut->setIsFollowing(0);
+            $statut->setIsBlocked(0);
+        }
+        
+        // Traiter les différentes actions
+        switch ($action) {
+            case 'follow':
+                // Vérifier si l'utilisateur est bloqué
+                if ($statut->isBlocked()) {
+                    $this->addFlash('error', 'Vous devez d\'abord débloquer cet utilisateur pour pouvoir le suivre.');
+                } else {
+                    $statut->setIsFollowing(1);
+                    $this->entityManager->persist($statut);
+                    $this->entityManager->flush();
+                    $this->addFlash('success', 'Vous suivez maintenant cet utilisateur.');
+                }
+                break;
+                
+            case 'unfollow':
+                $statut->setIsFollowing(0);
+                $this->entityManager->persist($statut);
+                $this->entityManager->flush();
+                $this->addFlash('success', 'Vous ne suivez plus cet utilisateur.');
+                break;
+                
+            case 'block':
+                $statut->setIsBlocked(1);
+                $statut->setIsFollowing(0); // Ne peut pas suivre un utilisateur bloqué
+                $this->entityManager->persist($statut);
+                $this->entityManager->flush();
+                $this->addFlash('success', 'Utilisateur bloqué avec succès.');
+                break;
+                
+            case 'unblock':
+                $statut->setIsBlocked(0);
+                $this->entityManager->persist($statut);
+                $this->entityManager->flush();
+                $this->addFlash('success', 'Utilisateur débloqué avec succès.');
+                break;
+                
+            default:
+                $this->addFlash('error', 'Action non reconnue.');
+                break;
+        }
+
+        // Redirection vers le profil de l'utilisateur
+        return $this->redirectToRoute('app_profil_user', ['pseudo' => $pseudo]);
     }
 }

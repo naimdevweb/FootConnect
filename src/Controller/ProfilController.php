@@ -7,6 +7,7 @@ use App\Controller\Trait\ProfileFollowTrait;
 use App\Controller\Trait\ProfilePhotoTrait;
 use App\Controller\Trait\ProfileUpdateTrait;
 use App\Controller\Trait\ProfileWarningTrait;
+use App\Entity\Statut;
 use App\Entity\User;
 use App\Form\ProfilePictureType;
 use App\Services\ProfilCountService;
@@ -150,25 +151,65 @@ class ProfilController extends AbstractController
         ]);
     }
 
-    #[Route('/profil/user/{id}', name: 'app_profil_user')]
-    public function userProfile(User $user): Response
-    {
-        $warningData = ['warnings' => [], 'unviewedWarnings' => []];
-        
-        // Pour les modérateurs, on permet de voir les avertissements des autres utilisateurs
-        if ($this->isGranted('ROLE_MODERATOR') || $this->isGranted('ROLE_ADMIN')) {
-            $warningData = $this->getUserWarnings($user, $this->warningRepository);
-        }
-
-        return $this->render('profil/index.html.twig', [
-            'user' => $user,
-            'photos' => $user->getPhotos(),
-            'followersCount' => $this->profilCountService->countFollowers($user),
-            'followingCount' => $this->profilCountService->countFollowing($user),
-            'warnings' => $warningData['warnings'],
-            'unviewedWarnings' => $warningData['unviewedWarnings']
-        ]);
+    
+    
+   
+/**
+ * Affiche le profil d'un utilisateur spécifié
+ * 
+ * @param User $user Utilisateur dont on affiche le profil
+ * @return Response Réponse HTTP
+ */
+#[Route('/profil/user/{pseudo}', name: 'app_profil_user')]
+public function userProfile(string $pseudo): Response
+{
+    $user = $this->entityManager->getRepository(User::class)->findOneBy(['pseudo' => $pseudo]);
+    
+    if (!$user) {
+        $this->addFlash('error', 'Utilisateur introuvable.');
+        return $this->redirectToRoute('app_profil');
     }
+    
+    $warningData = ['warnings' => [], 'unviewedWarnings' => []];
+    $isFollowing = false;
+    $isBlocked = false;
+    
+    // Récupérer l'utilisateur connecté
+    $currentUser = $this->getUser();
+    
+    // Vérifier si l'utilisateur est connecté
+    if ($currentUser) {
+        // Récupérer le statut entre les deux utilisateurs
+        $statut = $this->entityManager->getRepository(Statut::class)->findOneBy([
+            'user' => $currentUser,
+            'otherUser' => $user
+        ]);
+        
+        // Définir les variables isFollowing et isBlocked pour le template
+        if ($statut) {
+            $isFollowing = (bool)$statut->isFollowing();
+            $isBlocked = (bool)$statut->isBlocked();
+        }
+    }
+    
+    // Pour les modérateurs, on permet de voir les avertissements des autres utilisateurs
+    if ($this->isGranted('ROLE_MODERATOR') || $this->isGranted('ROLE_ADMIN')) {
+        $warningData = $this->getUserWarnings($user, $this->warningRepository);
+    }
+
+    return $this->render('profil/index.html.twig', [
+        'user' => $user,
+        'photos' => $user->getPhotos(),
+        'followersCount' => $this->profilCountService->countFollowers($user),
+        'followingCount' => $this->profilCountService->countFollowing($user),
+        'warnings' => $warningData['warnings'],
+        'unviewedWarnings' => $warningData['unviewedWarnings'],
+        'isFollowing' => $isFollowing,
+        'isBlocked' => $isBlocked
+    ]);
+}
+
+
 
     #[Route('/update', name: 'app_profil_edit')]
     public function update(
@@ -222,13 +263,20 @@ class ProfilController extends AbstractController
             'user' => $user
         ]);
     }
+    
 
     /**
      * Affiche les abonnés de l'utilisateur spécifié
      */
-    #[Route("/profil/{id}/followers", name: "app_followers")]
-    public function showFollowers(User $user): Response
+    #[Route("/profil/{pseudo}/followers", name: "app_followers")]
+    public function showFollowers(string $pseudo): Response
     {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['pseudo' => $pseudo]);
+        if (!$user) {
+            $this->addFlash('error', 'Utilisateur introuvable.');
+            return $this->redirectToRoute('app_profil');
+        }
+        
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         
         $followersData = $this->prepareFollowersData($user, $this->entityManager);
@@ -239,9 +287,15 @@ class ProfilController extends AbstractController
         ));
     }
 
-    #[Route("/profil/{id}/following", name: "app_following")]
-    public function showFollowing(User $user): Response
+    #[Route("/profil/{pseudo}/following", name: "app_following")]
+    public function showFollowing(string $pseudo): Response
     {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['pseudo' => $pseudo]);
+        if (!$user) {
+            $this->addFlash('error', 'Utilisateur introuvable.');
+            return $this->redirectToRoute('app_profil');
+        }
+        
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         
         $followingData = $this->prepareFollowingData($user, $this->entityManager);
@@ -252,22 +306,28 @@ class ProfilController extends AbstractController
         ));
     }
 
+
     /**
      * Affiche la liste des utilisateurs bloqués
      */
-    #[Route("/profil/{id}/blocked", name: "app_blocked_users")]
-    public function showBlockedUsers(User $user): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        
-        $blockedData = $this->prepareBlockedUsersData($user, $this->entityManager);
-        
-        return $this->render('profil/abonnes.html.twig', array_merge(
-            ['user' => $user],
-            $blockedData
-        ));
+   #[Route("/profil/{pseudo}/blocked", name: "app_blocked_users")]
+public function showBlockedUsers(string $pseudo): Response
+{
+    $user = $this->entityManager->getRepository(User::class)->findOneBy(['pseudo' => $pseudo]);
+    if (!$user) {
+        $this->addFlash('error', 'Utilisateur introuvable.');
+        return $this->redirectToRoute('app_profil');
     }
-
+    
+    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+    
+    $blockedData = $this->prepareBlockedUsersData($user, $this->entityManager);
+    
+    return $this->render('profil/abonnes.html.twig', array_merge(
+        ['user' => $user],
+        $blockedData
+    ));
+}
 
     /**
      * Configure et vérifie le répertoire d'upload
