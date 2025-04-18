@@ -24,7 +24,7 @@ class Commentaire
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
-    #[Assert\Type("string",message: 'Le message doit être une chaîne de caractères')]
+    #[Assert\Type("string", message: 'Le message doit être une chaîne de caractères')]
     private ?string $message = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaires')]
@@ -134,5 +134,31 @@ class Commentaire
         }
 
         return $this;
+    }
+
+    /**
+     * Vérifie si un commentaire est liké par un utilisateur donné
+     */
+    public function isLikedByUser(?User $user): bool
+    {
+        if (!$user) {
+            return false;
+        }
+        
+        foreach ($this->likeCommentaires as $like) {
+            if ($like->getUser()->getId() === $user->getId()) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Récupère le nombre de likes pour ce commentaire
+     */
+    public function getLikesCount(): int
+    {
+        return $this->likeCommentaires->count();
     }
 }

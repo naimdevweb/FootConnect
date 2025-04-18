@@ -91,6 +91,54 @@
 		.image-fade:hover::after {
 			opacity: 1;
 		}
+
+         /* Styles pour les animations des boutons */
+    @keyframes like-ripple {
+        0% { transform: scale(0); opacity: 0.7; }
+        100% { transform: scale(1.5); opacity: 0; }
+    }
+    
+    @keyframes count-animation {
+        0% { opacity: 1; transform: translateY(0); }
+        50% { opacity: 1; transform: translateY(-15px); }
+        100% { opacity: 0; transform: translateY(-20px); }
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: rotate(0); }
+        20% { transform: rotate(-10deg); }
+        40% { transform: rotate(10deg); }
+        60% { transform: rotate(-10deg); }
+        80% { transform: rotate(10deg); }
+    }
+    
+    @keyframes poof {
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    .like-animation {
+        animation: heartBeat 0.45s ease-in-out;
+    }
+    
+    .delete-icon.shake {
+        animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        transform-origin: center;
+    }
+    
+    .delete-ripple.animate, .like-ripple.animate {
+        animation: like-ripple 0.6s ease-out forwards;
+    }
+    
+    .like-count-animate.show {
+        animation: count-animation 1s ease-out forwards;
+        color: #3b82f6;
+        font-weight: bold;
+    }
+    
+    .poof {
+        animation: poof 0.5s ease-out forwards;
+    }
 	</style>
 {% endblock %}
 
@@ -150,12 +198,12 @@
 
 						<!-- Publications des personnes suivies -->
 						<a href="{{ path('app_home', {'type': 'following'}) }}" class="flex items-center space-x-3 p-3
-																                                    {% if filterType == 'following' %}
-																                                     bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300
-																                                     {% else %}
-																                                     text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700
-																                                    {% endif %}
-																                                     rounded-xl transition-all duration-200 hover:shadow-sm">
+																																                                    {% if filterType == 'following' %}
+																																                                     bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300
+																																                                     {% else %}
+																																                                     text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700
+																																                                    {% endif %}
+																																                                     rounded-xl transition-all duration-200 hover:shadow-sm">
 							<i class="fas fa-user-friends text-lg"></i>
 							<span>Abonnements</span>
 						</a>
@@ -300,6 +348,7 @@
 									<section id="comments-{{ photo.id }}" class="hidden comment-section mt-4 border-t border-gray-100 dark:border-gray-700 pt-4 transition-colors">
 										<div class="max-h-80 overflow-y-auto custom-scrollbar pr-2">
 											<div class="space-y-3">
+												
 												{% for comment in photo.comments %}
 													<article id="comment-{{ comment.id }}" class="flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200">
 														<div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 overflow-hidden">
@@ -315,9 +364,39 @@
 																<span class="text-xs text-gray-400">{{ comment.createdAt|date('H:i') }}</span>
 															</header>
 															<p class="text-sm text-gray-800 dark:text-gray-200 break-words">{{ comment.message }}</p>
+															<div class="flex items-center justify-between mt-3">
+																<div class="flex items-center space-x-2">
+																	{% if app.user %}
+																		<button class="comment-like-button relative overflow-hidden rounded-lg transition-all duration-300 flex items-center gap-2 px-3 py-1.5 {% if comment.isLikedByUser(app.user) %}bg-gradient-to-r from-blue-600 to-indigo-500 text-white{% else %}bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300{% endif %} hover:shadow-md hover:scale-105 transform active:scale-95" data-comment-id="{{ comment.id }}">
+																			<i class="fas fa-thumbs-up {% if comment.isLikedByUser(app.user) %}text-white{% endif %} text-base"></i>
+																			<span class="comment-like-count font-medium text-sm relative">
+																				<span class="absolute transition-all duration-300 opacity-0 translate-y-3 like-count-animate">+1</span>
+																				{{ comment.likesCount|default(0) }}
+																			</span>
+																			<div class="absolute inset-0 w-full h-full rounded-lg pointer-events-none opacity-0 like-ripple"></div>
+																		</button>
+																	{% else %}
+																		<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400">
+																			<i class="fas fa-thumbs-up text-base"></i>
+																			<span class="font-medium text-sm">{{ comment.likesCount|default(0) }}</span>
+																		</div>
+																	{% endif %}
+																</div>
+
+																{% if app.user and app.user == comment.user %}
+																	<button class="delete-comment-btn relative overflow-hidden rounded-lg transition-all duration-300 flex items-center gap-2 px-3 py-1.5 bg-gray-100 hover:bg-red-50 dark:bg-gray-700 dark:hover:bg-red-900/20 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 hover:shadow-md hover:scale-105 transform active:scale-95" data-comment-id="{{ comment.id }}">
+																		<i class="fas fa-trash-alt text-base delete-icon"></i>
+																		<span class="font-medium text-sm hidden sm:inline">Supprimer</span>
+																		<div class="absolute inset-0 w-full h-full rounded-lg pointer-events-none opacity-0 delete-ripple"></div>
+																	</button>
+																{% endif %}
+															</div>
+
+
 														</div>
 													</article>
 												{% else %}
+													// ...existing code...
 													<div class="text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors">
 														<p class="text-gray-500 dark:text-gray-400">Aucun commentaire pour le moment</p>
 													</div>
@@ -416,261 +495,414 @@
 
 <script>
 	document.addEventListener('DOMContentLoaded', function () {
-		    // Fonction pour gérer les likes
-		    function handleLikes() {
-		        document.querySelectorAll('.like-button').forEach(button => {
-		            button.addEventListener('click', async function () {
-		                const photoId = this.dataset.photoId;
-		                const isLiked = this.classList.contains('text-pink-600');
+				    // Fonction pour gérer les likes
+				    function handleLikes() {
+				        document.querySelectorAll('.like-button').forEach(button => {
+				            button.addEventListener('click', async function () {
+				                const photoId = this.dataset.photoId;
+				                const isLiked = this.classList.contains('text-pink-600');
+				
+				                try {
+				                    const response = await fetch(`/like/${photoId}`, {
+				                        method: 'POST',
+				                        headers: {
+				                            'X-Requested-With': 'XMLHttpRequest',
+				                        },
+				                    });
+				
+				                    if (response.ok) {
+				                        const count = this.querySelector('.like-count');
+				                        const currentCount = parseInt(count.textContent);
+				
+				                        if (!isLiked) {
+				                            this.classList.remove('text-gray-600', 'dark:text-gray-400');
+				                            this.classList.add('text-pink-600', 'dark:text-pink-500');
+				                            count.textContent = currentCount + 1;
+				                        } else {
+				                            this.classList.remove('text-pink-600', 'dark:text-pink-500');
+				                            this.classList.add('text-gray-600', 'dark:text-gray-400');
+				                            count.textContent = currentCount - 1;
+				                        }
+				                    } else {
+				                        console.error('Erreur lors du like:', response.statusText);
+				                    }
+				                } catch (error) {
+				                    console.error('Erreur lors du like:', error);
+				                }
+				            });
+				        });
+				    }
+				
+				    // Fonction pour gérer les commentaires
+				    function handleComments() {
+				        document.querySelectorAll('.comment-toggle').forEach(button => {
+				            button.addEventListener('click', function () {
+				                const targetId = this.dataset.target;
+				                const commentSection = document.getElementById(targetId);
+				
+				                if (commentSection.classList.contains('hidden')) {
+				                    // Fermer toutes les autres sections de commentaires
+				                    document.querySelectorAll('.comment-section').forEach(section => {
+				                        if (section.id !== targetId && !section.classList.contains('hidden')) {
+				                            section.classList.add('hidden');
+				                        }
+				                    });
+				
+				                    // Ouvrir cette section
+				                    commentSection.classList.remove('hidden');
+				                    setTimeout(() => {
+				                        commentSection.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+				                        const input = commentSection.querySelector('input, textarea');
+				                        if (input) 
+				                            input.focus();
+				                    }, 100);
+				                } else {
+				                    commentSection.classList.add('hidden');
+				                }
+				            });
+				        });
+				
+				        // Traitement des soumissions de commentaires
+				        document.querySelectorAll('.comment-form').forEach(form => {
+				            form.addEventListener('submit', async function (event) {
+				                event.preventDefault();
+				
+				                const photoId = this.dataset.photoId;
+				                const formData = new FormData(this);
+				                formData.append('photo_id', photoId);
+				                const commentSection = document.getElementById(`comments-${photoId}`);
+				                const commentList = commentSection.querySelector('.space-y-3');
+				                const messageInput = this.querySelector('[name="commentaire[message]"]');
+				                const message = messageInput.value.trim();
+				
+				                if (!message) {
+				                    messageInput.classList.add('ring-2', 'ring-red-500');
+				                    setTimeout(() => messageInput.classList.remove('ring-2', 'ring-red-500'), 2000);
+				                    return;
+				                }
+				
+				                const submitButton = this.querySelector('button[type="submit"]');
+				                const originalContent = submitButton.innerHTML;
+				                submitButton.disabled = true;
+				                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+				
+				                try {
+				                    const response = await fetch(this.action, {
+				                        method: 'POST',
+				                        body: formData,
+				                        headers: {
+				                            'X-Requested-With': 'XMLHttpRequest'
+				                        }
+				                    });
+				
+				                    if (response.ok) {
+				                        // Variables pour afficher l'avatar de l'utilisateur
+				                        const userAvatar = document.querySelector('.w-8.h-8.rounded-full.bg-blue-100');
+				                        const userName = '{{ app.user ? app.user.pseudo : "Utilisateur" }}';
+				                        const userPicture = '{{ app.user and app.user.profilePicture ? asset("uploads/profile_pictures/" ~ app.user.profilePicture) : "" }}';
+				                        const userInitial = userAvatar.textContent.trim();
+				                        const currentTime = new Date().toLocaleTimeString([], {
+				                            hour: '2-digit',
+				                            minute: '2-digit'
+				                        });
+				
+				                        const commentElement = document.createElement('article');
+				                        commentElement.id = `comment-temp-${Date.now()}`;
+				                        commentElement.className = 'flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200';
+				                        commentElement.style.opacity = '0';
+				                        commentElement.style.transform = 'translateY(10px)';
+				
+				                        commentElement.innerHTML = `
+				                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 overflow-hidden">
+				                                ${userPicture ? `<img src="${userPicture}" alt="Photo de profil" class="w-full h-full object-cover">` : userInitial}
+				                            </div>
+				                            <div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
+				                                <header class="flex justify-between items-start mb-1">
+				                                    <span class="font-medium text-xs text-gray-700 dark:text-gray-300">${userName}</span>
+				                                    <span class="text-xs text-gray-400">${currentTime}</span>
+				                                </header>
+				                                <p class="text-sm text-gray-800 dark:text-gray-200 break-words">${message}</p>
+				                            </div>
+				                        `;
+				
+				                        const noComments = commentList.querySelector('.text-center');
+				                        if (noComments) {
+				                            noComments.remove();
+				                        }
+				
+				                        commentList.appendChild(commentElement);
+				
+				                        setTimeout(() => {
+				                            commentElement.style.transition = 'all 0.3s ease-out';
+				                            commentElement.style.opacity = '1';
+				                            commentElement.style.transform = 'translateY(0)';
+				                        }, 10);
+				
+				                        const commentCounter = document.querySelector(`[data-target="comments-${photoId}"] span`);
+				                        if (commentCounter) {
+				                            const currentCount = parseInt(commentCounter.textContent);
+				                            commentCounter.textContent = currentCount + 1;
+				                        }
+				
+				                        this.reset();
+				                    } else {
+				                        console.error('Erreur lors de l\'ajout du commentaire:', response.statusText);
+				                    }
+				                } catch (error) {
+				                    console.error('Erreur lors de l\'ajout du commentaire:', error);
+				                } finally {
+				                    submitButton.disabled = false;
+				                    submitButton.innerHTML = originalContent;
+				                }
+				            });
+				        });
+				    }
+				     
+				    // Gestion des boutons favoris
+				    function handleFavorites() {
+			    document.querySelectorAll('.favorite-toggle').forEach(button => {
+			        // S'assurer que le bouton a les bons attributs initiaux
+			        const icon = button.querySelector('i.fa-bookmark');
+			        if (icon.classList.contains('text-yellow-600')) {
+			            button.setAttribute('data-is-favorite', 'true');
+			        } else {
+			            button.setAttribute('data-is-favorite', 'false');
+			        }
+			        
+			        button.addEventListener('click', function() {
+			            // Récupérer l'ID de la photo et l'état actuel
+			            const photoId = this.dataset.photoId;
+			            const icon = this.querySelector('i.fa-bookmark');
+			            const isFavorite = button.getAttribute('data-is-favorite') === 'true';
+			            
+			            // Changer immédiatement l'apparence visuelle
+			            if (isFavorite) {
+			                // Si c'est déjà un favori, on l'enlève
+			                icon.classList.remove('text-yellow-600', 'dark:text-yellow-500');
+			                button.setAttribute('data-is-favorite', 'false');
+		                    console.log("on enleve");
+		                    
+			            } else {
+			                // Sinon, on l'ajoute aux favoris
+			                icon.classList.add('text-yellow-600', 'dark:text-yellow-500');
+			                button.setAttribute('data-is-favorite', 'true');
+		                                        console.log("on remet");
 		
-		                try {
-		                    const response = await fetch(`/like/${photoId}`, {
-		                        method: 'POST',
-		                        headers: {
-		                            'X-Requested-With': 'XMLHttpRequest',
-		                        },
-		                    });
+			
+			            }
+			            
+			            // Ajouter une animation visuelle
+			            icon.classList.add('like-animation');
+			            setTimeout(() => {
+			                icon.classList.remove('like-animation');
+			            }, 450);
+			            
+			            // Envoyer la mise à jour au serveur en arrière-plan
+			            fetch(`/toggle-favorite/${photoId}`)
+			                .catch(error => {
+			                    console.error('Erreur lors de la mise à jour des favoris:', error);
+			                });
+			        });
+			    });
+			}
 		
-		                    if (response.ok) {
-		                        const count = this.querySelector('.like-count');
-		                        const currentCount = parseInt(count.textContent);
-		
-		                        if (!isLiked) {
-		                            this.classList.remove('text-gray-600', 'dark:text-gray-400');
-		                            this.classList.add('text-pink-600', 'dark:text-pink-500');
-		                            count.textContent = currentCount + 1;
-		                        } else {
-		                            this.classList.remove('text-pink-600', 'dark:text-pink-500');
-		                            this.classList.add('text-gray-600', 'dark:text-gray-400');
-		                            count.textContent = currentCount - 1;
-		                        }
-		                    } else {
-		                        console.error('Erreur lors du like:', response.statusText);
-		                    }
-		                } catch (error) {
-		                    console.error('Erreur lors du like:', error);
-		                }
-		            });
-		        });
-		    }
-		
-		    // Fonction pour gérer les commentaires
-		    function handleComments() {
-		        document.querySelectorAll('.comment-toggle').forEach(button => {
-		            button.addEventListener('click', function () {
-		                const targetId = this.dataset.target;
-		                const commentSection = document.getElementById(targetId);
-		
-		                if (commentSection.classList.contains('hidden')) {
-		                    // Fermer toutes les autres sections de commentaires
-		                    document.querySelectorAll('.comment-section').forEach(section => {
-		                        if (section.id !== targetId && !section.classList.contains('hidden')) {
-		                            section.classList.add('hidden');
-		                        }
-		                    });
-		
-		                    // Ouvrir cette section
-		                    commentSection.classList.remove('hidden');
-		                    setTimeout(() => {
-		                        commentSection.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-		                        const input = commentSection.querySelector('input, textarea');
-		                        if (input) 
-		                            input.focus();
-		                    }, 100);
-		                } else {
-		                    commentSection.classList.add('hidden');
-		                }
-		            });
-		        });
-		
-		        // Traitement des soumissions de commentaires
-		        document.querySelectorAll('.comment-form').forEach(form => {
-		            form.addEventListener('submit', async function (event) {
-		                event.preventDefault();
-		
-		                const photoId = this.dataset.photoId;
-		                const formData = new FormData(this);
-		                formData.append('photo_id', photoId);
-		                const commentSection = document.getElementById(`comments-${photoId}`);
-		                const commentList = commentSection.querySelector('.space-y-3');
-		                const messageInput = this.querySelector('[name="commentaire[message]"]');
-		                const message = messageInput.value.trim();
-		
-		                if (!message) {
-		                    messageInput.classList.add('ring-2', 'ring-red-500');
-		                    setTimeout(() => messageInput.classList.remove('ring-2', 'ring-red-500'), 2000);
-		                    return;
-		                }
-		
-		                const submitButton = this.querySelector('button[type="submit"]');
-		                const originalContent = submitButton.innerHTML;
-		                submitButton.disabled = true;
-		                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-		
-		                try {
-		                    const response = await fetch(this.action, {
-		                        method: 'POST',
-		                        body: formData,
-		                        headers: {
-		                            'X-Requested-With': 'XMLHttpRequest'
-		                        }
-		                    });
-		
-		                    if (response.ok) {
-		                        // Variables pour afficher l'avatar de l'utilisateur
-		                        const userAvatar = document.querySelector('.w-8.h-8.rounded-full.bg-blue-100');
-		                        const userName = '{{ app.user ? app.user.pseudo : "Utilisateur" }}';
-		                        const userPicture = '{{ app.user and app.user.profilePicture ? asset("uploads/profile_pictures/" ~ app.user.profilePicture) : "" }}';
-		                        const userInitial = userAvatar.textContent.trim();
-		                        const currentTime = new Date().toLocaleTimeString([], {
-		                            hour: '2-digit',
-		                            minute: '2-digit'
-		                        });
-		
-		                        const commentElement = document.createElement('article');
-		                        commentElement.id = `comment-temp-${Date.now()}`;
-		                        commentElement.className = 'flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200';
-		                        commentElement.style.opacity = '0';
-		                        commentElement.style.transform = 'translateY(10px)';
-		
-		                        commentElement.innerHTML = `
-		                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 overflow-hidden">
-		                                ${userPicture ? `<img src="${userPicture}" alt="Photo de profil" class="w-full h-full object-cover">` : userInitial}
-		                            </div>
-		                            <div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
-		                                <header class="flex justify-between items-start mb-1">
-		                                    <span class="font-medium text-xs text-gray-700 dark:text-gray-300">${userName}</span>
-		                                    <span class="text-xs text-gray-400">${currentTime}</span>
-		                                </header>
-		                                <p class="text-sm text-gray-800 dark:text-gray-200 break-words">${message}</p>
-		                            </div>
-		                        `;
-		
-		                        const noComments = commentList.querySelector('.text-center');
-		                        if (noComments) {
-		                            noComments.remove();
-		                        }
-		
-		                        commentList.appendChild(commentElement);
-		
-		                        setTimeout(() => {
-		                            commentElement.style.transition = 'all 0.3s ease-out';
-		                            commentElement.style.opacity = '1';
-		                            commentElement.style.transform = 'translateY(0)';
-		                        }, 10);
-		
-		                        const commentCounter = document.querySelector(`[data-target="comments-${photoId}"] span`);
-		                        if (commentCounter) {
-		                            const currentCount = parseInt(commentCounter.textContent);
-		                            commentCounter.textContent = currentCount + 1;
-		                        }
-		
-		                        this.reset();
-		                    } else {
-		                        console.error('Erreur lors de l\'ajout du commentaire:', response.statusText);
-		                    }
-		                } catch (error) {
-		                    console.error('Erreur lors de l\'ajout du commentaire:', error);
-		                } finally {
-		                    submitButton.disabled = false;
-		                    submitButton.innerHTML = originalContent;
-		                }
-		            });
-		        });
-		    }
-		     
-		    // Gestion des boutons favoris
-		    function handleFavorites() {
-	    document.querySelectorAll('.favorite-toggle').forEach(button => {
-	        // S'assurer que le bouton a les bons attributs initiaux
-	        const icon = button.querySelector('i.fa-bookmark');
-	        if (icon.classList.contains('text-yellow-600')) {
-	            button.setAttribute('data-is-favorite', 'true');
-	        } else {
-	            button.setAttribute('data-is-favorite', 'false');
-	        }
-	        
-	        button.addEventListener('click', function() {
-	            // Récupérer l'ID de la photo et l'état actuel
-	            const photoId = this.dataset.photoId;
-	            const icon = this.querySelector('i.fa-bookmark');
-	            const isFavorite = button.getAttribute('data-is-favorite') === 'true';
-	            
-	            // Changer immédiatement l'apparence visuelle
-	            if (isFavorite) {
-	                // Si c'est déjà un favori, on l'enlève
-	                icon.classList.remove('text-yellow-600', 'dark:text-yellow-500');
-	                button.setAttribute('data-is-favorite', 'false');
-                    console.log("on enleve");
+		    // Fonction pour gérer les likes des commentaires avec animations améliorées
+function handleCommentLikes() {
+    document.querySelectorAll('.comment-like-button').forEach(button => {
+        button.addEventListener('click', async function() {
+            const commentId = this.dataset.commentId;
+            const isLiked = this.classList.contains('bg-gradient-to-r');
+            const ripple = this.querySelector('.like-ripple');
+            const countElement = this.querySelector('.comment-like-count');
+            const countAnimElement = this.querySelector('.like-count-animate');
+            const icon = this.querySelector('i.fa-thumbs-up');
+            
+            // Animation d'effet d'ondulation (ripple)
+            ripple.classList.add('animate');
+            setTimeout(() => ripple.classList.remove('animate'), 600);
+            
+            // Ajouter une animation à l'icône
+            icon.classList.add('like-animation');
+            setTimeout(() => icon.classList.remove('like-animation'), 450);
+            
+            try {
+                const response = await fetch(`/comment/like/${commentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                
+                if (response.ok) {
+                    const currentCount = parseInt(countElement.textContent);
                     
-	            } else {
-	                // Sinon, on l'ajoute aux favoris
-	                icon.classList.add('text-yellow-600', 'dark:text-yellow-500');
-	                button.setAttribute('data-is-favorite', 'true');
-                                        console.log("on remet");
+                    if (!isLiked) {
+                        // Ajouter le like
+                        this.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
+                        this.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-indigo-500', 'text-white');
+                        icon.classList.add('text-white');
+                        
+                        // Animation du compteur
+                        countElement.textContent = currentCount + 1;
+                        countAnimElement.classList.add('show');
+                        setTimeout(() => countAnimElement.classList.remove('show'), 1000);
+                    } else {
+                        // Retirer le like
+                        this.classList.add('bg-gray-100', 'dark:bg-gray-700', 'hover:bg-gray-200', 'dark:hover:bg-gray-600');
+                        this.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-indigo-500', 'text-white');
+                        icon.classList.remove('text-white');
+                        
+                        countElement.textContent = Math.max(0, currentCount - 1);
+                    }
+                } else {
+                    console.error('Erreur lors du like du commentaire:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Erreur lors du like du commentaire:', error);
+            }
+        });
+    });
+}
 
-	
-	            }
-	            
-	            // Ajouter une animation visuelle
-	            icon.classList.add('like-animation');
-	            setTimeout(() => {
-	                icon.classList.remove('like-animation');
-	            }, 450);
-	            
-	            // Envoyer la mise à jour au serveur en arrière-plan
-	            fetch(`/toggle-favorite/${photoId}`)
-	                .catch(error => {
-	                    console.error('Erreur lors de la mise à jour des favoris:', error);
-	                });
-	        });
-	    });
-	}
-		    // Initialisation des fonctionnalités
+// Fonction pour gérer la suppression des commentaires avec animations améliorées
+function handleCommentDeletion() {
+    document.querySelectorAll('.delete-comment-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const commentId = this.dataset.commentId;
+            const commentElement = document.getElementById(`comment-${commentId}`);
+            const photoId = commentElement.closest('.comment-section').id.split('-')[1];
+            const deleteIcon = this.querySelector('.delete-icon');
+            const ripple = this.querySelector('.delete-ripple');
+            
+            // Animation lors du clic
+            deleteIcon.classList.add('shake');
+            ripple.classList.add('animate');
+            
+            // Confirmation stylisée
+            // Créer une alerte personnalisée stylisée
+            const alertOverlay = document.createElement('div');
+            alertOverlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            
+            const alertBox = document.createElement('div');
+            alertBox.className = 'bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-sm w-full text-center';
+            
+            alertBox.innerHTML = `
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Confirmer la suppression</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Voulez-vous vraiment supprimer ce commentaire ?</p>
+                <div class="flex justify-center space-x-4">
+                    <button id="cancelDelete" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition">Annuler</button>
+                    <button id="confirmDelete" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Supprimer</button>
+                </div>
+            `;
+            
+            alertOverlay.appendChild(alertBox);
+            document.body.appendChild(alertOverlay);
+            
+            // Gestion des boutons
+            document.getElementById('cancelDelete').addEventListener('click', () => {
+                alertOverlay.remove();
+                deleteIcon.classList.remove('shake');
+                ripple.classList.remove('animate');
+            });
+            
+            document.getElementById('confirmDelete').addEventListener('click', () => {
+                alertOverlay.remove();
+                // Continuer avec la suppression
+            });
+            
+            try {
+                const response = await fetch(`/comment/delete/${commentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+                
+                if (response.ok) {
+                    // Effet de disparition
+                    commentElement.classList.add('poof');
+                    
+                    // Mise à jour du compteur de commentaires
+                    const commentCounter = document.querySelector(`[data-target="comments-${photoId}"] span`);
+                    const currentCount = parseInt(commentCounter.textContent);
+                    commentCounter.textContent = Math.max(0, currentCount - 1);
+                    
+                    // Supprimer l'élément après l'animation
+                    setTimeout(() => {
+                        commentElement.remove();
+                        
+                        // Si c'était le dernier commentaire, afficher le message "Aucun commentaire"
+                        const commentsList = document.querySelector(`#comments-${photoId} .space-y-3`);
+                        if (commentsList && commentsList.children.length === 0) {
+                            const emptyMessage = document.createElement('div');
+                            emptyMessage.className = 'text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors';
+                            emptyMessage.innerHTML = '<p class="text-gray-500 dark:text-gray-400">Aucun commentaire pour le moment</p>';
+                            commentsList.appendChild(emptyMessage);
+                        }
+                    }, 500);
+                } else {
+                    console.error('Erreur lors de la suppression du commentaire:', response.statusText);
+                    deleteIcon.classList.remove('shake');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la suppression du commentaire:', error);
+                deleteIcon.classList.remove('shake');
+            }
+        });
+    });
+}
+		  
+		   
+		   
+		    
+		    // Initialisation des fonctionnalités au chargement de la page
 		    handleLikes();
 		    handleComments();
 		    handleFavorites();
+		    handleCommentDeletion();
+		    handleCommentLikes();
 		});
 		
-		document.addEventListener('DOMContentLoaded', function () { // Mode sombre toggle avec logging pour déboguer
-		console.log("Initialisation du mode sombre dans settings...");
-		const darkModeToggle = document.getElementById('darkModeToggle');
-		
-		if (darkModeToggle) {
-		    console.log("Toggle trouvé :", darkModeToggle);
-		
-		    // Initialiser l'état du toggle
-		    darkModeToggle.checked = document.documentElement.classList.contains('dark');
-		    console.log("État initial du toggle :", darkModeToggle.checked);
-		
-		    // Ajouter l'écouteur d'événement avec approche différente
-		    darkModeToggle.addEventListener('click', function () {
-		        console.log("Toggle cliqué, nouvel état :", this.checked);
-		
-		        if (this.checked) {
-		            document.documentElement.classList.add('dark');
-		            localStorage.setItem('darkMode', 'true');
-		        } else {
-		            document.documentElement.classList.remove('dark');
-		            localStorage.setItem('darkMode', 'false');
-		        }
-		
-		        // Émission d'un événement personnalisé pour signaler le changement
-		        document.dispatchEvent(new CustomEvent('darkModeChanged', {
-		            detail: {
-		                darkMode: this.checked
-		            }
-		        }));
-		    });
-		
-		    // Sync avec les changements externes (au cas où)
-		    document.addEventListener('darkModeChanged', function (e) {
-		        darkModeToggle.checked = e.detail.darkMode;
-		    });
-		} else {
-		    console.error("Toggle de mode sombre non trouvé!");
-		}
-		});
-		
-		    </script>
-		{% endblock %}
+				
+				document.addEventListener('DOMContentLoaded', function () { // Mode sombre toggle avec logging pour déboguer
+				console.log("Initialisation du mode sombre dans settings...");
+				const darkModeToggle = document.getElementById('darkModeToggle');
+				
+				if (darkModeToggle) {
+				    console.log("Toggle trouvé :", darkModeToggle);
+				
+				    // Initialiser l'état du toggle
+				    darkModeToggle.checked = document.documentElement.classList.contains('dark');
+				    console.log("État initial du toggle :", darkModeToggle.checked);
+				
+				    // Ajouter l'écouteur d'événement avec approche différente
+				    darkModeToggle.addEventListener('click', function () {
+				        console.log("Toggle cliqué, nouvel état :", this.checked);
+				
+				        if (this.checked) {
+				            document.documentElement.classList.add('dark');
+				            localStorage.setItem('darkMode', 'true');
+				        } else {
+				            document.documentElement.classList.remove('dark');
+				            localStorage.setItem('darkMode', 'false');
+				        }
+				
+				        // Émission d'un événement personnalisé pour signaler le changement
+				        document.dispatchEvent(new CustomEvent('darkModeChanged', {
+				            detail: {
+				                darkMode: this.checked
+				            }
+				        }));
+				    });
+				
+				    // Sync avec les changements externes (au cas où)
+				    document.addEventListener('darkModeChanged', function (e) {
+				        darkModeToggle.checked = e.detail.darkMode;
+				    });
+				} else {
+				    console.error("Toggle de mode sombre non trouvé!");
+				}
+				});
+				
+				    </script>
+				{% endblock %}
