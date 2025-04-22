@@ -1,0 +1,282 @@
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\moderation\reports.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des signalements - FootConnect{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .report-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .report-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<main class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-2 flex items-center">
+            <i class="fas fa-shield-alt text-blue-600 dark:text-blue-400 mr-3"></i>
+            Gestion des signalements
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">
+            Consultez et traitez les signalements des utilisateurs pour maintenir une communauté saine.
+        </p>
+    </div>
+    
+    <!-- Statistiques des signalements -->
+    {# Assurez-vous que vous utilisez correctement les variables passées par le contrôleur #}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-l-4 border-yellow-500">
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">En attente</p>
+        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ reportStats.pending }}</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-l-4 border-blue-500">
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">En cours d'examen</p>
+        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ reportStats.reviewing }}</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-l-4 border-green-500">
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Résolus</p>
+        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ reportStats.resolved }}</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border-l-4 border-gray-500">
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Rejetés</p>
+        <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">{{ reportStats.dismissed }}</p>
+    </div>
+</div>
+    <!-- Filtres -->
+    <div class="mb-6">
+        <div class="flex flex-wrap gap-2">
+            <button class="tab-button bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-4 py-2 rounded-lg font-medium text-sm" data-target="pending-reports">
+                En attente ({{ reportStats.pending }})
+            </button>
+            <button class="tab-button bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg font-medium text-sm" data-target="reviewing-reports">
+                En cours d'examen ({{ reportStats.reviewing }})
+            </button>
+            <button class="tab-button bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg font-medium text-sm" data-target="resolved-reports">
+                Derniers résolus
+            </button>
+        </div>
+    </div>
+    
+    <!-- Signalements en attente -->
+    <div id="pending-reports" class="reports-section">
+        {% if pendingReports|length > 0 %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for report in pendingReports %}
+                    <a href="{{ path('app_moderation_report_details', {'id': report.id}) }}" class="report-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 text-xs rounded-full">
+                                    En attente
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ report.createdAt|date('d/m/Y H:i') }}
+                                </span>
+                            </div>
+                            
+                            <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                                {% if report.reportType == 'user' %}
+                                    Signalement d'utilisateur
+                                {% elseif report.reportType == 'comment' %}
+                                    Signalement de commentaire
+                                {% elseif report.reportType == 'post' %}
+                                    Signalement de publication
+                                {% endif %}
+                            </h3>
+                            
+                            <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                                {{ report.reason }}
+                            </p>
+                            
+                            <div class="flex items-center mt-4 text-sm text-gray-500 dark:text-gray-400">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user mr-1"></i>
+                                    <span>{{ report.reporter.pseudo }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-8 text-center">
+                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mx-auto flex items-center justify-center mb-4">
+                    <i class="fas fa-check text-blue-600 dark:text-blue-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Aucun signalement en attente</h3>
+                <p class="text-gray-600 dark:text-gray-400">Tous les signalements ont été traités. Bon travail !</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Signalements en cours d'examen -->
+    <div id="reviewing-reports" class="reports-section hidden">
+        {% if reviewingReports|length > 0 %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for report in reviewingReports %}
+                    <a href="{{ path('app_moderation_report_details', {'id': report.id}) }}" class="report-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs rounded-full">
+                                    En examen
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ report.createdAt|date('d/m/Y H:i') }}
+                                </span>
+                            </div>
+                            
+                            <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                                {% if report.reportType == 'user' %}
+                                    Signalement d'utilisateur
+                                {% elseif report.reportType == 'comment' %}
+                                    Signalement de commentaire
+                                {% elseif report.reportType == 'post' %}
+                                    Signalement de publication
+                                {% endif %}
+                            </h3>
+                            
+                            <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                                {{ report.reason }}
+                            </p>
+                            
+                            <div class="flex items-center mt-4 text-sm text-gray-500 dark:text-gray-400">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user mr-1"></i>
+                                    <span>{{ report.reporter.pseudo }}</span>
+                                </div>
+                                
+                                {% if report.moderator %}
+                                    <div class="flex items-center ml-4">
+                                        <i class="fas fa-user-shield mr-1"></i>
+                                        <span>{{ report.moderator.pseudo }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-8 text-center">
+                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mx-auto flex items-center justify-center mb-4">
+                    <i class="fas fa-search text-blue-600 dark:text-blue-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Aucun signalement en cours d'examen</h3>
+                <p class="text-gray-600 dark:text-gray-400">Il n'y a actuellement aucun signalement en cours d'examen.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Signalements résolus récemment -->
+    <div id="resolved-reports" class="reports-section hidden">
+        {% if resolvedReports|length > 0 %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for report in resolvedReports %}
+                    <a href="{{ path('app_moderation_report_details', {'id': report.id}) }}" class="report-card bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                {% if report.status == 'resolved' %}
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs rounded-full">
+                                        Résolu
+                                    </span>
+                                {% else %}
+                                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-300 text-xs rounded-full">
+                                        Rejeté
+                                    </span>
+                                {% endif %}
+                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ report.createdAt|date('d/m/Y H:i') }}
+                                </span>
+                            </div>
+                            
+                            <h3 class="font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                                {% if report.reportType == 'user' %}
+                                    Signalement d'utilisateur
+                                {% elseif report.reportType == 'comment' %}
+                                    Signalement de commentaire
+                                {% elseif report.reportType == 'post' %}
+                                    Signalement de publication
+                                {% endif %}
+                            </h3>
+                            
+                            {% if report.moderatorNote %}
+                                <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                                    {{ report.moderatorNote }}
+                                </p>
+                            {% endif %}
+                            
+                            <div class="flex items-center mt-4 text-sm text-gray-500 dark:text-gray-400">
+                                {% if report.moderator %}
+                                    <div class="flex items-center">
+                                        <i class="fas fa-user-shield mr-1"></i>
+                                        <span>{{ report.moderator.pseudo }}</span>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if report.resolvedAt %}
+                                    <div class="flex items-center ml-4">
+                                        <i class="fas fa-calendar-check mr-1"></i>
+                                        <span>{{ report.resolvedAt|date('d/m/Y') }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-8 text-center">
+                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mx-auto flex items-center justify-center mb-4">
+                    <i class="fas fa-clipboard-check text-blue-600 dark:text-blue-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">Aucun signalement résolu récemment</h3>
+                <p class="text-gray-600 dark:text-gray-400">Il n'y a pas de signalements résolus récemment à afficher.</p>
+            </div>
+        {% endif %}
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const reportSections = document.querySelectorAll('.reports-section');
+        
+        // Fonction pour activer un onglet
+        function activateTab(tabId) {
+            // Cacher toutes les sections
+            reportSections.forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Afficher la section correspondante
+            const activeSection = document.getElementById(tabId);
+            if (activeSection) {
+                activeSection.classList.remove('hidden');
+            }
+            
+            // Mettre à jour les styles des boutons
+            tabButtons.forEach(button => {
+                if (button.dataset.target === tabId) {
+                    button.classList.remove('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                    button.classList.add('bg-blue-100', 'dark:bg-blue-900/30', 'text-blue-800', 'dark:text-blue-300');
+                } else {
+                    button.classList.remove('bg-blue-100', 'dark:bg-blue-900/30', 'text-blue-800', 'dark:text-blue-300');
+                    button.classList.add('bg-gray-100', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-300');
+                }
+            });
+        }
+        
+        // Ajouter des écouteurs d'événements aux boutons
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                activateTab(this.dataset.target);
+            });
+        });
+    });
+</script>
+{% endblock %}

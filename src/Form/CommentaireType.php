@@ -16,25 +16,25 @@ class CommentaireType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add('message', TextareaType::class, [
-            'constraints' => [
-                new NotBlank([
-                    'message' => 'Le commentaire ne peut pas être vide'
-                ])
-            ],
-            'label' => false
-        ])
-        ->add('photoId', HiddenType::class, [
-            'mapped' => false,
-            'data' => $options['photo_id']
-        ]);
-}
+            ->add('message', TextareaType::class, [
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Le commentaire ne peut pas être vide'
+                    ])
+                ],
+                'label' => false
+            ])
+            ->add('photoId', HiddenType::class, [
+                'mapped' => false,
+                'data' => $options['photo_id']
+            ]);
+    }
 
-public function configureOptions(OptionsResolver $resolver): void
-{
-    $resolver->setDefaults([
-        'data_class' => Commentaire::class,
-        'photo_id' => null,
-    ]);
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Commentaire::class,
+            'photo_id' => null,
+        ]);
     }
 }

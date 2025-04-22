@@ -20,6 +20,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Entity\Comment;
 use App\Entity\Commentaire;
+use App\Entity\Report;
+use App\Repository\CommentaireRepository;
+use App\Repository\ReportRepository;
 
 /**
  * Contrôleur pour les fonctionnalités de modération
@@ -35,36 +38,53 @@ class ModerationController extends AbstractController
     /**
      * Affiche le tableau de bord de modération principal
      */
-    #[Route('/moderation', name: 'app_moderation_dashboard', methods: ['GET'])]
-    public function dashboard(
-        PhotoRepository $photoRepository,
-        UserRepository $userRepository,
-        WarningRepository $warningRepository
-    ): Response {
-        try {
-            // Récupérer les statistiques
-            $totalUsers = $userRepository->count([]);
-            $totalPhotos = $photoRepository->count([]);
-            $warnings = $warningRepository->findAll();
-            $totalWarnings = count($warnings);
+   /**
+ * Affiche le tableau de bord de modération principal
+ */
+#[Route('/moderation', name: 'app_moderation_dashboard', methods: ['GET'])]
+public function dashboard(
+    PhotoRepository $photoRepository,
+    UserRepository $userRepository,
+    WarningRepository $warningRepository,
+    ReportRepository $reportRepository
+): Response {
+    // Initialiser les variables par défaut pour éviter les erreurs
+    $totalUsers = 0;
+    $totalPhotos = 0;
+    $totalWarnings = 0;
+    $pendingReports = 0;
+    $latestPhotos = [];
 
-            // Photos récentes
-            $latestPhotos = $photoRepository->findBy(
-                [],
-                ['createdAt' => 'DESC'],
-                10
-            );
+    try {
+        // Récupérer les statistiques
+        $totalUsers = $userRepository->count([]);
+        $totalPhotos = $photoRepository->count([]);
+        $warnings = $warningRepository->findAll();
+        $totalWarnings = count($warnings);
+        
+        // Récupérer le nombre de signalements en attente
+        $pendingReports = $reportRepository->countByStatus(Report::STATUS_PENDING);
 
-            return $this->render('warning/dashboard.html.twig', [
-                'latestPhotos' => $latestPhotos,
-                'totalUsers' => $totalUsers,
-                'totalPhotos' => $totalPhotos,
-                'totalWarnings' => $totalWarnings
-            ]);
-        } catch (\Exception $e) {
-            return $this->handleModerationException($e, 'chargement du tableau de bord', 'app_home');
-        }
+        // Photos récentes
+        $latestPhotos = $photoRepository->findBy(
+            [],
+            ['createdAt' => 'DESC'],
+            10
+        );
+
+    } catch (\Exception $e) {
+        $this->addFlash('error', 'Une erreur est survenue lors du chargement du tableau de bord: ' . $e->getMessage());
     }
+
+    // Toujours rendre le template, même en cas d'erreur
+    return $this->render('warning/dashboard.html.twig', [
+        'latestPhotos' => $latestPhotos,
+        'totalUsers' => $totalUsers,
+        'totalPhotos' => $totalPhotos,
+        'totalWarnings' => $totalWarnings,
+        'pendingReports' => $pendingReports
+    ]);
+}
 
     /**
      * Liste toutes les photos pour modération
@@ -217,4 +237,212 @@ public function moderatorDeleteComment(
             'photos' => $photos,
         ]);
     }
+
+    #[Route('/moderation/reports', name: 'app_moderation_reports')]
+    public function reports(ReportRepository $reportRepository): Response
+    {
+        try {
+            // Récupérer les signalements par statut
+            $pendingReports = $reportRepository->findBy(['status' => Report::STATUS_PENDING], ['createdAt' => 'DESC']);
+            $reviewingReports = $reportRepository->findBy(['status' => Report::STATUS_REVIEWING], ['createdAt' => 'DESC']);
+            $resolvedReports = $reportRepository->findBy(
+                ['status' => [Report::STATUS_RESOLVED, Report::STATUS_DISMISSED]], 
+                ['createdAt' => 'DESC'],
+                10 // Limiter à 10 signalements résolus récents
+            );
+            
+            // Nombre de signalements par statut pour le tableau de bord
+            $reportStats = [
+                'pending' => $reportRepository->countByStatus(Report::STATUS_PENDING),
+                'reviewing' => $reportRepository->countByStatus(Report::STATUS_REVIEWING),
+                'resolved' => $reportRepository->countByStatus(Report::STATUS_RESOLVED),
+                'dismissed' => $reportRepository->countByStatus(Report::STATUS_DISMISSED),
+            ];
+            
+            return $this->render('warning/reports.html.twig', [
+                'pendingReports' => $pendingReports,
+                'reviewingReports' => $reviewingReports,
+                'resolvedReports' => $resolvedReports,
+                'reportStats' => $reportStats,
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors du chargement des signalements: ' . $e->getMessage());
+            return $this->redirectToRoute('app_moderation_dashboard');
+        }
+    }
+
+    /**
+ * Affiche les détails d'un signalement
+ */
+#[Route('/moderation/report/{id}', name: 'app_moderation_report_details', methods: ['GET'])]
+public function reportDetails(
+    Report $report,
+    UserRepository $userRepository,
+    CommentaireRepository $commentaireRepository,
+    PhotoRepository $photoRepository,
+    EntityManagerInterface $entityManager
+): Response {
+    try {
+        // Récupérer les détails de l'élément signalé
+        $reportedItem = null;
+        
+        switch ($report->getReportType()) {
+            case Report::TYPE_USER:
+                $reportedItem = $userRepository->find($report->getReportedItemId());
+                break;
+                
+            case Report::TYPE_COMMENT:
+                $reportedItem = $commentaireRepository->find($report->getReportedItemId());
+                break;
+                
+            case Report::TYPE_POST:
+                $reportedItem = $photoRepository->find($report->getReportedItemId());
+                break;
+        }
+        
+        // Si l'élément signalé n'existe plus, mettre à jour le statut du signalement
+        if (!$reportedItem && $report->getStatus() === Report::STATUS_PENDING) {
+            $report->setStatus(Report::STATUS_RESOLVED);
+            $report->setModeratorNote('L\'élément signalé n\'existe plus.');
+            $report->setModerator($this->getUser());
+            $report->setResolvedAt(new \DateTime());
+            $entityManager->flush();
+        }
+        
+        return $this->render('warning/report_details.html.twig', [
+            'report' => $report,
+            'reportedItem' => $reportedItem,
+        ]);
+    } catch (\Exception $e) {
+        $this->addFlash('error', 'Une erreur est survenue lors du chargement des détails du signalement: ' . $e->getMessage());
+        return $this->redirectToRoute('app_moderation_reports');
+    }
+}
+
+/**
+ * Met à jour le statut d'un signalement
+ */
+#[Route('/moderation/report/{id}/update-status', name: 'app_moderation_update_status', methods: ['POST'])]
+public function updateStatus(
+    Request $request,
+    Report $report,
+    EntityManagerInterface $entityManager,
+    UserRepository $userRepository,
+    CommentaireRepository $commentaireRepository,
+    PhotoRepository $photoRepository
+): Response {
+    // Vérification CSRF
+    if (!$this->isCsrfTokenValid('update-report-status' . $report->getId(), $request->request->get('_token'))) {
+        $this->addFlash('error', 'Token CSRF invalide.');
+        return $this->redirectToRoute('app_moderation_report_details', ['id' => $report->getId()]);
+    }
+    
+    $action = $request->request->get('action');
+    $moderatorNote = $request->request->get('moderator_note');
+    
+    try {
+        // Mise à jour du statut du signalement
+        $report->setModerator($this->getUser());
+        $report->setModeratorNote($moderatorNote);
+        
+        switch ($action) {
+            case 'reviewing':
+                $report->setStatus(Report::STATUS_REVIEWING);
+                $message = 'Le signalement est maintenant en cours d\'examen.';
+                break;
+                
+            case 'dismiss':
+                $report->setStatus(Report::STATUS_DISMISSED);
+                $report->setResolvedAt(new \DateTime());
+                $message = 'Le signalement a été rejeté.';
+                break;
+                
+            case 'resolve':
+                $report->setStatus(Report::STATUS_RESOLVED);
+                $report->setResolvedAt(new \DateTime());
+                $message = 'Le signalement a été résolu.';
+                break;
+                
+            case 'delete_content':
+                $report->setStatus(Report::STATUS_RESOLVED);
+                $report->setResolvedAt(new \DateTime());
+                
+                // Supprimer le contenu signalé
+                $reportedItem = null;
+                
+                switch ($report->getReportType()) {
+                    case Report::TYPE_COMMENT:
+                        $reportedItem = $commentaireRepository->find($report->getReportedItemId());
+                        if ($reportedItem) {
+                            $entityManager->remove($reportedItem);
+                        }
+                        break;
+                        
+                    case Report::TYPE_POST:
+                        $reportedItem = $photoRepository->find($report->getReportedItemId());
+                        if ($reportedItem) {
+                            $entityManager->remove($reportedItem);
+                        }
+                        break;
+                }
+                
+                $message = 'Le contenu signalé a été supprimé et le signalement résolu.';
+                break;
+                
+            case 'warn_user':
+                $report->setStatus(Report::STATUS_RESOLVED);
+                $report->setResolvedAt(new \DateTime());
+                
+                // Ajouter un avertissement à l'utilisateur concerné
+                $userId = null;
+                
+                switch ($report->getReportType()) {
+                    case Report::TYPE_USER:
+                        $userId = $report->getReportedItemId();
+                        break;
+                        
+                    case Report::TYPE_COMMENT:
+                        $comment = $commentaireRepository->find($report->getReportedItemId());
+                        if ($comment) {
+                            $userId = $comment->getUser()->getId();
+                        }
+                        break;
+                        
+                    case Report::TYPE_POST:
+                        $post = $photoRepository->find($report->getReportedItemId());
+                        if ($post) {
+                            $userId = $post->getUser()->getId();
+                        }
+                        break;
+                }
+                
+                if ($userId) {
+                    $user = $userRepository->find($userId);
+                    if ($user) {
+                        // Créer un avertissement
+                        $warning = new Warning();
+                        $warning->setUser($user);
+                        $warning->setReason('Suite à un signalement');
+                        $warning->setDescription($moderatorNote ?: 'Contenu signalé par un utilisateur');
+                        $warning->setModerator($this->getUser());
+                        $entityManager->persist($warning);
+                        
+                        $message = 'Un avertissement a été envoyé à l\'utilisateur et le signalement a été résolu.';
+                    }
+                }
+                break;
+                
+            default:
+                throw new \InvalidArgumentException('Action non reconnue');
+        }
+        
+        $entityManager->flush();
+        $this->addFlash('success', $message);
+        
+    } catch (\Exception $e) {
+        $this->addFlash('error', 'Une erreur est survenue: ' . $e->getMessage());
+    }
+    
+    return $this->redirectToRoute('app_moderation_report_details', ['id' => $report->getId()]);
+}
 }

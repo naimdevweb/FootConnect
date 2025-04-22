@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Report;
 use App\Repository\PhotoRepository;
+use App\Repository\ReportRepository;
 use App\Services\CommentFormService;
 use App\Services\CommentaireService;
 use App\Services\PhotoService;
@@ -18,10 +20,12 @@ class HomeController extends AbstractController
 {
     public function __construct(
         private readonly PhotoRepository $photoRepository,
+        private readonly ReportRepository $reportRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly CommentFormService $commentFormService,
         private readonly CommentaireService $commentaireService,
         private readonly PhotoService $photoService,
+        
         private readonly SearchService $searchService
     ) {}
 
@@ -52,6 +56,13 @@ class HomeController extends AbstractController
             }
         }
 
+         // Nombre de signalements en attente pour les modérateurs
+    $pendingReportsCount = null;
+    if ($this->isGranted('ROLE_MODERATEUR')) {
+        $pendingReportsCount = $this->reportRepository->countByStatus(Report::STATUS_PENDING);
+    }
+
+
         // dd($photos, $userStatuts, $commentForms);
 
         return $this->render('home/index.html.twig', [
@@ -60,7 +71,8 @@ class HomeController extends AbstractController
             'userStatuts' => $userStatuts,
             'currentUser' => $currentUser,
             'filterType' => $filterType,
-            'pageTitle' => $pageTitle
+            'pageTitle' => $pageTitle,
+            'pendingReportsCount' => $pendingReportsCount,
         ]);
     }
     

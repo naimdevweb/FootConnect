@@ -143,380 +143,380 @@
 
 {% block body %}
 
-	{% include 'components/_imports.html.twig' %}
-	<main
-		class="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 md:pb-0 transition-colors duration-200">
-		<!-- Contenu principal -->
-		<div class="container mx-auto px-4 py-6">
-			{% if favoritePosts|length > 0 %}
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-					{% for favoritePost in favoritePosts %}
-						{% set photo = favoritePost.photo %}
-						<article
-							class="fade-in hover-scale bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden transition-colors duration-200" style="animation-delay: {{ loop.index * 0.15 }}s;">
-							<!-- En-tête de la publication -->
-							<header class="p-4 flex items-center justify-between">
-								<div class="flex items-center space-x-3">
-									<a href="{{ path('app_profil_user', {'pseudo': photo.user.pseudo}) }}" class="font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-										{{ photo.user.pseudo }}
-									</a>
-									<div>
+{% include 'components/_imports.html.twig' %}
+<main
+	class="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20 md:pb-0 transition-colors duration-200">
+	<!-- Contenu principal -->
+	<div class="container mx-auto px-4 py-6">
+		{% if favoritePosts|length > 0 %}
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+				{% for favoritePost in favoritePosts %}
+					{% set photo = favoritePost.photo %}
+					<article
+						class="fade-in hover-scale bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden transition-colors duration-200" style="animation-delay: {{ loop.index * 0.15 }}s;">
+						<!-- En-tête de la publication -->
+						<header class="p-4 flex items-center justify-between">
+							<div class="flex items-center space-x-3">
+								<a href="{{ path('app_profil_user', {'pseudo': photo.user.pseudo}) }}" class="font-semibold text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+									{{ photo.user.pseudo }}
+								</a>
+								<div>
 
-										<p class="text-xs text-gray-500 dark:text-gray-400 flex items-center space-x-1 transition-colors duration-200">
-											<span>{{ photo.createdAt|date('d/m/Y') }}</span>
-											<span class="text-gray-300 dark:text-gray-600">•</span>
-											<span>{{ photo.createdAt|date('H:i') }}</span>
-										</p>
-									</div>
+									<p class="text-xs text-gray-500 dark:text-gray-400 flex items-center space-x-1 transition-colors duration-200">
+										<span>{{ photo.createdAt|date('d/m/Y') }}</span>
+										<span class="text-gray-300 dark:text-gray-600">•</span>
+										<span>{{ photo.createdAt|date('H:i') }}</span>
+									</p>
 								</div>
-							</header>
+							</div>
+						</header>
 
-							<!-- Contenu de la publication -->
-							{% if photo.description %}
-								<div class="px-4 pb-3">
-									<p class="text-gray-800 dark:text-gray-200 leading-relaxed transition-colors duration-200">{{ photo.description|nl2br }}</p>
-								</div>
-							{% endif %}
+						<!-- Contenu de la publication -->
+						{% if photo.description %}
+							<div class="px-4 pb-3">
+								<p class="text-gray-800 dark:text-gray-200 leading-relaxed transition-colors duration-200">{{ photo.description|nl2br }}</p>
+							</div>
+						{% endif %}
 
-							<!-- Image avec effets avancés -->
-							<figure class="relative image-fade overflow-hidden bg-gray-100 dark:bg-gray-700 transition-colors duration-200">
-								<img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" class="w-full object-cover transition-transform duration-700 hover:scale-105" style="aspect-ratio: 4/3;" loading="lazy">
-								<figcaption class="absolute bottom-0 left-0 right-0 text-white p-4 opacity-0 transform translate-y-2 transition-all duration-300 ease-out pointer-events-none">
-									<div class="font-medium">Photo de
-										{{ photo.user.pseudo }}</div>
-								</figcaption>
-							</figure>
+						<!-- Image avec effets avancés -->
+						<figure class="relative image-fade overflow-hidden bg-gray-100 dark:bg-gray-700 transition-colors duration-200">
+							<img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" class="w-full object-cover transition-transform duration-700 hover:scale-105" style="aspect-ratio: 4/3;" loading="lazy">
+							<figcaption class="absolute bottom-0 left-0 right-0 text-white p-4 opacity-0 transform translate-y-2 transition-all duration-300 ease-out pointer-events-none">
+								<div class="font-medium">Photo de
+									{{ photo.user.pseudo }}</div>
+							</figcaption>
+						</figure>
 
-							<!-- Actions (likes, commentaires, etc.) -->
-							{# Modifier la section des actions de la publication pour ajouter les boutons de like et commentaires interactifs #}
-							<footer class="p-4">
-								<div
-									class="flex items-center justify-between mb-3">
-									<!-- Bouton like -->
-									{% if app.user %}
-										<button class="like-button flex items-center space-x-2 {{ photo.isLikedByUser ? 'text-pink-600 dark:text-pink-500' : 'text-gray-600 dark:text-gray-400' }} hover:text-pink-600 dark:hover:text-pink-500 transition-colors" data-photo-id="{{ photo.id }}">
-											<i class="fas fa-heart text-xl"></i>
-											<span class="like-count text-sm font-medium">{{ photo.likes|length }}</span>
-										</button>
-									{% else %}
-										<a href="{{ path('app_login') }}" class="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-500 transition-colors">
-											<i class="fas fa-heart text-xl"></i>
-											<span class="text-sm font-medium">{{ photo.likes|length }}</span>
-										</a>
-									{% endif %}
-
-									<!-- Bouton commentaire -->
-									<button class="comment-toggle flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" data-target="comments-{{ photo.id }}">
-										<i class="fas fa-comment text-xl"></i>
-										<span class="text-sm font-medium">{{ photo.comments|length }}</span>
+						<!-- Actions (likes, commentaires, etc.) -->
+						{# Modifier la section des actions de la publication pour ajouter les boutons de like et commentaires interactifs #}
+						<footer class="p-4">
+							<div
+								class="flex items-center justify-between mb-3">
+								<!-- Bouton like -->
+								{% if app.user %}
+									<button class="like-button flex items-center space-x-2 {{ photo.isLikedByUser ? 'text-pink-600 dark:text-pink-500' : 'text-gray-600 dark:text-gray-400' }} hover:text-pink-600 dark:hover:text-pink-500 transition-colors" data-photo-id="{{ photo.id }}">
+										<i class="fas fa-heart text-xl"></i>
+										<span class="like-count text-sm font-medium">{{ photo.likes|length }}</span>
 									</button>
-
-									<!-- Bouton favoris -->
-									<a href="{{ path('app_toggle_favorite', {'id': photo.id}) }}" class="text-yellow-500 hover:text-gray-500 dark:hover:text-gray-400 transition-colors duration-200" title="Retirer des enregistrements">
-										<i class="fas fa-bookmark text-xl"></i>
+								{% else %}
+									<a href="{{ path('app_login') }}" class="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-500 transition-colors">
+										<i class="fas fa-heart text-xl"></i>
+										<span class="text-sm font-medium">{{ photo.likes|length }}</span>
 									</a>
+								{% endif %}
+
+								<!-- Bouton commentaire -->
+								<button class="comment-toggle flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" data-target="comments-{{ photo.id }}">
+									<i class="fas fa-comment text-xl"></i>
+									<span class="text-sm font-medium">{{ photo.comments|length }}</span>
+								</button>
+
+								<!-- Bouton favoris -->
+								<a href="{{ path('app_toggle_favorite', {'id': photo.id}) }}" class="text-yellow-500 hover:text-gray-500 dark:hover:text-gray-400 transition-colors duration-200" title="Retirer des enregistrements">
+									<i class="fas fa-bookmark text-xl"></i>
+								</a>
+							</div>
+
+							<!-- Section des commentaires (initialement cachée) -->
+							<section id="comments-{{ photo.id }}" class="hidden comment-section mt-4 border-t border-gray-100 dark:border-gray-700 pt-4 transition-colors">
+								<div class="max-h-80 overflow-y-auto custom-scrollbar pr-2">
+									<div class="space-y-3">
+										{% for comment in photo.comments %}
+											<article id="comment-{{ comment.id }}" class="flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200">
+												<div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 overflow-hidden">
+													{% if comment.user.profilePicture is defined and comment.user.profilePicture %}
+														<img src="{{ asset('uploads/profile_pictures/' ~ comment.user.profilePicture) }}" alt="Photo de profil" class="w-full h-full object-cover">
+													{% else %}
+														{{ comment.user.pseudo|slice(0,1)|upper }}
+													{% endif %}
+												</div>
+												<div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3 transition-colors">
+													<header class="flex justify-between items-start mb-1">
+														<span class="font-medium text-xs text-gray-700 dark:text-gray-300">{{ comment.user.pseudo }}</span>
+														<span class="text-xs text-gray-400">{{ comment.createdAt|date('H:i') }}</span>
+													</header>
+													<p class="text-sm text-gray-800 dark:text-gray-200 break-words">{{ comment.message }}</p>
+												</div>
+											</article>
+										{% else %}
+											<div class="text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors">
+												<p class="text-gray-500 dark:text-gray-400">Aucun commentaire pour le moment</p>
+											</div>
+										{% endfor %}
+									</div>
 								</div>
 
-								<!-- Section des commentaires (initialement cachée) -->
-								<section id="comments-{{ photo.id }}" class="hidden comment-section mt-4 border-t border-gray-100 dark:border-gray-700 pt-4 transition-colors">
-									<div class="max-h-80 overflow-y-auto custom-scrollbar pr-2">
-										<div class="space-y-3">
-											{% for comment in photo.comments %}
-												<article id="comment-{{ comment.id }}" class="flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200">
-													<div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 overflow-hidden">
-														{% if comment.user.profilePicture is defined and comment.user.profilePicture %}
-															<img src="{{ asset('uploads/profile_pictures/' ~ comment.user.profilePicture) }}" alt="Photo de profil" class="w-full h-full object-cover">
-														{% else %}
-															{{ comment.user.pseudo|slice(0,1)|upper }}
-														{% endif %}
-													</div>
-													<div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3 transition-colors">
-														<header class="flex justify-between items-start mb-1">
-															<span class="font-medium text-xs text-gray-700 dark:text-gray-300">{{ comment.user.pseudo }}</span>
-															<span class="text-xs text-gray-400">{{ comment.createdAt|date('H:i') }}</span>
-														</header>
-														<p class="text-sm text-gray-800 dark:text-gray-200 break-words">{{ comment.message }}</p>
-													</div>
-												</article>
-											{% else %}
-												<div class="text-center py-6 bg-gray-50 dark:bg-gray-700 rounded-xl transition-colors">
-													<p class="text-gray-500 dark:text-gray-400">Aucun commentaire pour le moment</p>
-												</div>
-											{% endfor %}
-										</div>
-									</div>
-
-									<!-- Formulaire de commentaire -->
-									{% if app.user %}
-										{% if commentForms[photo.id] is defined %}
-											{{ form_start(commentForms[photo.id], {
+								<!-- Formulaire de commentaire -->
+								{% if app.user %}
+									{% if commentForms[photo.id] is defined %}
+										{{ form_start(commentForms[photo.id], {
                     'attr': {
                         'class': 'mt-4 comment-form',
                         'id': 'comment-form-' ~ photo.id,
                         'data-photo-id': photo.id
                     }
                 }) }}
-											<div class="flex space-x-2 items-center">
-												<div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-semibold flex-shrink-0 overflow-hidden">
-													{% if app.user.profilePicture is defined and app.user.profilePicture %}
-														<img src="{{ asset('uploads/profile_pictures/' ~ app.user.profilePicture) }}" alt="Photo de profil" class="w-full h-full object-cover">
-													{% else %}
-														{{ app.user.pseudo|slice(0,1)|upper }}
-													{% endif %}
-												</div>
-												<div class="flex-1 relative">
-													{{ form_widget(commentForms[photo.id].message, {
+										<div class="flex space-x-2 items-center">
+											<div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-blue-600 dark:text-blue-300 font-semibold flex-shrink-0 overflow-hidden">
+												{% if app.user.profilePicture is defined and app.user.profilePicture %}
+													<img src="{{ asset('uploads/profile_pictures/' ~ app.user.profilePicture) }}" alt="Photo de profil" class="w-full h-full object-cover">
+												{% else %}
+													{{ app.user.pseudo|slice(0,1)|upper }}
+												{% endif %}
+											</div>
+											<div class="flex-1 relative">
+												{{ form_widget(commentForms[photo.id].message, {
                             'attr': {
                                 'class': 'w-full rounded-full pl-4 pr-10 py-2 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200',
                                 'placeholder': 'Écrire un commentaire...'
                             }
                         }) }}
-													<button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
-														<i class="fas fa-paper-plane"></i>
-													</button>
-												</div>
+												<button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">
+													<i class="fas fa-paper-plane"></i>
+												</button>
 											</div>
-											{{ form_end(commentForms[photo.id]) }}
-										{% endif %}
-									{% else %}
-										<div class="mt-4 flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-3 rounded-xl transition-colors">
-											<p class="text-sm text-gray-600 dark:text-gray-400">Connectez-vous pour commenter</p>
-											<a href="{{ path('app_login') }}" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
-												Se connecter
-											</a>
 										</div>
+										{{ form_end(commentForms[photo.id]) }}
 									{% endif %}
-								</section>
-							</footer>
-						</article>
-					{% endfor %}
-				</div>
-			{% else %}
-				<!-- État vide stylisé amélioré -->
-				<div class="fade-in bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 text-center max-w-md mx-auto transition-colors duration-200">
-					<div class="relative w-24 h-24 mx-auto bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-500 dark:text-blue-400 mb-6 transition-colors duration-200">
-						<i class="fas fa-bookmark text-4xl"></i>
-						<div class="absolute -top-2 -right-2 w-8 h-8 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center transition-colors duration-200">
-							<div class="w-6 h-6 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm transition-colors duration-200">
-								<i class="fas fa-times text-gray-400 dark:text-gray-500 text-xs transition-colors duration-200"></i>
-							</div>
+								{% else %}
+									<div class="mt-4 flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-3 rounded-xl transition-colors">
+										<p class="text-sm text-gray-600 dark:text-gray-400">Connectez-vous pour commenter</p>
+										<a href="{{ path('app_login') }}" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+											Se connecter
+										</a>
+									</div>
+								{% endif %}
+							</section>
+						</footer>
+					</article>
+				{% endfor %}
+			</div>
+		{% else %}
+			<!-- État vide stylisé amélioré -->
+			<div class="fade-in bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8 text-center max-w-md mx-auto transition-colors duration-200">
+				<div class="relative w-24 h-24 mx-auto bg-blue-50 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-500 dark:text-blue-400 mb-6 transition-colors duration-200">
+					<i class="fas fa-bookmark text-4xl"></i>
+					<div class="absolute -top-2 -right-2 w-8 h-8 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center transition-colors duration-200">
+						<div class="w-6 h-6 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm transition-colors duration-200">
+							<i class="fas fa-times text-gray-400 dark:text-gray-500 text-xs transition-colors duration-200"></i>
 						</div>
 					</div>
-					<h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 transition-colors duration-200">Aucun enregistrement</h3>
-					<p class="text-gray-600 dark:text-gray-400 mb-8 max-w-sm mx-auto leading-relaxed transition-colors duration-200">Vous n'avez pas encore enregistré de publications. Explorez et enregistrez des posts qui vous intéressent pour les retrouver ici.</p>
-					<div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-3">
-						<a href="{{ path('app_home') }}" class="inline-flex items-center justify-center px-5 py-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200 shadow-sm">
-							<i class="fas fa-home mr-2 text-gray-500 dark:text-gray-400 transition-colors duration-200"></i>
-							Accueil
-						</a>
-						<a href="{{ path('app_discover') }}" class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 dark:bg-blue-700 text-white rounded-xl hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200 shadow-sm">
-							<i class="fas fa-search mr-2"></i>
-							Explorer
-						</a>
-					</div>
 				</div>
-			{% endif %}
-		</div>
-
-		<!-- Navigation mobile avec style plus attrayant -->
-		<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg z-10 transition-colors duration-200">
-			<div class="flex justify-around items-center py-3">
-				<a href="{{ path('app_home') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 transition-colors duration-200">
-					<i class="fas fa-home text-xl"></i>
-					<span class="text-xs mt-1">Accueil</span>
-				</a>
-				<a href="{{ path('app_discover') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 transition-colors duration-200">
-					<i class="fas fa-search text-xl"></i>
-					<span class="text-xs mt-1">Recherche</span>
-				</a>
-				<div class="relative">
-					<a href="{{ path('app_profil') }}" class="flex items-center justify-center p-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white rounded-full shadow-md -mt-5 hover:shadow-lg transition-colors duration-200">
-						<i class="fas fa-plus"></i>
+				<h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3 transition-colors duration-200">Aucun enregistrement</h3>
+				<p class="text-gray-600 dark:text-gray-400 mb-8 max-w-sm mx-auto leading-relaxed transition-colors duration-200">Vous n'avez pas encore enregistré de publications. Explorez et enregistrez des posts qui vous intéressent pour les retrouver ici.</p>
+				<div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-3">
+					<a href="{{ path('app_home') }}" class="inline-flex items-center justify-center px-5 py-3 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200 shadow-sm">
+						<i class="fas fa-home mr-2 text-gray-500 dark:text-gray-400 transition-colors duration-200"></i>
+						Accueil
 					</a>
-					<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-white dark:bg-gray-800 rounded-full -z-10 transition-colors duration-200"></div>
+					<a href="{{ path('app_discover') }}" class="inline-flex items-center justify-center px-5 py-3 bg-blue-600 dark:bg-blue-700 text-white rounded-xl hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-200 shadow-sm">
+						<i class="fas fa-search mr-2"></i>
+						Explorer
+					</a>
 				</div>
-				<a href="#" class="flex flex-col items-center text-gray-600 dark:text-gray-400 transition-colors duration-200">
-					<i class="fas fa-bell text-xl"></i>
-					<span class="text-xs mt-1">Alertes</span>
-				</a>
-				<a href="{{ path('app_profil') }}" class="flex flex-col items-center text-blue-600 dark:text-blue-400 relative transition-colors duration-200">
-					<i class="fas fa-user text-xl"></i>
-					<span class="text-xs mt-1">Profil</span>
-					<div class="absolute -bottom-3 w-6 h-1 bg-blue-600 dark:bg-blue-400 rounded-full transition-colors duration-200"></div>
-				</a>
 			</div>
-		</nav>
-	</main>
+		{% endif %}
+	</div>
 
-    {# Ajouter à la fin du fichier, avant {% endblock %} #}
+	<!-- Navigation mobile avec style plus attrayant -->
+	<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg z-10 transition-colors duration-200">
+		<div class="flex justify-around items-center py-3">
+			<a href="{{ path('app_home') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 transition-colors duration-200">
+				<i class="fas fa-home text-xl"></i>
+				<span class="text-xs mt-1">Accueil</span>
+			</a>
+			<a href="{{ path('app_discover') }}" class="flex flex-col items-center text-gray-600 dark:text-gray-400 transition-colors duration-200">
+				<i class="fas fa-search text-xl"></i>
+				<span class="text-xs mt-1">Recherche</span>
+			</a>
+			<div class="relative">
+				<a href="{{ path('app_profil') }}" class="flex items-center justify-center p-3 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white rounded-full shadow-md -mt-5 hover:shadow-lg transition-colors duration-200">
+					<i class="fas fa-plus"></i>
+				</a>
+				<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-14 h-14 bg-white dark:bg-gray-800 rounded-full -z-10 transition-colors duration-200"></div>
+			</div>
+			<a href="#" class="flex flex-col items-center text-gray-600 dark:text-gray-400 transition-colors duration-200">
+				<i class="fas fa-bell text-xl"></i>
+				<span class="text-xs mt-1">Alertes</span>
+			</a>
+			<a href="{{ path('app_profil') }}" class="flex flex-col items-center text-blue-600 dark:text-blue-400 relative transition-colors duration-200">
+				<i class="fas fa-user text-xl"></i>
+				<span class="text-xs mt-1">Profil</span>
+				<div class="absolute -bottom-3 w-6 h-1 bg-blue-600 dark:bg-blue-400 rounded-full transition-colors duration-200"></div>
+			</a>
+		</div>
+	</nav>
+</main>
+
+{# Ajouter à la fin du fichier, avant {% endblock %} #}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Fonction pour gérer les likes
-    function handleLikes() {
-        document.querySelectorAll('.like-button').forEach(button => {
-            button.addEventListener('click', async function () {
-                const photoId = this.dataset.photoId;
-                const isLiked = this.classList.contains('text-pink-600');
-
-                try {
-                    const response = await fetch(`/like/${photoId}`, {
-                        method: 'POST',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                    });
-
-                    if (response.ok) {
-                        const count = this.querySelector('.like-count');
-                        const currentCount = parseInt(count.textContent);
-
-                        if (!isLiked) {
-                            this.classList.remove('text-gray-600', 'dark:text-gray-400');
-                            this.classList.add('text-pink-600', 'dark:text-pink-500');
-                            count.textContent = currentCount + 1;
-                        } else {
-                            this.classList.remove('text-pink-600', 'dark:text-pink-500');
-                            this.classList.add('text-gray-600', 'dark:text-gray-400');
-                            count.textContent = currentCount - 1;
-                        }
-                    } else {
-                        console.error('Erreur lors du like:', response.statusText);
-                    }
-                } catch (error) {
-                    console.error('Erreur lors du like:', error);
-                }
-            });
-        });
-    }
-
-    // Fonction pour gérer les commentaires
-    function handleComments() {
-        document.querySelectorAll('.comment-toggle').forEach(button => {
-            button.addEventListener('click', function () {
-                const targetId = this.dataset.target;
-                const commentSection = document.getElementById(targetId);
-
-                if (commentSection.classList.contains('hidden')) {
-                    // Fermer toutes les autres sections de commentaires
-                    document.querySelectorAll('.comment-section').forEach(section => {
-                        if (section.id !== targetId && !section.classList.contains('hidden')) {
-                            section.classList.add('hidden');
-                        }
-                    });
-
-                    // Ouvrir cette section
-                    commentSection.classList.remove('hidden');
-                    setTimeout(() => {
-                        commentSection.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-                        const input = commentSection.querySelector('input, textarea');
-                        if (input) 
-                            input.focus();
-                    }, 100);
-                } else {
-                    commentSection.classList.add('hidden');
-                }
-            });
-        });
-
-        // Traitement des soumissions de commentaires
-        document.querySelectorAll('.comment-form').forEach(form => {
-            form.addEventListener('submit', async function (event) {
-                event.preventDefault();
-
-                const photoId = this.dataset.photoId;
-                const formData = new FormData(this);
-                formData.append('photo_id', photoId);
-                const commentSection = document.getElementById(`comments-${photoId}`);
-                const commentList = commentSection.querySelector('.space-y-3');
-                const messageInput = this.querySelector('[name="commentaire[message]"]');
-                const message = messageInput.value.trim();
-
-                if (!message) {
-                    messageInput.classList.add('ring-2', 'ring-red-500');
-                    setTimeout(() => messageInput.classList.remove('ring-2', 'ring-red-500'), 2000);
-                    return;
-                }
-
-                const submitButton = this.querySelector('button[type="submit"]');
-                const originalContent = submitButton.innerHTML;
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-                try {
-                    const response = await fetch(this.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-
-                    if (response.ok) {
-                        // Variables pour afficher l'avatar de l'utilisateur
-                        const userAvatar = document.querySelector('.w-8.h-8.rounded-full.bg-blue-100');
-                        const userName = '{{ app.user ? app.user.pseudo : "Utilisateur" }}';
-                        const userPicture = '{{ app.user and app.user.profilePicture ? asset("uploads/profile_pictures/" ~ app.user.profilePicture) : "" }}';
-                        const userInitial = userAvatar ? userAvatar.textContent.trim() : '';
-                        const currentTime = new Date().toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-
-                        const commentElement = document.createElement('article');
-                        commentElement.id = `comment-temp-${Date.now()}`;
-                        commentElement.className = 'flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200';
-                        commentElement.style.opacity = '0';
-                        commentElement.style.transform = 'translateY(10px)';
-
-                        commentElement.innerHTML = `
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 overflow-hidden">
-                                ${userPicture ? `<img src="${userPicture}" alt="Photo de profil" class="w-full h-full object-cover">` : userInitial}
-                            </div>
-                            <div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
-                                <header class="flex justify-between items-start mb-1">
-                                    <span class="font-medium text-xs text-gray-700 dark:text-gray-300">${userName}</span>
-                                    <span class="text-xs text-gray-400">${currentTime}</span>
-                                </header>
-                                <p class="text-sm text-gray-800 dark:text-gray-200 break-words">${message}</p>
-                            </div>
-                        `;
-
-                        const noComments = commentList.querySelector('.text-center');
-                        if (noComments) {
-                            noComments.remove();
-                        }
-
-                        commentList.appendChild(commentElement);
-
-                        setTimeout(() => {
-                            commentElement.style.transition = 'all 0.3s ease-out';
-                            commentElement.style.opacity = '1';
-                            commentElement.style.transform = 'translateY(0)';
-                        }, 10);
-
-                        const commentCounter = document.querySelector(`[data-target="comments-${photoId}"] span`);
-                        if (commentCounter) {
-                            const currentCount = parseInt(commentCounter.textContent);
-                            commentCounter.textContent = currentCount + 1;
-                        }
-
-                        this.reset();
-                    } else {
-                        console.error('Erreur lors de l\'ajout du commentaire:', response.statusText);
-                    }
-                } catch (error) {
-                    console.error('Erreur lors de l\'ajout du commentaire:', error);
-                } finally {
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = originalContent;
-                }
-            });
-        });
-    }
-
-    // Initialisation des fonctionnalités
-    handleLikes();
-    handleComments();
-});
-</script>
-{% endblock %}
+	document.addEventListener('DOMContentLoaded', function () {
+	    // Fonction pour gérer les likes
+	    function handleLikes() {
+	        document.querySelectorAll('.like-button').forEach(button => {
+	            button.addEventListener('click', async function () {
+	                const photoId = this.dataset.photoId;
+	                const isLiked = this.classList.contains('text-pink-600');
+	
+	                try {
+	                    const response = await fetch(`/like/${photoId}`, {
+	                        method: 'POST',
+	                        headers: {
+	                            'X-Requested-With': 'XMLHttpRequest',
+	                        },
+	                    });
+	
+	                    if (response.ok) {
+	                        const count = this.querySelector('.like-count');
+	                        const currentCount = parseInt(count.textContent);
+	
+	                        if (!isLiked) {
+	                            this.classList.remove('text-gray-600', 'dark:text-gray-400');
+	                            this.classList.add('text-pink-600', 'dark:text-pink-500');
+	                            count.textContent = currentCount + 1;
+	                        } else {
+	                            this.classList.remove('text-pink-600', 'dark:text-pink-500');
+	                            this.classList.add('text-gray-600', 'dark:text-gray-400');
+	                            count.textContent = currentCount - 1;
+	                        }
+	                    } else {
+	                        console.error('Erreur lors du like:', response.statusText);
+	                    }
+	                } catch (error) {
+	                    console.error('Erreur lors du like:', error);
+	                }
+	            });
+	        });
+	    }
+	
+	    // Fonction pour gérer les commentaires
+	    function handleComments() {
+	        document.querySelectorAll('.comment-toggle').forEach(button => {
+	            button.addEventListener('click', function () {
+	                const targetId = this.dataset.target;
+	                const commentSection = document.getElementById(targetId);
+	
+	                if (commentSection.classList.contains('hidden')) {
+	                    // Fermer toutes les autres sections de commentaires
+	                    document.querySelectorAll('.comment-section').forEach(section => {
+	                        if (section.id !== targetId && !section.classList.contains('hidden')) {
+	                            section.classList.add('hidden');
+	                        }
+	                    });
+	
+	                    // Ouvrir cette section
+	                    commentSection.classList.remove('hidden');
+	                    setTimeout(() => {
+	                        commentSection.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+	                        const input = commentSection.querySelector('input, textarea');
+	                        if (input) 
+	                            input.focus();
+	                    }, 100);
+	                } else {
+	                    commentSection.classList.add('hidden');
+	                }
+	            });
+	        });
+	
+	        // Traitement des soumissions de commentaires
+	        document.querySelectorAll('.comment-form').forEach(form => {
+	            form.addEventListener('submit', async function (event) {
+	                event.preventDefault();
+	
+	                const photoId = this.dataset.photoId;
+	                const formData = new FormData(this);
+	                formData.append('photo_id', photoId);
+	                const commentSection = document.getElementById(`comments-${photoId}`);
+	                const commentList = commentSection.querySelector('.space-y-3');
+	                const messageInput = this.querySelector('[name="commentaire[message]"]');
+	                const message = messageInput.value.trim();
+	
+	                if (!message) {
+	                    messageInput.classList.add('ring-2', 'ring-red-500');
+	                    setTimeout(() => messageInput.classList.remove('ring-2', 'ring-red-500'), 2000);
+	                    return;
+	                }
+	
+	                const submitButton = this.querySelector('button[type="submit"]');
+	                const originalContent = submitButton.innerHTML;
+	                submitButton.disabled = true;
+	                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+	
+	                try {
+	                    const response = await fetch(this.action, {
+	                        method: 'POST',
+	                        body: formData,
+	                        headers: {
+	                            'X-Requested-With': 'XMLHttpRequest'
+	                        }
+	                    });
+	
+	                    if (response.ok) {
+	                        // Variables pour afficher l'avatar de l'utilisateur
+	                        const userAvatar = document.querySelector('.w-8.h-8.rounded-full.bg-blue-100');
+	                        const userName = '{{ app.user ? app.user.pseudo : "Utilisateur" }}';
+	                        const userPicture = '{{ app.user and app.user.profilePicture ? asset("uploads/profile_pictures/" ~ app.user.profilePicture) : "" }}';
+	                        const userInitial = userAvatar ? userAvatar.textContent.trim() : '';
+	                        const currentTime = new Date().toLocaleTimeString([], {
+	                            hour: '2-digit',
+	                            minute: '2-digit'
+	                        });
+	
+	                        const commentElement = document.createElement('article');
+	                        commentElement.id = `comment-temp-${Date.now()}`;
+	                        commentElement.className = 'flex space-x-3 hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded-xl transition-all duration-200';
+	                        commentElement.style.opacity = '0';
+	                        commentElement.style.transform = 'translateY(10px)';
+	
+	                        commentElement.innerHTML = `
+	                            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-sm flex-shrink-0 overflow-hidden">
+	                                ${userPicture ? `<img src="${userPicture}" alt="Photo de profil" class="w-full h-full object-cover">` : userInitial}
+	                            </div>
+	                            <div class="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
+	                                <header class="flex justify-between items-start mb-1">
+	                                    <span class="font-medium text-xs text-gray-700 dark:text-gray-300">${userName}</span>
+	                                    <span class="text-xs text-gray-400">${currentTime}</span>
+	                                </header>
+	                                <p class="text-sm text-gray-800 dark:text-gray-200 break-words">${message}</p>
+	                            </div>
+	                        `;
+	
+	                        const noComments = commentList.querySelector('.text-center');
+	                        if (noComments) {
+	                            noComments.remove();
+	                        }
+	
+	                        commentList.appendChild(commentElement);
+	
+	                        setTimeout(() => {
+	                            commentElement.style.transition = 'all 0.3s ease-out';
+	                            commentElement.style.opacity = '1';
+	                            commentElement.style.transform = 'translateY(0)';
+	                        }, 10);
+	
+	                        const commentCounter = document.querySelector(`[data-target="comments-${photoId}"] span`);
+	                        if (commentCounter) {
+	                            const currentCount = parseInt(commentCounter.textContent);
+	                            commentCounter.textContent = currentCount + 1;
+	                        }
+	
+	                        this.reset();
+	                    } else {
+	                        console.error('Erreur lors de l\'ajout du commentaire:', response.statusText);
+	                    }
+	                } catch (error) {
+	                    console.error('Erreur lors de l\'ajout du commentaire:', error);
+	                } finally {
+	                    submitButton.disabled = false;
+	                    submitButton.innerHTML = originalContent;
+	                }
+	            });
+	        });
+	    }
+	
+	    // Initialisation des fonctionnalités
+	    handleLikes();
+	    handleComments();
+	});
+	</script>
+	{% endblock %}

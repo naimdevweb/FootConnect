@@ -1,0 +1,284 @@
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\moderation\report_details.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du signalement - FootConnect
+{% endblock %}
+
+{% block body %}
+	<main class="container mx-auto px-4 py-8 max-w-4xl">
+		<div class="mb-6">
+			<a href="{{ path('app_moderation_reports') }}" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center">
+				<i class="fas fa-arrow-left mr-2"></i>
+				Retour aux signalements
+			</a>
+		</div>
+
+		<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+			<div class="flex justify-between items-center mb-6">
+				<h1 class="text-xl font-bold text-gray-800 dark:text-gray-100">
+					Signalement #{{ report.id }}
+					{% if report.status == 'pending' %}
+						<span class="ml-2 px-3 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 text-sm rounded-full">En attente</span>
+					{% elseif report.status == 'reviewing' %}
+						<span class="ml-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm rounded-full">En examen</span>
+					{% elseif report.status == 'resolved' %}
+						<span class="ml-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-sm rounded-full">Résolu</span>
+					{% elseif report.status == 'dismissed' %}
+						<span class="ml-2 px-3 py-1 bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-300 text-sm rounded-full">Rejeté</span>
+					{% endif %}
+				</h1>
+
+				<span class="text-sm text-gray-500 dark:text-gray-400">
+					{{ report.createdAt|date('d/m/Y H:i') }}
+				</span>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<div>
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">Informations</h2>
+
+					<div class="space-y-3">
+						<div class="flex flex-col">
+							<span class="text-sm text-gray-500 dark:text-gray-400">Type</span>
+							<span class="font-medium text-gray-800 dark:text-gray-100">
+								{% if report.reportType == 'user' %}
+									Utilisateur
+								{% elseif report.reportType == 'comment' %}
+									Commentaire
+								{% elseif report.reportType == 'post' %}
+									Publication
+								{% endif %}
+							</span>
+						</div>
+
+						<div class="flex flex-col">
+							<span class="text-sm text-gray-500 dark:text-gray-400">Signalé par</span>
+							<span class="font-medium text-gray-800 dark:text-gray-100 flex items-center">
+								<a href="{{ path('app_profil_user', {'pseudo': report.reporter.pseudo}) }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+									{{ report.reporter.pseudo }}
+								</a>
+							</span>
+						</div>
+
+						{% if report.moderator %}
+							<div class="flex flex-col">
+								<span class="text-sm text-gray-500 dark:text-gray-400">Traité par</span>
+								<span class="font-medium text-gray-800 dark:text-gray-100">
+									{{ report.moderator.pseudo }}
+								</span>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+
+				<div>
+					<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">Motif du signalement</h2>
+					<div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+						<p class="text-gray-700 dark:text-gray-300">{{ report.reason }}</p>
+					</div>
+
+					{% if report.details %}
+						<h3 class="text-md font-semibold text-gray-800 dark:text-gray-100 mt-4 mb-2">Détails supplémentaires</h3>
+						<div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+							<p class="text-gray-700 dark:text-gray-300">{{ report.details }}</p>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+
+			{% if report.moderatorNote %}
+				<div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+					<h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">Note du modérateur</h3>
+					<div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+						<p class="text-gray-700 dark:text-gray-300">{{ report.moderatorNote }}</p>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+
+		<!-- Contenu signalé -->
+		<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 mb-6">
+			<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Contenu signalé</h2>
+
+			{% if reportedItem %}
+				{% if report.reportType == 'user' %}
+					<!-- Affichage de l'utilisateur signalé -->
+					<div class="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+						<div class="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold overflow-hidden mr-4">
+							{% if reportedItem.profilePicture %}
+								<img src="{{ asset('uploads/profile_pictures/' ~ reportedItem.profilePicture) }}" alt="Photo de profil" class="w-full h-full object-cover">
+							{% else %}
+								{{ reportedItem.pseudo|slice(0,1)|upper }}
+							{% endif %}
+						</div>
+						<div>
+							<h3 class="font-semibold text-gray-800 dark:text-gray-100">{{ reportedItem.pseudo }}</h3>
+							{% if reportedItem.createdAt is defined and reportedItem.createdAt is not null %}
+								<p class="text-sm text-gray-600 dark:text-gray-400">
+									Compte créé le
+									{{ reportedItem.createdAt|date('d/m/Y') }}
+								</p>
+							{% elseif reportedItem.registeredAt is defined and reportedItem.registeredAt is not null %}
+								<p class="text-sm text-gray-600 dark:text-gray-400">
+									Compte créé le
+									{{ reportedItem.registeredAt|date('d/m/Y') }}
+								</p>
+							{% else %}
+								<p class="text-sm text-gray-600 dark:text-gray-400">
+									Membre de FootConnect
+								</p>
+							{% endif %}
+							<div class="mt-2">
+								<a href="{{ path('app_profil_user', {'pseudo': reportedItem.pseudo}) }}" class="text-blue-600 dark:text-blue-400 text-sm hover:underline">
+									<i class="fas fa-external-link-alt mr-1"></i>
+									Voir le profil
+								</a>
+							</div>
+						</div>
+					</div>
+				{% elseif report.reportType == 'comment' %}
+					<!-- Affichage du commentaire signalé -->
+					<div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+						<div class="flex items-start mb-3">
+							<div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center overflow-hidden mr-3">
+								{% if reportedItem.user.profilePicture %}
+									<img src="{{ asset('uploads/profile_pictures/' ~ reportedItem.user.profilePicture) }}" alt="Photo de profil" class="w-full h-full object-cover">
+								{% else %}
+									{{ reportedItem.user.pseudo|slice(0,1)|upper }}
+								{% endif %}
+							</div>
+							<div>
+								<div class="flex items-center">
+									<a href="{{ path('app_profil_user', {'pseudo': reportedItem.user.pseudo}) }}" class="font-semibold text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+										{{ reportedItem.user.pseudo }}
+									</a>
+									<span class="mx-2 text-gray-400 dark:text-gray-500">•</span>
+									<span class="text-xs text-gray-500 dark:text-gray-400">{{ reportedItem.createdAt|date('d/m/Y H:i') }}</span>
+								</div>
+								<p class="mt-2 text-gray-800 dark:text-gray-200">{{ reportedItem.message }}</p>
+							</div>
+						</div>
+
+						{% if reportedItem.photo %}
+							<div class="mt-3 text-sm">
+								<a href="#" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center">
+									<i class="fas fa-external-link-alt mr-1"></i>
+									Voir la publication d'origine
+								</a>
+							</div>
+						{% endif %}
+					</div>
+				{% elseif report.reportType == 'post' %}
+					<!-- Affichage de la publication signalée -->
+					<div class="bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden">
+						<div class="p-4">
+							<div class="flex items-center mb-3">
+								<div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center overflow-hidden mr-3">
+									{% if reportedItem.user.profilePicture %}
+										<img src="{{ asset('uploads/profile_pictures/' ~ reportedItem.user.profilePicture) }}" alt="Photo de profil" class="w-full h-full object-cover">
+									{% else %}
+										{{ reportedItem.user.pseudo|slice(0,1)|upper }}
+									{% endif %}
+								</div>
+								<div>
+									<a href="{{ path('app_profil_user', {'pseudo': reportedItem.user.pseudo}) }}" class="font-semibold text-gray-800 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+										{{ reportedItem.user.pseudo }}
+									</a>
+									<p class="text-xs text-gray-500 dark:text-gray-400">{{ reportedItem.createdAt|date('d/m/Y H:i') }}</p>
+								</div>
+							</div>
+
+							{% if reportedItem.description %}
+								<p class="mb-3 text-gray-800 dark:text-gray-200">{{ reportedItem.description }}</p>
+							{% endif %}
+						</div>
+
+						{% if reportedItem.photoUrl %}
+							<div class="relative w-full" style="max-height: 400px; overflow: hidden;">
+								<img src="{{ asset('uploads/photos/' ~ reportedItem.photoUrl) }}" alt="Photo signalée" class="w-full object-contain">
+							</div>
+						{% endif %}
+
+						<div class="p-4">
+							<a href="#" class="text-blue-600 dark:text-blue-400 text-sm hover:underline flex items-center">
+								<i class="fas fa-external-link-alt mr-1"></i>
+								Voir la publication
+							</a>
+						</div>
+					</div>
+				{% endif %}
+			{% else %}
+				<div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg flex items-center">
+					<i class="fas fa-exclamation-triangle text-yellow-600 dark:text-yellow-500 mr-3 text-xl"></i>
+					<p class="text-gray-700 dark:text-gray-300">
+						Le contenu signalé n'est plus disponible. Il a peut-être été supprimé.
+					</p>
+				</div>
+			{% endif %}
+		</div>
+
+		<!-- Actions -->
+		<div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+			<h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Actions</h2>
+
+			<div class="space-y-4">
+				<form action="{{ path('app_moderation_update_status', {'id': report.id}) }}" method="post" class="space-y-4">
+					<input type="hidden" name="_token" value="{{ csrf_token('update-report-status' ~ report.id) }}">
+
+					{% if report.status == 'pending' or report.status == 'reviewing' %}
+						<div class="mb-4">
+							<label for="moderator_note" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Note du modérateur</label>
+							<textarea id="moderator_note" name="moderator_note" rows="3" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800 dark:text-gray-200 bg-white dark:bg-gray-700">{{ report.moderatorNote }}</textarea>
+						</div>
+
+						<div class="flex flex-wrap gap-3">
+							{% if report.status == 'pending' %}
+								<button type="submit" name="action" value="reviewing" class="px-4 py-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/40 dark:hover:bg-blue-900/60 text-blue-800 dark:text-blue-300 rounded-lg text-sm font-medium transition-colors flex items-center">
+									<i class="fas fa-eye mr-2"></i>
+									Marquer en cours d'examen
+								</button>
+							{% endif %}
+
+							<button type="submit" name="action" value="dismiss" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-300 rounded-lg text-sm font-medium transition-colors flex items-center">
+								<i class="fas fa-times mr-2"></i>
+								Rejeter le signalement
+							</button>
+
+							<button type="submit" name="action" value="resolve" class="px-4 py-2 bg-green-100 hover:bg-green-200 dark:bg-green-900/40 dark:hover:bg-green-900/60 text-green-800 dark:text-green-300 rounded-lg text-sm font-medium transition-colors flex items-center">
+								<i class="fas fa-check mr-2"></i>
+								Marquer comme résolu
+							</button>
+
+							{% if report.reportType != 'user' and reportedItem %}
+								<button type="submit" name="action" value="delete_content" class="px-4 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-900/60 text-red-800 dark:text-red-300 rounded-lg text-sm font-medium transition-colors flex items-center">
+									<i class="fas fa-trash mr-2"></i>
+									Supprimer le contenu
+								</button>
+							{% endif %}
+
+							<button type="submit" name="action" value="warn_user" class="px-4 py-2 bg-orange-100 hover:bg-orange-200 dark:bg-orange-900/40 dark:hover:bg-orange-900/60 text-orange-800 dark:text-orange-300 rounded-lg text-sm font-medium transition-colors flex items-center">
+								<i class="fas fa-exclamation-triangle mr-2"></i>
+								Avertir l'utilisateur
+							</button>
+						</div>
+					{% else %}
+						<div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+							<p class="text-gray-600 dark:text-gray-400">
+								Ce signalement a déjà été traité et marqué comme
+								{% if report.status == 'resolved' %}
+									<span class="font-medium text-green-600 dark:text-green-400">résolu</span>
+								{% else %}
+									<span class="font-medium text-gray-600 dark:text-gray-400">rejeté</span>
+								{% endif %}
+								{% if report.resolvedAt %}
+									le
+									{{ report.resolvedAt|date('d/m/Y H:i') }}
+								{% endif %}.
+							</p>
+						</div>
+					{% endif %}
+				</form>
+			</div>
+		</div>
+	</main>
+{% endblock %}

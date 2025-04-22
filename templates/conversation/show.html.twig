@@ -3,68 +3,208 @@
 {% block title %}Conversation{% endblock %}
 
 {% block body %}
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-            <!-- En-tête de la conversation -->
-            <div class="bg-blue-600 px-6 py-4">
-                <h1 class="text-xl font-semibold text-white">Messages</h1>
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-6 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-dark-md overflow-hidden">
+            <div class="bg-indigo-600 dark:bg-indigo-700 px-6 py-4">
+                <h1 class="text-xl font-bold text-white flex items-center">
+                    <span class="material-icons mr-2">chat</span>
+                    Conversation
+                </h1>
             </div>
+
+           
             
-            <!-- Corps de la conversation -->
             <div class="p-6">
-                <!-- Zone des messages avec défilement -->
-                <div id="messages" class="overflow-y-auto max-h-[500px] space-y-4 mb-6" hx-ext="sse" sse-connect="{{ mercure(topic)}}" sse-swap="message">
-                    {% include "conversation/messages.html.twig" %}
+                {# Zone des messages avec défilement #}
+                <div class="overflow-y-auto h-96 dark:bg-gray-800 transition-colors duration-300" id="messages">
+                    {% include 'conversation/messages.html.twig' %}
                 </div>
                 
-                <hr class="border-gray-200 my-4">
-                
-                <!-- Formulaire d'envoi -->
-                <form class="flex gap-3 items-center" hx-post="{{ path('message.create') }}" hx-swap="none">
+                {# Séparateur #}
+                <div class="border-t border-gray-200 dark:border-gray-700 my-4 transition-colors duration-300"></div>
+
+                {# Formulaire d'envoi de message #}
+                <form id="messageForm" class="flex space-x-3 mt-4">
                     <input 
                         aria-label="Message" 
-                        type="text" 
+                        placeholder="Écrivez votre message..." 
+                        class="flex-grow px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm dark:shadow-dark-sm focus:outline-none focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 transition-colors duration-300" 
                         name="content" 
                         id="content" 
-                        class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Écrivez votre message..."
+                        type="text"
                     >
                     <input type="hidden" name="conversationId" value="{{ conversation.id }}">
                     <button 
-                        type="submit" 
-                        class="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                        type="submit"
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm dark:shadow-dark-sm text-sm font-medium text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition-colors duration-300"
+                        id="send"
                     >
+                        <span class="material-icons text-sm mr-1">send</span>
                         Envoyer
                     </button>
                 </form>
             </div>
         </div>
     </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
 <script>
-const messages = document.getElementById('messages');
-const userId = {{ app.user.id }};
-
-document.addEventListener('DOMContentLoaded', () => {
-   scrollToBottom(messages);
+document.addEventListener('DOMContentLoaded', function() {
+    // Variables pour le système de messagerie
+    const messagesContainer = document.getElementById('messages');
+    const messageForm = document.getElementById('messageForm');
+    let lastMessageId = {{ lastMessageId|default(0) }};
+    let isPolling = true;
+    let isSendingMessage = false; // Pour éviter les envois multiples
+    let processingMessageIds = new Set(); // Pour suivre les IDs des messages en cours de traitement
+    
+    // Fonction pour faire défiler vers le bas
+    function scrollToBottom() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    // Scroll initial vers le bas
+    scrollToBottom();
+    
+    // Gestionnaire d'envoi de message
+    messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const contentInput = document.getElementById('content');
+        const conversationIdInput = document.querySelector('input[name="conversationId"]');
+        
+        if (!contentInput.value.trim() || isSendingMessage) {
+            return; // Ne pas envoyer de message vide ou si un envoi est déjà en cours
+        }
+        
+        // Empêcher les envois multiples
+        isSendingMessage = true;
+        
+        // Préparer les données
+        const formData = new FormData();
+        formData.append('content', contentInput.value);
+        formData.append('conversationId', conversationIdInput.value);
+        
+        // Envoyer le message par AJAX
+        fetch('{{ path('message.create') }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erreur réseau: ' + response.status);
+            }
+            return response.text();
+        })
+        .then(html => {
+            // Effacer le champ de saisie
+            contentInput.value = '';
+            contentInput.focus();
+            
+            // Extraire l'ID du message à partir du HTML reçu
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            const messageElement = tempDiv.querySelector('[data-message-id]');
+            
+            if (messageElement) {
+                const newMessageId = parseInt(messageElement.getAttribute('data-message-id'));
+                
+                // Ajouter cet ID à notre liste pour éviter la duplication
+                processingMessageIds.add(newMessageId);
+                
+                // Mettre à jour lastMessageId si nécessaire
+                if (newMessageId > lastMessageId) {
+                    lastMessageId = newMessageId;
+                }
+                
+                // Après 5 secondes, supprimer l'ID de la liste de traitement
+                setTimeout(() => {
+                    processingMessageIds.delete(newMessageId);
+                }, 5000);
+            }
+            
+            // Ajouter directement le message dans la conversation
+            messagesContainer.insertAdjacentHTML('beforeend', html);
+            
+            // Défiler vers le bas pour voir le nouveau message
+            scrollToBottom();
+        })
+        .catch(error => {
+            console.error('Erreur lors de l\'envoi du message:', error);
+            alert('Impossible d\'envoyer votre message. Veuillez réessayer.');
+        })
+        .finally(() => {
+            isSendingMessage = false; // Réinitialiser le drapeau d'envoi
+        });
+    });
+    
+    // Fonction pour récupérer les nouveaux messages
+    function pollMessages() {
+        if (!isPolling) return;
+        
+        fetch(`{{ path('message.get', {'conversationId': conversation.id}) }}?lastMessageId=${lastMessageId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur réseau: ' + response.status);
+                }
+                return response.text();
+            })
+            .then(html => {
+                if (html.trim()) {
+                    // Créer un élément temporaire pour analyser le HTML
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = html;
+                    
+                    // Extraire tous les messages du HTML
+                    const newMessageElements = tempDiv.querySelectorAll('[data-message-id]');
+                    let hasNewMessages = false;
+                    
+                    // Vérifier chaque message
+                    newMessageElements.forEach(messageElement => {
+                        const messageId = parseInt(messageElement.getAttribute('data-message-id'));
+                        
+                        // Ne pas ajouter les messages que nous avons déjà traités ou qui sont en cours de traitement
+                        if (!processingMessageIds.has(messageId) && messageId > lastMessageId) {
+                            hasNewMessages = true;
+                            
+                            // Ajouter le message au conteneur
+                            messagesContainer.appendChild(messageElement);
+                            
+                            // Mettre à jour lastMessageId
+                            if (messageId > lastMessageId) {
+                                lastMessageId = messageId;
+                            }
+                        }
+                    });
+                    
+                    // Faire défiler vers le bas s'il y a de nouveaux messages
+                    if (hasNewMessages) {
+                        scrollToBottom();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des messages:', error);
+            })
+            .finally(() => {
+                // Continuer le polling
+                setTimeout(pollMessages, 3000); // Toutes les 3 secondes
+            });
+    }
+    
+    // Démarrer le polling
+    pollMessages();
+    
+    // Arrêter le polling quand l'utilisateur quitte la page
+    window.addEventListener('beforeunload', function() {
+        isPolling = false;
+    });
 });
-
-
-
-document.addEventListener('htmx:sseBeforeMessage',function (e){
-    e.preventDefault();
-
-    const json = e.detail.data;
-    console.log(json);
-});
-
-function scrollToBottom(container){
-    container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'smooth'
-    })
-}
-
-
 </script>
-   
 {% endblock %}

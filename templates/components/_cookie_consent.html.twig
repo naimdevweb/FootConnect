@@ -1,0 +1,524 @@
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\components\_cookie_consent.html.twig #}
+<div id="cookieConsent" class="fixed bottom-0 left-0 right-0 z-50 transform translate-y-full transition-all duration-500 ease-in-out opacity-0">
+    <div class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
+        <div class="container mx-auto p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-start">
+                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-full flex-shrink-0 flex items-center justify-center mr-3">
+                    <i class="fas fa-cookie-bite text-blue-600 dark:text-blue-400 text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">Nous respectons votre vie privée</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        FootConnect utilise des cookies pour améliorer votre expérience, personnaliser le contenu et analyser notre trafic.
+                        <a href="{{ path('app_cookies') }}" class="text-blue-600 dark:text-blue-400 hover:underline">En savoir plus</a>
+                    </p>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2 mt-3 md:mt-0">
+                <button id="cookieSettings" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg text-sm font-medium transition-colors">
+                    Personnaliser
+                </button>
+                <button id="cookieAccept" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white text-sm rounded-lg transition-colors shadow-sm">
+                    Accepter tout
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="cookieModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center" style="display: none;">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-lg mx-4 w-full">
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-cookie-bite text-blue-600 dark:text-blue-400 text-lg"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Paramètres des cookies</h3>
+                </div>
+                <button id="closeModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-6">
+                Personnalisez vos préférences en matière de cookies. Les cookies essentiels ne peuvent pas être désactivés car ils sont nécessaires au fonctionnement du site.
+            </p>
+
+            <div class="space-y-4 mb-6">
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <p class="font-medium text-gray-800 dark:text-white">Cookies essentiels</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Nécessaires au fonctionnement du site</p>
+                    </div>
+                    <div class="relative">
+                        <input type="checkbox" id="essentialCookies" class="sr-only" checked disabled>
+                        <label for="essentialCookies" class="flex items-center cursor-not-allowed">
+                            <div class="w-11 h-6 bg-blue-600 dark:bg-blue-700 rounded-full flex items-center">
+                                <div class="w-5 h-5 bg-white rounded-full transform translate-x-5 transition"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <p class="font-medium text-gray-800 dark:text-white">Cookies fonctionnels</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Améliorent l'expérience utilisateur</p>
+                    </div>
+                    <div class="relative">
+                        <input type="checkbox" id="functionalCookies" class="sr-only">
+                        <label for="functionalCookies" class="flex items-center cursor-pointer">
+                            <div class="toggle-bg w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center transition-colors duration-200">
+                                <div class="toggle-dot w-5 h-5 bg-white rounded-full transform transition-transform duration-200"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <p class="font-medium text-gray-800 dark:text-white">Cookies analytiques</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Nous aident à améliorer le site</p>
+                    </div>
+                    <div class="relative">
+                        <input type="checkbox" id="analyticsCookies" class="sr-only">
+                        <label for="analyticsCookies" class="flex items-center cursor-pointer">
+                            <div class="toggle-bg w-11 h-6 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center transition-colors duration-200">
+                                <div class="toggle-dot w-5 h-5 bg-white rounded-full transform transition-transform duration-200"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <a href="{{ path('app_cookies') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    Politique des cookies
+                </a>
+                <div class="flex gap-2">
+                    <button id="savePreferences" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white text-sm rounded-lg transition-colors">
+                        Enregistrer
+                    </button>
+                    <button id="acceptAllModal" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-lg text-sm font-medium transition-colors shadow-sm">
+                        Accepter tout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\components\_cookie_consent.html.twig #}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Configuration
+    const cookieName = 'fc_cookie_consent';
+    const localStorageName = 'fc_cookie_preferences';
+    const expirationDays = 365;
+    
+    // Éléments DOM
+    const banner = document.getElementById('cookieConsent');
+    const modal = document.getElementById('cookieModal');
+    const functionalToggle = document.getElementById('functionalCookies');
+    const analyticsToggle = document.getElementById('analyticsCookies');
+    
+    // Boutons
+    const settingsButton = document.getElementById('cookieSettings');
+    const acceptButton = document.getElementById('cookieAccept');
+    const closeModalButton = document.getElementById('closeModal');
+    const savePreferencesButton = document.getElementById('savePreferences');
+    const acceptAllModalButton = document.getElementById('acceptAllModal');
+    
+    // Détection de la page d'accueil (corrigée)
+    const isHomePage = window.location.pathname === '/' || 
+                       window.location.pathname === '/index.php' || 
+                       window.location.pathname === '/home';
+    
+    console.log('Chemin actuel :', window.location.pathname);
+    console.log('Est page d\'accueil :', isHomePage);
+    
+    // Vérifier si l'utilisateur est connecté
+    const isUserLoggedIn = checkIfUserIsLoggedIn();
+    const isLoginPage = window.location.pathname.includes('login');
+    
+    // Nettoyer les préférences uniquement lors d'une déconnexion
+    if (window.location.search.includes('logout=true')) {
+        clearAllCookieData();
+        console.log('Déconnexion détectée, préférences cookies réinitialisées');
+    }
+    
+    // Ajouter des écouteurs pour détecter la déconnexion
+    document.addEventListener('userLoggedOut', clearAllCookieData);
+    
+    // Ajouter un écouteur aux boutons de déconnexion
+    document.querySelectorAll('a[href*="logout"]').forEach(link => {
+        link.addEventListener('click', clearAllCookieData);
+    });
+    
+    // Initialisation du système de cookies
+    initCookieConsent();
+    
+    /**
+     * Vérifie si l'utilisateur est actuellement connecté
+     * @returns {boolean} - true si l'utilisateur est connecté
+     */
+    function checkIfUserIsLoggedIn() {
+        // La méthode la plus fiable: vérifier la classe sur le body
+        if (document.body.classList.contains('logged-in')) {
+            console.log('Détecté comme connecté via classe CSS');
+            return true;
+        }
+        
+        // Secours si la classe n'est pas présente
+        const userProfileElement = document.querySelector('.user-profile-element');
+        if (userProfileElement) {
+            console.log('Détecté comme connecté via élément DOM');
+            return true;
+        }
+        
+        console.log('Non connecté selon la détection');
+        return false;
+    }
+    
+    /**
+     * Supprime les données de consentement cookies
+     */
+    function clearAllCookieData() {
+        try {
+            localStorage.removeItem(localStorageName);
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax`;
+            console.log('Données de consentement cookies supprimées');
+        } catch (e) {
+            console.error('Erreur lors de la suppression des données:', e);
+        }
+    }
+    
+    /**
+     * Initialise le système de consentement des cookies
+     */
+    function initCookieConsent() {
+        // Charger les préférences
+        const preferences = loadPreferences();
+        console.log('Préférences chargées:', preferences);
+        
+        // Initialiser les écouteurs d'événements
+        initEventListeners();
+        
+        // Mettre à jour les toggles
+        updateToggles(preferences);
+        
+        // Décider d'afficher la bannière ou non
+        if (isHomePage && !preferences.accepted) {
+            // Sur la page d'accueil ET pas encore accepté -> afficher la bannière
+            console.log('Affichage de la bannière sur la page d\'accueil');
+            setTimeout(() => {
+                if (banner) {
+                    banner.classList.remove('opacity-0');
+                    banner.style.transform = 'translateY(0)';
+                    banner.classList.remove('translate-y-full');
+                }
+            }, 500);
+        } else {
+            // Pas sur la page d'accueil OU déjà accepté -> masquer la bannière
+            if (banner) {
+                banner.classList.add('opacity-0');
+                banner.style.transform = 'translateY(100%)';
+                banner.classList.add('translate-y-full');
+            }
+            console.log(isHomePage ? 'Cookies déjà acceptés' : 'Pas sur la page d\'accueil');
+        }
+    }
+    
+   
+    
+    
+    
+    /**
+     * Charge les préférences de cookies depuis localStorage ou cookies
+     * @returns {Object} Les préférences de cookies de l'utilisateur
+     */
+    function loadPreferences() {
+        const defaultPrefs = {
+            essential: true,
+            functional: false,
+            analytics: false,
+            accepted: false
+        };
+        
+        try {
+            // Essayer d'abord de charger depuis localStorage (plus fiable)
+            const localData = localStorage.getItem(localStorageName);
+            if (localData) {
+                const parsedData = JSON.parse(localData);
+                console.log('Préférences chargées depuis localStorage');
+                return { ...defaultPrefs, ...parsedData };
+            }
+            
+            // Ensuite essayer depuis les cookies
+            const cookieValue = getCookie(cookieName);
+            if (cookieValue) {
+                const parsedData = JSON.parse(cookieValue);
+                console.log('Préférences chargées depuis les cookies');
+                return { ...defaultPrefs, ...parsedData };
+            }
+        } catch (e) {
+            console.error('Erreur lors du chargement des préférences:', e);
+        }
+        
+        return defaultPrefs;
+    }
+    
+    /**
+     * Configure les écouteurs d'événements pour tous les boutons
+     */
+    function initEventListeners() {
+        // Écouteurs pour les toggles
+        if (functionalToggle) {
+            functionalToggle.addEventListener('change', () => updateToggleVisual(functionalToggle));
+        }
+        
+        if (analyticsToggle) {
+            analyticsToggle.addEventListener('change', () => updateToggleVisual(analyticsToggle));
+        }
+        
+        // Écouteurs pour les boutons de la bannière
+        if (settingsButton) {
+            settingsButton.addEventListener('click', showModal);
+        }
+        
+        if (acceptButton) {
+            acceptButton.addEventListener('click', acceptAllCookies);
+        }
+        
+        // Écouteurs pour les boutons de la modale
+        if (closeModalButton) {
+            closeModalButton.addEventListener('click', hideModal);
+        }
+        
+        if (savePreferencesButton) {
+            savePreferencesButton.addEventListener('click', savePreferences);
+        }
+        
+        if (acceptAllModalButton) {
+            acceptAllModalButton.addEventListener('click', acceptAllCookies);
+        }
+    }
+    
+    /**
+     * Met à jour l'état visuel des toggles en fonction des préférences
+     * @param {Object} preferences - Les préférences de l'utilisateur
+     */
+    function updateToggles(preferences) {
+        if (functionalToggle) {
+            functionalToggle.checked = preferences.functional || false;
+            updateToggleVisual(functionalToggle);
+        }
+        
+        if (analyticsToggle) {
+            analyticsToggle.checked = preferences.analytics || false;
+            updateToggleVisual(analyticsToggle);
+        }
+    }
+    
+    /**
+     * Met à jour l'apparence visuelle d'un toggle
+     * @param {HTMLElement} toggle - L'élément toggle à mettre à jour
+     */
+    function updateToggleVisual(toggle) {
+        if (!toggle || !toggle.nextElementSibling) return;
+        
+        const label = toggle.nextElementSibling;
+        const bg = label.querySelector('.toggle-bg');
+        const dot = label.querySelector('.toggle-dot');
+        
+        if (!bg || !dot) return;
+        
+        if (toggle.checked) {
+            bg.classList.remove('bg-gray-300', 'dark:bg-gray-600');
+            bg.classList.add('bg-blue-600', 'dark:bg-blue-700');
+            dot.classList.add('translate-x-5');
+        } else {
+            bg.classList.add('bg-gray-300', 'dark:bg-gray-600');
+            bg.classList.remove('bg-blue-600', 'dark:bg-blue-700');
+            dot.classList.remove('translate-x-5');
+        }
+    }
+    
+    /**
+     * Affiche la modale de paramètres des cookies
+     */
+    function showModal() {
+        if (!banner || !modal) return;
+        
+        banner.style.transform = 'translateY(100%)';
+        banner.classList.add('translate-y-full');
+        modal.style.display = 'flex';
+    }
+    
+    /**
+     * Masque la modale de paramètres des cookies
+     */
+    function hideModal() {
+        if (!modal) return;
+        
+        modal.style.display = 'none';
+        
+        // Réafficher la bannière si les cookies n'ont pas été acceptés
+        const preferences = loadPreferences();
+        if (!preferences.accepted && banner) {
+            banner.style.transform = 'translateY(0)';
+            banner.classList.remove('translate-y-full');
+        }
+    }
+    
+    /**
+     * Accepte tous les types de cookies
+     */
+    function acceptAllCookies() {
+        const newPrefs = {
+            essential: true,
+            functional: true,
+            analytics: true,
+            accepted: true,
+            timestamp: new Date().getTime()
+        };
+        
+        savePreferencesToStorage(newPrefs);
+        
+        // Masquer la bannière et la modale
+        if (banner) {
+            banner.style.transform = 'translateY(100%)';
+            banner.classList.add('translate-y-full');
+            banner.classList.add('opacity-0');
+        }
+        
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        
+        showNotification('Tous les cookies ont été acceptés');
+    }
+    
+    /**
+     * Enregistre les préférences personnalisées de l'utilisateur
+     */
+    function savePreferences() {
+        const newPrefs = {
+            essential: true,
+            functional: functionalToggle ? functionalToggle.checked : false,
+            analytics: analyticsToggle ? analyticsToggle.checked : false,
+            accepted: true,
+            timestamp: new Date().getTime()
+        };
+        
+        savePreferencesToStorage(newPrefs);
+        
+        // Masquer la bannière et la modale
+        if (banner) {
+            banner.style.transform = 'translateY(100%)';
+            banner.classList.add('translate-y-full');
+            banner.classList.add('opacity-0');
+        }
+        
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        
+        showNotification('Vos préférences ont été enregistrées');
+    }
+    
+    /**
+     * Enregistre les préférences dans localStorage et cookies
+     * @param {Object} preferences - Les préférences à enregistrer
+     */
+    function savePreferencesToStorage(preferences) {
+        try {
+            // Sauvegarder dans localStorage
+            localStorage.setItem(localStorageName, JSON.stringify(preferences));
+            
+            // Sauvegarder dans les cookies
+            setCookie(cookieName, JSON.stringify(preferences), expirationDays);
+            
+            console.log('Préférences enregistrées avec succès:', preferences);
+            
+            // Rendre les préférences disponibles globalement
+            window.cookiePreferences = preferences;
+        } catch (e) {
+            console.error('Erreur lors de l\'enregistrement des préférences:', e);
+        }
+    }
+    
+    /**
+     * Affiche une notification temporaire
+     * @param {string} message - Le message à afficher
+     */
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center transition-opacity duration-300';
+        notification.style.opacity = '0';
+        notification.innerHTML = `<i class="fas fa-check-circle mr-2"></i> ${message}`;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '1';
+        }, 10);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
+    }
+    
+    /**
+     * Définit un cookie avec les options spécifiées
+     * @param {string} name - Nom du cookie
+     * @param {string} value - Valeur du cookie
+     * @param {number} days - Nombre de jours avant expiration
+     */
+    function setCookie(name, value, days) {
+        try {
+            let expires = '';
+            
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = `; expires=${date.toUTCString()}`;
+            }
+            
+            document.cookie = `${name}=${encodeURIComponent(value)}${expires}; path=/; SameSite=Lax`;
+            console.log(`Cookie ${name} défini avec succès`);
+        } catch (e) {
+            console.error(`Erreur lors de la définition du cookie ${name}:`, e);
+        }
+    }
+    
+    /**
+     * Récupère la valeur d'un cookie
+     * @param {string} name - Nom du cookie à récupérer
+     * @returns {string|null} - Valeur du cookie ou null si non trouvé
+     */
+    function getCookie(name) {
+        try {
+            const nameEQ = `${name}=`;
+            const ca = document.cookie.split(';');
+            
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1);
+                if (c.indexOf(nameEQ) === 0) {
+                    return decodeURIComponent(c.substring(nameEQ.length));
+                }
+            }
+        } catch (e) {
+            console.error(`Erreur lors de la récupération du cookie ${name}:`, e);
+        }
+        
+        return null;
+    }
+});
+</script>

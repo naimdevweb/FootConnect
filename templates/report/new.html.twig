@@ -1,0 +1,77 @@
+{# filepath: c:\Users\Dev404\Documents\foot_connect\FOOT_CONNECT\templates\report\new.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Signaler un contenu - FootConnect{% endblock %}
+
+{% block body %}
+<main class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+        <a href="javascript:history.back()" class="flex items-center text-blue-600 dark:text-blue-400 hover:underline mb-6 text-sm">
+            <i class="fas fa-arrow-left mr-2"></i> Retour
+        </a>
+
+        <h1 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <i class="fas fa-flag text-red-500 mr-2"></i>
+            Signaler 
+            {% if reportType == 'post' %}
+                une publication
+            {% elseif reportType == 'comment' %}
+                un commentaire
+            {% elseif reportType == 'user' %}
+                un utilisateur
+            {% endif %}
+        </h1>
+
+        {% if reportedItemInfo %}
+        <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <h3 class="text-lg font-semibold mb-2">{{ reportedItemInfo.type }}</h3>
+            <div class="flex items-center">
+                {% if reportType == 'user' and reportedItemInfo.entity.profilePicture %}
+                    <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
+                        <img src="{{ asset('uploads/profile_pictures/' ~ reportedItemInfo.entity.profilePicture) }}" 
+                             alt="Photo de profil" class="w-full h-full object-cover">
+                    </div>
+                {% elseif reportType == 'user' %}
+                    <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center mr-3">
+                        {{ reportedItemInfo.name|slice(0,1)|upper }}
+                    </div>
+                {% endif %}
+                
+                <div>
+                    <p class="font-medium">{{ reportedItemInfo.name }}</p>
+                    {% if reportedItemInfo.preview is defined %}
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ reportedItemInfo.preview }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <p class="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+            Les modérateurs examineront votre signalement dans les plus brefs délais.
+            Merci de contribuer à maintenir FootConnect comme un espace sûr et respectueux.
+        </p>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+        
+            {{ form_errors(form) }}
+            
+            {{ form_row(form.reason) }}
+            {{ form_row(form.details) }}
+            
+            {{ form_widget(form.reportType) }}
+            {{ form_widget(form.reportedItemId) }}
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <a href="{{ app.request.headers.get('referer') }}" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg text-gray-800 dark:text-gray-200 transition-colors">
+                    Annuler
+                </a>
+                <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                    Envoyer le signalement
+                </button>
+            </div>
+            
+        {{ form_end(form) }}
+    </div>
+</main>
+{% endblock %}

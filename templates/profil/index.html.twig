@@ -166,6 +166,18 @@
             Modifier
         </a>
 
+	 {% if is_granted('ROLE_MODERATEUR') %}
+        <a href="{{ path('app_moderation_reports') }}" class="flex items-center justify-between p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 hover:shadow-sm">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-flag text-lg"></i>
+                <span>Signalements</span>
+            </div>
+            {% if pending_reports_count is defined and pending_reports_count > 0 %}
+                <span class="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">{{ pending_reports_count }}</span>
+            {% endif %}
+        </a>
+    {% endif %}
+
         <a href="{{ path('app_logout') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md">
             <i class="material-icons text-sm mr-1">logout</i>
             Déconnexion

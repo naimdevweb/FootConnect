@@ -165,8 +165,9 @@
     <script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js" integrity="sha384-fw+eTlCc7suMV/1w/7fr2/PmwElUIt5i82bi+qTiLXvjRXZ2/FkiTNA/w0MhXnGI" crossorigin="anonymous"></script>
 </head>
 
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-all duration-300">
+<body class=" {{ app.user ? 'logged-in' : 'logged-out' }} bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-all duration-300">
     <!-- Header principal (navigation globale) -->
+   
     <header>
         <nav class="bg-white dark:bg-gray-800 shadow-md p-4 transition-colors duration-200">
             <div class="container mx-auto">
@@ -403,73 +404,67 @@
 </footer>
 
 
-   {% block javascripts %}
-<script src="{{ asset('js/cookie-manager.js') }}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Menu burger toggle
-        const burgerMenu = document.getElementById('burger-menu');
-        if (burgerMenu) {
-            burgerMenu.addEventListener('click', function() {
-                const mobileMenu = document.getElementById('mobile-menu');
-                if (mobileMenu.classList.contains('hidden')) {
-                    mobileMenu.classList.remove('hidden');
-                } else {
-                    mobileMenu.classList.add('hidden');
-                }
-            });
-        }
-        
-        // Bouton de recherche mobile toggle
-        const mobileSearchToggle = document.getElementById('mobile-search-toggle');
-        if (mobileSearchToggle) {
-            mobileSearchToggle.addEventListener('click', function() {
-                const mobileSearch = document.getElementById('mobile-search');
-                if (mobileSearch.classList.contains('hidden')) {
-                    mobileSearch.classList.remove('hidden');
-                    mobileSearch.querySelector('input').focus();
-                } else {
-                    mobileSearch.classList.add('hidden');
-                }
-            });
-        }
 
-        // Fonction pour appliquer le mode sombre
-        function applyTheme(darkMode) {
-            if (darkMode) {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('darkMode', 'true');
-            } else {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('darkMode', 'false');
+{# À la fin du fichier base.html.twig #}
+
+{% block javascripts %}
+    {# Scripts généraux (menu burger, mode sombre, etc.) #}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Menu burger toggle
+            const burgerMenu = document.getElementById('burger-menu');
+            if (burgerMenu) {
+                burgerMenu.addEventListener('click', function() {
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.remove('hidden');
+                    } else {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
             }
-        }
-
-        // Vérifier la préférence enregistrée
-        const storedDarkMode = localStorage.getItem('darkMode');
-        
-        // Appliquer le thème depuis localStorage ou la préférence système
-        if (storedDarkMode !== null) {
-            applyTheme(storedDarkMode === 'true');
-        } else {
-            // Détection préférence du système (mode sombre)
-            const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            applyTheme(prefersDarkMode);
-        }
-
-        // Synchroniser le toggle sur toutes les pages
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        if (darkModeToggle) {
-            darkModeToggle.checked = localStorage.getItem('darkMode') === 'true';
             
-            // Écouter les changements du toggle
-            darkModeToggle.addEventListener('change', function() {
-                applyTheme(this.checked);
-            });
-        }
-    });
-</script>
-{% endblock %}
-</body>
+            // Fonction pour appliquer le mode sombre
+            function applyTheme(darkMode) {
+                if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('darkMode', 'true');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('darkMode', 'false');
+                }
+            }
 
+            // Vérifier la préférence enregistrée
+            const storedDarkMode = localStorage.getItem('darkMode');
+            
+            // Appliquer le thème depuis localStorage ou la préférence système
+            if (storedDarkMode !== null) {
+                applyTheme(storedDarkMode === 'true');
+            } else {
+                // Détection préférence du système (mode sombre)
+                const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyTheme(prefersDarkMode);
+            }
+
+            // Synchroniser le toggle sur toutes les pages
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                darkModeToggle.checked = localStorage.getItem('darkMode') === 'true';
+                
+                // Écouter les changements du toggle
+                darkModeToggle.addEventListener('change', function() {
+                    applyTheme(this.checked);
+                });
+            }
+        });
+    </script>
+{% endblock %}
+
+{# Inclure le template de la bannière d'abord #}
+{% include 'components/_cookie_consent.html.twig' %}
+
+
+
+</body>
 </html>

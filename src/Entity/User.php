@@ -38,7 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $resetToken = null;
-    
+
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $resetTokenCreatedAt = null;
 
@@ -77,6 +77,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $bannedAt = null;
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $createdAt = null;
 
 
 
@@ -149,14 +152,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author', cascade: ['remove'], orphanRemoval: true)]
     private Collection $messages;
-    
-  
+
+
 
     public function __toString(): string
     {
         return $this->pseudo ?? $this->email ?? '';
     }
-    
+
     public function __construct()
     {
         $this->photos = new ArrayCollection();
@@ -171,8 +174,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->receivedWarnings = new ArrayCollection();
     }
 
-   
-     /**
+
+    /**
      * Set the deletedAt property.
      */
     public function setDeletedAt(?\DateTime $deletedAt): void
@@ -188,9 +191,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->deletedAt;
     }
 
-    
 
-       /**
+
+    /**
      * Get the value of isDeleted
      */
     public function isDeleted(): ?bool
@@ -224,7 +227,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    
+
     /**
      * A visual identifier that represents this user.
      *
@@ -391,7 +394,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Get the value of favoritePosts
-     */ 
+     */
     public function getFavoritePosts()
     {
         return $this->favoritePosts;
@@ -401,10 +404,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Set the value of favoritePosts
      *
      * @return  self
-     */ 
+     */
     public function setFavoritePosts($favoritePosts)
     {
         $this->favoritePosts = $favoritePosts;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    // Avec éventuellement un setter
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -423,7 +439,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setResetToken(?string $resetToken): self
     {
         $this->resetToken = $resetToken;
-        
+
         return $this;
     }
 
@@ -434,14 +450,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->resetTokenCreatedAt;
     }
-    
+
     /**
      * Définit la date de création du jeton de réinitialisation
      */
     public function setResetTokenCreatedAt(?\DateTimeInterface $resetTokenCreatedAt): self
     {
         $this->resetTokenCreatedAt = $resetTokenCreatedAt;
-        
+
         return $this;
     }
 
@@ -453,10 +469,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if (!$this->resetToken || !$this->resetTokenCreatedAt) {
             return true;
         }
-        
+
         if ($this->resetTokenCreatedAt instanceof \DateTimeInterface) {
-            $resetTokenDate = $this->resetTokenCreatedAt instanceof \DateTimeImmutable 
-                ? $this->resetTokenCreatedAt 
+            $resetTokenDate = $this->resetTokenCreatedAt instanceof \DateTimeImmutable
+                ? $this->resetTokenCreatedAt
                 : \DateTimeImmutable::createFromMutable($this->resetTokenCreatedAt);
             $expirationDate = $resetTokenDate->modify("+{$expirationHours} hours");
         } else {
@@ -473,11 +489,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setProfilePicture(?string $profilePicture): self
     {
         $this->profilePicture = $profilePicture;
-        
+
         return $this;
     }
 
-     /**
+    /**
      * Get the likes associated with the user.
      *
      * @return Collection|Like[]
@@ -487,7 +503,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->likes;
     }
 
-       /**
+    /**
      * Get the comments associated with the user.
      *
      * @return Collection<int, Comment>
@@ -496,7 +512,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->commentaires;
     }
-
-
-
 }

@@ -2,24 +2,134 @@
 
 {% block title %}Politique de cookies - FootConnect{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .cookie-section {
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .cookie-section:hover {
+            transform: translateY(-2px);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .cookie-icon {
+            animation: pulse 3s ease-in-out infinite;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
 <main class="container mx-auto px-4 py-8 max-w-4xl">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 md:p-8 mb-6 transition-colors duration-200 hover:shadow-lg">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 border-b border-gray-200 dark:border-gray-700 pb-4 flex items-center">
-            <i class="fas fa-cookie-bite text-blue-600 dark:text-blue-400 mr-3"></i>
+            <i class="fas fa-cookie-bite text-blue-600 dark:text-blue-400 mr-3 cookie-icon"></i>
             Politique de cookies
         </h1>
         
-        <!-- Contenu principal inchangé -->
         <div class="prose prose-blue dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
-            <!-- Le contenu existant reste identique -->
+            <p class="lead text-lg mb-6">
+                FootConnect utilise des cookies pour améliorer votre expérience sur notre site. Cette page explique comment nous utilisons les cookies et vous permet de personnaliser vos préférences.
+            </p>
+            
+            <h2 class="text-xl font-semibold mt-8 mb-4 text-gray-800 dark:text-gray-200">Qu'est-ce qu'un cookie ?</h2>
+            <p class="mb-4">
+                Un cookie est un petit fichier texte stocké sur votre appareil lorsque vous visitez un site web. Les cookies permettent au site de mémoriser vos actions et préférences (identifiant de connexion, langue, taille de police, etc.) pour une période déterminée afin que vous n'ayez pas à les saisir à nouveau lorsque vous revenez sur le site ou naviguez d'une page à une autre.
+            </p>
+            
+            <div class="my-8 grid md:grid-cols-3 gap-4">
+                <div class="cookie-section bg-gray-50 dark:bg-gray-700 rounded-xl p-5 shadow-sm">
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-shield-alt text-blue-600 dark:text-blue-400 text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Cookies essentiels</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Nécessaires au fonctionnement du site. Ils permettent l'utilisation des principales fonctionnalités (connexion, sécurité).
+                    </p>
+                </div>
+                
+                <div class="cookie-section bg-gray-50 dark:bg-gray-700 rounded-xl p-5 shadow-sm">
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-sliders-h text-blue-600 dark:text-blue-400 text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Cookies fonctionnels</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Permettent d'améliorer votre expérience en mémorisant vos préférences (thème sombre/clair, favoris).
+                    </p>
+                </div>
+                
+                <div class="cookie-section bg-gray-50 dark:bg-gray-700 rounded-xl p-5 shadow-sm">
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-bar text-blue-600 dark:text-blue-400 text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Cookies analytiques</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Nous aident à comprendre comment les visiteurs interagissent avec le site afin de l'améliorer.
+                    </p>
+                </div>
+            </div>
+            
+            <h2 class="text-xl font-semibold mt-8 mb-4 text-gray-800 dark:text-gray-200">Comment gérons-nous les cookies ?</h2>
+            <p class="mb-4">
+                FootConnect utilise des cookies pour diverses raisons, notamment pour faire fonctionner correctement le site, pour améliorer votre expérience de navigation, pour se souvenir de vos préférences et pour vous présenter des contenus pertinents. Nous ne vendons jamais vos données personnelles recueillies via les cookies.
+            </p>
+            
+            <div class="my-6 border-l-4 border-blue-500 dark:border-blue-400 pl-4 py-2  dark:bg-blue-900/20 rounded-r-lg">
+                <p class="text-sm italic text-gray-700 dark:text-gray-300">
+                    <i class="fas fa-info-circle mr-2 text-blue-500 dark:text-blue-400"></i>
+                    Les cookies essentiels sont toujours activés car ils sont nécessaires au bon fonctionnement du site.
+                </p>
+            </div>
+            
+            <h2 class="text-xl font-semibold mt-8 mb-4 text-gray-800 dark:text-gray-200">Durée de conservation des cookies</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full my-6 text-sm">
+                    <thead>
+                        <tr class="bg-gray-100 dark:bg-gray-700">
+                            <th class="py-3 px-4 text-left font-medium text-gray-700 dark:text-gray-300">Type de cookie</th>
+                            <th class="py-3 px-4 text-left font-medium text-gray-700 dark:text-gray-300">Durée</th>
+                            <th class="py-3 px-4 text-left font-medium text-gray-700 dark:text-gray-300">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <tr class="bg-white dark:bg-gray-800">
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">Session</td>
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">Jusqu'à fermeture du navigateur</td>
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">Stockage temporaire pour fonctionnalités de base</td>
+                        </tr>
+                        <tr class="dark:bg-gray-750">
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">Persistant</td>
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">1 an</td>
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">Préférences utilisateur et paramètres</td>
+                        </tr>
+                        <tr class="bg-white dark:bg-gray-800">
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">Analytiques</td>
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">14 mois maximum</td>
+                            <td class="py-3 px-4 text-gray-700 dark:text-gray-300">Statistiques d'utilisation anonymisées</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h2 class="text-xl font-semibold mt-8 mb-4 text-gray-800 dark:text-gray-200">Comment contrôler les cookies ?</h2>
+            <p class="mb-4">
+                Vous pouvez configurer vos préférences en matière de cookies ci-dessous. Par ailleurs, la plupart des navigateurs permettent de contrôler les cookies via leurs paramètres. Sachez cependant que la désactivation des cookies peut affecter votre expérience sur notre site.
+            </p>
+            
+            <div class="mt-6 mb-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Gérer mes préférences</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Vous pouvez personnaliser vos préférences en matière de cookies à tout moment.
+                    </p>
+                </div>
+                <button id="settings-button" class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white py-2 px-4 rounded-lg transition-colors shadow-sm hover:shadow-md">
+                    <i class="fas fa-cog mr-2"></i> Configurer
+                </button>
+            </div>
         </div>
-    </div>
-    
-    <div class="text-center">
-        <button id="open-cookie-settings" class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white py-3 px-5 rounded-xl mb-4 transition-all duration-200 transform hover:-translate-y-1 hover:shadow-md">
-            <i class="fas fa-cog mr-2"></i> Configurer mes préférences de cookies
-        </button>
     </div>
     
     <div class="text-center mt-6">
@@ -32,9 +142,168 @@
 <!-- Modal de configuration des cookies -->
 <div id="cookie-preferences-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-300">
     <div class="relative max-w-lg w-full mx-4 bg-white dark:bg-gray-800 rounded-2xl shadow-xl transition-all transform scale-95 opacity-0 duration-300" id="modal-content">
-        <!-- Contenu de la modal inchangé -->
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">Préférences de cookies</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <p class="text-gray-600 dark:text-gray-400 text-sm mb-6">
+                Personnalisez vos préférences en matière de cookies. Les cookies essentiels sont nécessaires au fonctionnement du site et ne peuvent pas être désactivés.
+            </p>
+            
+            <div class="space-y-6">
+                <!-- Cookies essentiels -->
+                <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Cookies essentiels</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Toujours actifs</p>
+                    </div>
+                    <div class="relative">
+                        <input type="checkbox" id="essential-cookies" checked disabled class="sr-only">
+                        <label for="essential-cookies" class="flex items-center cursor-not-allowed">
+                            <div class="w-10 h-6 bg-blue-600 dark:bg-blue-700 rounded-full flex items-center transition-colors">
+                                <div class="w-5 h-5 bg-white rounded-full shadow transform translate-x-[18px]"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Cookies fonctionnels -->
+                <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Cookies fonctionnels</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Améliorent votre expérience</p>
+                    </div>
+                    <div class="relative">
+                        <input type="checkbox" id="functional-cookies" class="sr-only">
+                        <label for="functional-cookies" class="flex items-center cursor-pointer">
+                            <div class="w-10 h-6 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center transition-colors peer-checked:bg-blue-600">
+                                <div class="toggle-dot w-5 h-5 bg-white rounded-full shadow transform transition-transform"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Cookies analytiques -->
+                <div class="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Cookies analytiques</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Statistiques anonymes d'utilisation</p>
+                    </div>
+                    <div class="relative">
+                        <input type="checkbox" id="analytics-cookies" class="sr-only">
+                        <label for="analytics-cookies" class="flex items-center cursor-pointer">
+                            <div class="w-10 h-6 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center transition-colors peer-checked:bg-blue-600">
+                                <div class="toggle-dot w-5 h-5 bg-white rounded-full shadow transform transition-transform"></div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row sm:justify-between gap-3 mt-8">
+                <button id="accept-all" class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white py-2.5 px-5 rounded-lg transition-colors shadow-sm hover:shadow-md">
+                    <i class="fas fa-check-circle mr-2"></i> Accepter tout
+                </button>
+                <button id="accept-selected" class="inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 py-2.5 px-5 rounded-lg transition-colors shadow-sm hover:shadow-md">
+                    <i class="fas fa-save mr-2"></i> Enregistrer mes choix
+                </button>
+            </div>
+        </div>
     </div>
 </div>
+{% endblock %}
 
-
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('cookie-preferences-modal');
+        const modalContent = document.getElementById('modal-content');
+        const settingsButton = document.getElementById('settings-button');
+        const closeModalBtn = document.getElementById('close-modal');
+        
+        // Initialisation des toggles
+        const toggles = document.querySelectorAll('.toggle-dot');
+        const inputs = document.querySelectorAll('input[type="checkbox"]:not([disabled])');
+        
+        // Appliquer les préférences actuelles aux toggles
+        if (window.cookieManager) {
+            const functionalCheckbox = document.getElementById('functional-cookies');
+            const analyticsCheckbox = document.getElementById('analytics-cookies');
+            
+            if (functionalCheckbox) functionalCheckbox.checked = window.cookieManager.preferences.functional;
+            if (analyticsCheckbox) analyticsCheckbox.checked = window.cookieManager.preferences.analytics;
+            
+            updateToggles();
+        }
+        
+        // Gestion des toggles
+        inputs.forEach(input => {
+            input.addEventListener('change', updateToggles);
+        });
+        
+        function updateToggles() {
+            toggles.forEach(toggle => {
+                const checkbox = toggle.closest('label').previousElementSibling;
+                if (checkbox.checked) {
+                    toggle.classList.add('translate-x-[18px]');
+                    toggle.parentElement.classList.add('bg-blue-600');
+                    toggle.parentElement.classList.remove('bg-gray-300', 'dark:bg-gray-600');
+                } else {
+                    toggle.classList.remove('translate-x-[18px]');
+                    toggle.parentElement.classList.remove('bg-blue-600');
+                    toggle.parentElement.classList.add('bg-gray-300', 'dark:bg-gray-600');
+                }
+            });
+        }
+        
+        // Ouverture de la modal
+        settingsButton?.addEventListener('click', function() {
+            openModal();
+        });
+        
+        // Fermeture de la modal
+        closeModalBtn?.addEventListener('click', function() {
+            closeModal();
+        });
+        
+        // Clic en dehors de la modal
+        modal?.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        function openModal() {
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+        
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }, 300);
+        }
+        
+        // Initialisation des toggles au chargement
+        updateToggles();
+        
+        // Ouvrir automatiquement la modal si on vient de la bannière de cookies
+        if (new URLSearchParams(window.location.search).get('settings') === 'open') {
+            setTimeout(() => {
+                openModal();
+            }, 500);
+        }
+    });
+</script>
 {% endblock %}

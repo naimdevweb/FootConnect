@@ -47,21 +47,7 @@ class RegistrationFormType extends AbstractType
                     new Assert\IsTrue(['message' => 'Vous devez accepter les termes et conditions.']),
                 ]
             ])
-            ->add('profilePicture', FileType::class, [
-                'label' => 'Photo de profil',
-                'mapped' => false,
-                'required' => false,
-                'constraints' => [
-                    new File([
-                        'maxSize' => '2M',
-                        'mimeTypes' => [
-                            'image/jpeg',
-                            'image/png',
-                        ],
-                        'mimeTypesMessage' => 'Veuillez téléverser une image valide (JPEG ou PNG)',
-                    ])
-                ],
-            ])
+           
         ;
     }
 

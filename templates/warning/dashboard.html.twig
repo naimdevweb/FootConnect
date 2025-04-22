@@ -499,7 +499,8 @@
 				</header>
 				<div class="p-4 sm:p-6">
 					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-						{% for photo in latestPhotos %}
+						{% if latestPhotos is defined and latestPhotos is not empty %}
+						  {% for photo in latestPhotos %}
 							<article class="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-md bg-white dark:bg-gray-800 animate-slide-in transition-colors duration-200" style="animation-delay: {{ loop.index0 * 0.1 + 0.4 }}s; opacity: 0;">
 								<figure class="relative h-48 sm:h-64 overflow-hidden group">
 									<img src="{{ asset('uploads/photos/' ~ photo.photoUrl) }}" alt="Photo de {{ photo.user.pseudo }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
@@ -552,19 +553,26 @@
 								<span class="text-lg">Aucune photo récente à modérer</span>
 							</p>
 						{% endfor %}
-					</div>
+					{% else %}
+						<p class="text-gray-500 dark:text-gray-400 col-span-4 text-center py-12 animate-fade-in transition-colors duration-200">
+							<span class="material-icons text-gray-300 dark:text-gray-600 text-5xl block mb-4 transition-colors duration-200">photo_library</span>
+							<span class="text-lg">Aucune photo récente à modérer</span>
+						</p>
+					{% endif %}
 				</div>
-			</section>
-		</div>
-	</section>
+			</div>
+		</section>
+	</div>
+</section>
 
-	<script>
-		document.addEventListener('DOMContentLoaded', function () { // Animation des compteurs
+<script>
+	document.addEventListener('DOMContentLoaded', function () { // Animation des compteurs
 const countElements = document.querySelectorAll('.count-number');
 countElements.forEach(el => {
 const finalValue = parseInt(el.textContent);
 if (isNaN(finalValue)) 
 return;
+
 
 
 let startValue = 0;
@@ -582,6 +590,7 @@ const easeOutQuart = 1 - Math.pow(1 - progress, 4);
 let value = Math.floor(easeOutQuart * finalValue);
 if (value > finalValue) 
 value = finalValue;
+
 
 
 el.textContent = value;
@@ -611,5 +620,4 @@ el.style.animationPlayState = 'paused';
 observer.observe(el);
 });
 });
-	</script>
-{% endblock %}
+</script>{% endblock %}

@@ -15,8 +15,6 @@ class ProfilFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-          
-           
             ->add('photos', CollectionType::class, [
                 'entry_type' => PhotoFormType::class,
                 'entry_options' => ['label' => false],
@@ -24,10 +22,7 @@ class ProfilFormType extends AbstractType
                 'by_reference' => false,
                 'prototype' => true,
                 'attr' => ['class' => 'form-control']
-            ]);
-
-
-            
+            ]);       
     }
 
     public function configureOptions(OptionsResolver $resolver): void
